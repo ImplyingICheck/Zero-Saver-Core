@@ -13,18 +13,32 @@
 modified save files.
 
 Working data is assumed to be in the form of JSON."""
+from __future__ import annotations
+
+import platform
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+  from _typeshed import StrOrBytesPath
 
 
 class SaveLocation:
+  """Handles retrieving path information for various files.
 
-  def __init__(self):
-    pass
+  This section contains OS dependent code. Though currently, only Windows10 is
+  officially supported by ZERO Sievert, Zero Saver support for additional OSes
+  can be added here."""
 
-  def get_save_path(self):
-    pass
+  def __init__(self, system: str):
+    self.system = system if system else platform.system()
+    self.save_path = self.get_save_path()
+    self.gamedata_order_path = self.get_gamedata_order_path()
 
-  def get_gamedata_order_path(self):
-    pass
+  def get_save_path(self) -> StrOrBytesPath:
+    return ''
+
+  def get_gamedata_order_path(self) -> StrOrBytesPath:
+    return ''
 
 
 class GameDataIO:
