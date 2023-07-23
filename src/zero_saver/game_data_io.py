@@ -15,5 +15,17 @@ modified save files.
 Working data is assumed to be in the form of JSON."""
 
 
+class SaveLocation:
+
+  def __init__(self):
+    pass
+
+  def get_save_path(self):
+    pass
+
+  def get_gamedata_order_path(self):
+    pass
+
+
 class GameDataIO:
   pass
