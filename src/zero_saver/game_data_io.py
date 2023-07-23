@@ -15,6 +15,7 @@ modified save files.
 Working data is assumed to be in the form of JSON."""
 from __future__ import annotations
 
+import os
 import platform
 from typing import TYPE_CHECKING
 
@@ -28,14 +29,26 @@ class FileLocation:
   This section contains OS dependent code. Though currently, only Windows10 is
   officially supported by ZERO Sievert, Zero Saver support for additional OSes
   can be added here."""
+  WINDOWS_APPDATA_LOCAL = 'LOCALAPPDATA'
 
-  def __init__(self, system: str):
+  def __init__(self, system: str | None = None):
     self.system = system if system else platform.system()
     self.save_path = self.get_save_path()
     self.gamedata_order_path = self.get_gamedata_order_path()
 
-  def get_save_path(self) -> StrOrBytesPath:
-    return ''
+  def get_save_path(
+      self,
+      save_name: str = 'save_shared_1.dat',
+  ) -> StrOrBytesPath:
+    if self.system == 'Windows':
+      root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
+      assert isinstance(root, str)
+      # TODO: Figure out where this number comes from. Consistent across delete
+      #  and launch.
+      version = '91826839'
+      save_path = os.path.join('ZERO_Sievert', version, save_name)
+      return os.path.join(root, save_path)
+    raise ValueError(f'Invalid operating system: {self.system}')
 
   def get_gamedata_order_path(self) -> StrOrBytesPath:
     return ''
