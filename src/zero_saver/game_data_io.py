@@ -22,7 +22,7 @@ if TYPE_CHECKING:
   from _typeshed import StrOrBytesPath
 
 
-class SaveLocation:
+class FileLocation:
   """Handles retrieving path information for various files.
 
   This section contains OS dependent code. Though currently, only Windows10 is
