@@ -1,8 +1,8 @@
 [tool.poetry]
 # TODO: Set a project name, description, and authors.
-name = "project_name"
+name = "zero_saver"
 version = "0.1.0"
-description = ""
+description = "A save editor and manager for ZERO Sievert"
 authors = []
 readme = "README.md"
 
