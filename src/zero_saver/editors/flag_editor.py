@@ -1,4 +1,3 @@
-<!---
 # Copyright 2023 The Zero Saver Authors. All Rights Reserved.
 #
 # This file is part of Zero Saver.
@@ -14,7 +13,18 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
---->
-# ZERO Saver
+"""The editor designed to interface with main story quest progress, current
+quests, and time of day."""
+from zero_saver.editors import editor
 
-A save editor and manager for ZERO Sievert.
+
+class Quest:
+  pass
+
+
+class GameTime:
+  pass
+
+
+class FlagEditor(editor.Editor):
+  pass

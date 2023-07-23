@@ -1,8 +1,22 @@
+# Copyright 2023 The Zero Saver Authors. All Rights Reserved.
+#
+# This file is part of Zero Saver.
+#
+# Zero Saver is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Zero Saver is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 [tool.poetry]
-# TODO: Set a project name, description, and authors.
-name = "project_name"
+name = "zero_saver"
 version = "0.1.0"
-description = ""
+description = "A save editor and manager for ZERO Sievert"
 authors = []
 readme = "README.md"
 
@@ -24,3 +38,28 @@ pyright = "^1.1.314"
 pre-commit = "^3.3.3"
 pytest-cases = "^3.6.14"
 pytest-mock = "^3.11.1"
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
+pythonpath = "src cases"
+markers = [
+    "slow: marks slow-running tests",
+    "io: marks tests using external IO dependencies",
+]
+
+[tool.yapfignore]
+ignore_patterns = [
+    "dev_files/*.py",
+    "venv/*.py"
+]
+
+[tool.yapf]
+based_on_style = "yapf"
+
+[tool.pyright]
+include = ["src", "tests"]
+exclude = ["dev_files/*.py"]
+strict = ["src/zero_saver"]
+reportMissingImports = true
+reportUntypedFunctionDecorator = true
+reportUntypedClassDecorator = true

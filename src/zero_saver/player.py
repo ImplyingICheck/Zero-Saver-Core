@@ -1,4 +1,3 @@
-<!---
 # Copyright 2023 The Zero Saver Authors. All Rights Reserved.
 #
 # This file is part of Zero Saver.
@@ -14,7 +13,33 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
---->
-# ZERO Saver
+"""Data structure representing player character data.
 
-A save editor and manager for ZERO Sievert.
+The values supported are money quantity, faction reputation,
+fatigue/health/stamina/radiation values, skills, inventory, equipment, and
+character metadata.
+"""
+
+
+class Inventory:
+  pass
+
+
+class Skill:
+  pass
+
+
+class Equipment:
+  pass
+
+
+class Metadata:
+  pass
+
+
+class Reputation:
+  pass
+
+
+class Player:
+  pass

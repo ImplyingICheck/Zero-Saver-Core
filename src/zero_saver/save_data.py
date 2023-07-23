@@ -1,4 +1,3 @@
-<!---
 # Copyright 2023 The Zero Saver Authors. All Rights Reserved.
 #
 # This file is part of Zero Saver.
@@ -14,7 +13,8 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
---->
-# ZERO Saver
+"""Data structure representing a save game."""
 
-A save editor and manager for ZERO Sievert.
+
+class SaveData:
+  pass
