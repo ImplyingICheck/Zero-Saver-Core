@@ -64,7 +64,7 @@ def _read_registry_value(
   return value
 
 
-def _get_windows_steam_install_path():  # pyright: ignore [reportUnusedFunction]
+def _get_windows_steam_install_path():
   bits, linkage = platform.architecture()
   del linkage  # unused
   if bits == WindowsArchitecture.BITS_64:
@@ -84,6 +84,8 @@ class FileLocation:
   officially supported by ZERO Sievert, Zero Saver support for additional OSes
   can be added here."""
   WINDOWS_APPDATA_LOCAL = 'LOCALAPPDATA'
+  WINDOWS_ZERO_SIEVERT_INSTALL_PATH = os.path.join('steamapps', 'common',
+                                                   'ZERO Sievert')
 
   def __init__(self, system: str | None = None):
     self.system = system if system else platform.system()
@@ -105,7 +107,13 @@ class FileLocation:
     raise ValueError(f'Invalid operating system: {self.system}')
 
   def get_gamedata_order_path(self) -> StrOrBytesPath:
-    return ''
+    if self.system == 'Windows':
+      gamedata_order_file_name = 'gamedata_order.json'
+      steam_install_path = _get_windows_steam_install_path()
+      return os.path.join(steam_install_path,
+                          self.WINDOWS_ZERO_SIEVERT_INSTALL_PATH,
+                          gamedata_order_file_name)
+    raise ValueError(f'Operating system not supported: {self.system}')
 
 
 class GameDataIO:
