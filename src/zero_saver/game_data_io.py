@@ -117,4 +117,12 @@ class FileLocation:
 
 
 class GameDataIO:
-  pass
+
+  def __init__(self):
+    pass
+
+  def _read_save_file(self):
+    pass
+
+  def _import_gamedata(self):
+    pass
