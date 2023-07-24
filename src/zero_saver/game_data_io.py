@@ -89,10 +89,10 @@ class FileLocation:
 
   def __init__(self, system: str | None = None):
     self.system = system if system else platform.system()
-    self.save_path = self.get_save_path()
-    self.gamedata_order_path = self.get_gamedata_order_path()
+    self.save_path = self._get_save_path()
+    self.gamedata_order_path = self._get_gamedata_order_path()
 
-  def get_save_path(
+  def _get_save_path(
       self,
       save_name: str = 'save_shared_1.dat',
   ) -> StrOrBytesPath:
@@ -106,7 +106,7 @@ class FileLocation:
       return os.path.join(root, save_path)
     raise ValueError(f'Invalid operating system: {self.system}')
 
-  def get_gamedata_order_path(self) -> StrOrBytesPath:
+  def _get_gamedata_order_path(self) -> StrOrBytesPath:
     if self.system == 'Windows':
       gamedata_order_file_name = 'gamedata_order.json'
       steam_install_path = _get_windows_steam_install_path()
