@@ -121,14 +121,16 @@ class GameDataIO:
   """Translation layer for conversion of save data and game data json into Zero
   Saver objects."""
 
-  def __init__(self):
-    pass
+  def __init__(self, save_path: StrOrBytesPath | None = ''):
+    file_locations = FileLocation()
+    save_path = save_path if save_path else file_locations.save_path
+    self.save = self._read_save_file(save_path)
 
   def _read_save_file(
       self,
-      save_file_path: StrOrBytesPath,
+      save_path: StrOrBytesPath,
   ) -> dict[str, str | float]:
-    with open(save_file_path, 'r', encoding='utf-8') as f:
+    with open(save_path, 'r', encoding='utf-8') as f:
       return json.load(f)
 
   def _import_gamedata(self):
