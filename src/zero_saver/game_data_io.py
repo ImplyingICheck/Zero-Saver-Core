@@ -15,6 +15,7 @@ modified save files.
 Working data is assumed to be in the form of JSON."""
 from __future__ import annotations
 
+import enum
 import os
 import platform
 import winreg
@@ -26,7 +27,12 @@ if TYPE_CHECKING:
   from _typeshed import StrOrBytesPath
 
 
-def _read_registry_value(  # pyright: ignore [reportUnusedFunction]
+class WindowsArchitecture(enum.StrEnum):
+  BITS_64 = '64bit'
+  BITS_32 = '32bit'
+
+
+def _read_registry_value(
     key_path: str,
     value_name: str,
     *,
@@ -56,6 +62,19 @@ def _read_registry_value(  # pyright: ignore [reportUnusedFunction]
     raise error.winreg_error
   key.Close()
   return value
+
+
+def _get_windows_steam_install_path():  # pyright: ignore [reportUnusedFunction]
+  bits, linkage = platform.architecture()
+  del linkage  # unused
+  if bits == WindowsArchitecture.BITS_64:
+    key_path = os.path.join('SOFTWARE', 'Wow6432Node', 'Valve', 'Steam')
+  elif bits == WindowsArchitecture.BITS_32:
+    key_path = os.path.join('SOFTWARE', 'Valve', 'Steam')
+  else:
+    raise ValueError(f'Unsupported architecture: {bits}')
+  value_name = 'InstallPath'
+  return _read_registry_value(key_path, value_name)
 
 
 class FileLocation:
