@@ -16,6 +16,7 @@ Working data is assumed to be in the form of JSON."""
 from __future__ import annotations
 
 import enum
+import json
 import os
 import platform
 import winreg
@@ -117,12 +118,18 @@ class FileLocation:
 
 
 class GameDataIO:
+  """Translation layer for conversion of save data and game data json into Zero
+  Saver objects."""
 
   def __init__(self):
     pass
 
-  def _read_save_file(self):
-    pass
+  def _read_save_file(
+      self,
+      save_file_path: StrOrBytesPath,
+  ) -> dict[str, str | float]:
+    with open(save_file_path, 'r', encoding='utf-8') as f:
+      return json.load(f)
 
   def _import_gamedata(self):
     pass
