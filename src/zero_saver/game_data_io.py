@@ -17,10 +17,45 @@ from __future__ import annotations
 
 import os
 import platform
+import winreg
 from typing import TYPE_CHECKING
+
+from zero_saver.exceptions import winreg_errors
 
 if TYPE_CHECKING:
   from _typeshed import StrOrBytesPath
+
+
+def _read_registry_value(  # pyright: ignore [reportUnusedFunction]
+    key_path: str,
+    value_name: str,
+    *,
+    hive: int = winreg.HKEY_LOCAL_MACHINE,
+):
+  try:
+    key = winreg.OpenKey(hive, key_path)
+  except FileNotFoundError as e:
+    error = winreg_errors.WinregErrorFormatter(
+        e,
+        hive=hive,
+        key_path=key_path,
+    )
+    error.format_as_human_readable()
+    raise error.winreg_error
+  try:
+    value, value_type = winreg.QueryValueEx(key, value_name)
+    del value_type  # unused
+  except FileNotFoundError as e:
+    error = winreg_errors.WinregErrorFormatter(
+        e,
+        hive=hive,
+        key_path=key_path,
+        value_name=value_name,
+    )
+    error.format_as_human_readable()
+    raise error.winreg_error
+  key.Close()
+  return value
 
 
 class FileLocation:
