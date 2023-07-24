@@ -117,6 +117,14 @@ class FileLocation:
     raise ValueError(f'Operating system not supported: {self.system}')
 
 
+def _parse_float(float_as_str: str):
+  # ZERO Sievert saves encode ints as 'x.0' for some ungodly reason
+  if float_as_str[-2] == '.' and float_as_str[-1] == '0':
+    return int(float_as_str.split('.')[0])
+  else:
+    return float(float_as_str)
+
+
 class GameDataIO:
   """Translation layer for conversion of save data and game data json into Zero
   Saver objects."""
@@ -131,7 +139,7 @@ class GameDataIO:
       save_path: StrOrBytesPath,
   ) -> dict[str, str | float]:
     with open(save_path, 'r', encoding='utf-8') as f:
-      return json.load(f)
+      return json.load(f, parse_float=_parse_float)
 
   def _import_gamedata(self):
     pass
