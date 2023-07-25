@@ -9,7 +9,6 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
-# pyright: strict, reportUnusedFunction=false
 """Context manager for reading game data files from ZERO Sievert and writing
 modified save files.
 
@@ -31,6 +30,8 @@ from zero_saver.exceptions import winreg_errors
 
 if TYPE_CHECKING:
   from _typeshed import StrOrBytesPath, StrPath
+
+MAXIMUM_NUMBER_OF_BACKUPS = 10
 
 
 class WindowsArchitecture(enum.StrEnum):
@@ -195,9 +196,15 @@ class GameDataIO:
   """Translation layer for conversion of save data and game data json into Zero
   Saver objects."""
 
-  def __init__(self, save_path: StrPath | None = ''):
+  def __init__(
+      self,
+      save_path: StrPath | None = '',
+      backup_path: StrPath | None = '',
+  ):
     file_locations = FileLocation()
     save_path = save_path if save_path else file_locations.save_path
+    backup_path = backup_path if backup_path else file_locations.backup_path
+    assert self._backup_save_file(save_path, backup_path)
     self.save = self._read_save_file(save_path)
 
   def _read_save_file(
@@ -206,6 +213,20 @@ class GameDataIO:
   ) -> dict[str, str | float]:
     with open(save_path, 'r', encoding='utf-8') as f:
       return json.load(f, parse_float=_parse_float)
+
+  def _backup_save_file(self, save_path: StrPath, backup_path: StrPath) -> bool:
+    blocksize = 2**20
+    if iterator_length(os.scandir(backup_path)) >= MAXIMUM_NUMBER_OF_BACKUPS:
+      assert delete_oldest_file(backup_path)
+    with open(save_path, 'rb') as save_file:
+      original_save_filename = os.path.basename(save_path)
+      backup_filename = (f'{original_save_filename}'
+                         f'{_current_datetime_as_valid_filename()}')
+      backup_file_path = os.path.join(backup_path, backup_filename)
+      with open(backup_file_path, mode='wb') as backup:
+        while chunk := save_file.read(blocksize):
+          backup.write(chunk)
+    return True
 
   def _import_gamedata(self):
     pass
