@@ -38,7 +38,7 @@ def _read_registry_value(
     value_name: str,
     *,
     hive: int = winreg.HKEY_LOCAL_MACHINE,
-):
+) -> str:
   try:
     key = winreg.OpenKey(hive, key_path)
   except FileNotFoundError as e:
@@ -96,6 +96,7 @@ class FileLocation:
     self.system = system if system else platform.system()
     self.generate_program_directory()
     self.save_path = self._get_save_path()
+    self.backup_path = self._get_default_backup_directory()
     self.gamedata_order_path = self._get_gamedata_order_path()
 
   def _get_save_path(
@@ -120,6 +121,17 @@ class FileLocation:
                           self.WINDOWS_ZERO_SIEVERT_INSTALL_PATH,
                           gamedata_order_file_name)
     raise ValueError(f'Operating system not supported: {self.system}')
+
+  def _get_default_backup_directory(self):
+    if self.system == self.WINDOWS:
+      root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
+      assert isinstance(root, str)
+      backup_path = os.path.join(root, self.WINDOWS_BACKUPS_DIRECTORY)
+    else:
+      raise ValueError(f'Operating system not supported: {self.system}')
+    if not os.path.exists(backup_path) or not os.path.isdir(backup_path):
+      raise ValueError(f'Invalid backup location: {backup_path}')
+    return backup_path
 
   def generate_program_directory(self):
     if self.system == self.WINDOWS:
