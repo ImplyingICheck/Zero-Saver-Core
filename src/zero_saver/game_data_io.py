@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import datetime
 import enum
+import hashlib
 import itertools
 import json
 import os
@@ -29,7 +30,7 @@ from typing import Any, TYPE_CHECKING
 from zero_saver.exceptions import winreg_errors
 
 if TYPE_CHECKING:
-  from _typeshed import StrPath
+  from _typeshed import StrOrBytesPath, StrPath
   JsonValue = (
       str | int | float | bool | None | list['JsonValue']
       | Mapping[str, 'JsonValue'])
@@ -195,6 +196,17 @@ def delete_oldest_file(directory: StrPath) -> bool:
   return True
 
 
+def files_match(*files: StrOrBytesPath, blocksize: int = 2**20) -> bool:
+  hashes: list[bytes] = []
+  for file in files:
+    hash_function = hashlib.sha256()
+    with open(file, 'rb') as f:
+      while chunk := f.read(blocksize):
+        hash_function.update(chunk)
+    hashes.append(hash_function.digest())
+  return hashes.count(hashes[0]) == len(hashes)
+
+
 class GameDataIO:
   """Translation layer for conversion of save data and game data json into Zero
   Saver objects."""
@@ -228,7 +240,7 @@ class GameDataIO:
       with open(backup_file_path, mode='wb') as backup:
         while chunk := save_file.read(blocksize):
           backup.write(chunk)
-    return True
+    return files_match(self._save_path, backup_file_path)
 
   def _import_gamedata(self):
     pass
