@@ -102,8 +102,8 @@ class FileLocation:
                                            'backup')
 
   def __init__(self, system: str | None = None):
-    self.system: str = system if system else platform.system()
-    self.generate_program_directory()
+    self._system: str = system if system else platform.system()
+    self._generate_program_directory()
     self.save_path: StrPath = self._get_save_path()
     self.backup_path: StrPath = self._get_default_backup_directory()
     self.gamedata_order_path: StrPath = self._get_gamedata_order_path()
@@ -112,7 +112,7 @@ class FileLocation:
       self,
       save_name: str = 'save_shared_1.dat',
   ) -> StrPath:
-    if self.system == 'Windows':
+    if self._system == 'Windows':
       root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
       assert isinstance(root, str)
       # TODO: Figure out where this number comes from. Consistent across delete
@@ -120,30 +120,30 @@ class FileLocation:
       version = '91826839'
       save_path = os.path.join('ZERO_Sievert', version, save_name)
       return os.path.join(root, save_path)
-    raise ValueError(f'Invalid operating system: {self.system}')
+    raise ValueError(f'Invalid operating system: {self._system}')
 
   def _get_gamedata_order_path(self) -> StrPath:
-    if self.system == self.WINDOWS:
+    if self._system == self.WINDOWS:
       gamedata_order_file_name = 'gamedata_order.json'
       steam_install_path = _get_windows_steam_install_path()
       return os.path.join(steam_install_path,
                           self.WINDOWS_ZERO_SIEVERT_INSTALL_PATH,
                           gamedata_order_file_name)
-    raise ValueError(f'Operating system not supported: {self.system}')
+    raise ValueError(f'Operating system not supported: {self._system}')
 
   def _get_default_backup_directory(self):
-    if self.system == self.WINDOWS:
+    if self._system == self.WINDOWS:
       root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
       assert isinstance(root, str)
       backup_path = os.path.join(root, self.WINDOWS_BACKUPS_DIRECTORY)
     else:
-      raise ValueError(f'Operating system not supported: {self.system}')
+      raise ValueError(f'Operating system not supported: {self._system}')
     if not os.path.exists(backup_path) or not os.path.isdir(backup_path):
       raise ValueError(f'Invalid backup location: {backup_path}')
     return backup_path
 
-  def generate_program_directory(self) -> None:
-    if self.system == self.WINDOWS:
+  def _generate_program_directory(self) -> None:
+    if self._system == self.WINDOWS:
       root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
       assert isinstance(root, str)
       program_directory = os.path.join(root, self.WINDOWS_APPDATA_PROGRAM_FILE)
@@ -172,7 +172,7 @@ def _current_datetime_as_valid_filename() -> str:
   return current_datetime.replace(':', 'M')
 
 
-def iterator_length(iterator: Iterator[Any]) -> int:
+def _iterator_length(iterator: Iterator[Any]) -> int:
   itertools_count = itertools.count()
   for iteration in zip(iterator, itertools_count):
     del iteration  # unused
@@ -219,7 +219,7 @@ class GameDataIO:
 
   def _backup_save_file(self, save_path: StrPath, backup_path: StrPath) -> bool:
     blocksize = 2**20
-    if iterator_length(os.scandir(backup_path)) >= MAXIMUM_NUMBER_OF_BACKUPS:
+    if _iterator_length(os.scandir(backup_path)) >= MAXIMUM_NUMBER_OF_BACKUPS:
       assert delete_oldest_file(backup_path)
     with open(save_path, 'rb') as save_file:
       original_save_filename = os.path.basename(save_path)
