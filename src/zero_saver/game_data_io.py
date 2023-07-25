@@ -84,12 +84,17 @@ class FileLocation:
   This section contains OS dependent code. Though currently, only Windows10 is
   officially supported by ZERO Sievert, Zero Saver support for additional OSes
   can be added here."""
+  WINDOWS_APPDATA_PROGRAM_FILE = 'ZeroSaver'
   WINDOWS_APPDATA_LOCAL = 'LOCALAPPDATA'
   WINDOWS_ZERO_SIEVERT_INSTALL_PATH = os.path.join('steamapps', 'common',
                                                    'ZERO Sievert')
+  WINDOWS = 'Windows'
+  WINDOWS_BACKUPS_DIRECTORY = os.path.join(WINDOWS_APPDATA_PROGRAM_FILE,
+                                           'backup')
 
   def __init__(self, system: str | None = None):
     self.system = system if system else platform.system()
+    self.generate_program_directory()
     self.save_path = self._get_save_path()
     self.gamedata_order_path = self._get_gamedata_order_path()
 
@@ -108,13 +113,28 @@ class FileLocation:
     raise ValueError(f'Invalid operating system: {self.system}')
 
   def _get_gamedata_order_path(self) -> StrPath:
-    if self.system == 'Windows':
+    if self.system == self.WINDOWS:
       gamedata_order_file_name = 'gamedata_order.json'
       steam_install_path = _get_windows_steam_install_path()
       return os.path.join(steam_install_path,
                           self.WINDOWS_ZERO_SIEVERT_INSTALL_PATH,
                           gamedata_order_file_name)
     raise ValueError(f'Operating system not supported: {self.system}')
+
+  def generate_program_directory(self):
+    if self.system == self.WINDOWS:
+      root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
+      assert isinstance(root, str)
+      program_directory = os.path.join(root, self.WINDOWS_APPDATA_PROGRAM_FILE)
+      try:
+        os.mkdir(program_directory)
+      except FileExistsError:
+        pass
+      backup_directory = os.path.join(root, self.WINDOWS_BACKUPS_DIRECTORY)
+      try:
+        os.mkdir(backup_directory)
+      except FileExistsError:
+        pass
 
 
 def _parse_float(float_as_str: str):
