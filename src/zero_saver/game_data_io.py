@@ -23,6 +23,7 @@ import json
 import os
 import platform
 import winreg
+import cmath
 from collections.abc import Iterator
 from typing import Any, TYPE_CHECKING
 
@@ -172,6 +173,22 @@ def iterator_length(iterator: Iterator[Any]) -> int:
   for iteration in zip(iterator, itertools_count):
     del iteration  # unused
   return next(itertools_count)
+
+
+def delete_oldest_file(directory: StrPath) -> bool:
+  oldest_time = cmath.inf
+  oldest_file = None
+  for file in os.scandir(directory):
+    last_modified_time = os.stat(file).st_mtime_ns
+    if last_modified_time < oldest_time:
+      oldest_time = last_modified_time
+      oldest_file = file
+  if oldest_file is not None:
+    try:
+      os.remove(oldest_file.path)
+    except FileNotFoundError:
+      pass
+  return True
 
 
 class GameDataIO:
