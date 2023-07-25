@@ -32,9 +32,11 @@ from zero_saver.exceptions import winreg_errors
 
 if TYPE_CHECKING:
   from _typeshed import StrOrBytesPath, StrPath
-  JsonValue = (
-      str | int | float | bool | None | list['JsonValue']
-      | Mapping[str, 'JsonValue'])
+  # Missing float | int from normal JSON
+  ZeroSievertJsonValue = (
+      str | decimal.Decimal | None | list['ZeroSievertJsonValue']
+      | Mapping[str, 'ZeroSievertJsonValue'])
+  ZeroSievertSave = dict[str, ZeroSievertJsonValue]
 
 MAXIMUM_NUMBER_OF_BACKUPS = 10
 
@@ -160,7 +162,10 @@ class FileLocation:
         pass
 
 
-def format_with_two_digits_after_e(value: decimal.Decimal, format_str: str):
+def format_with_two_digits_after_e(
+    value: decimal.Decimal,
+    format_str: str,
+) -> str:
   formatted_decimal = format(value, format_str)
   mantissa, exponent = formatted_decimal.split('e')
   return f'{mantissa}e{int(exponent):+03}'
@@ -251,9 +256,9 @@ class GameDataIO:
     self._save_path = save_path if save_path else file_locations.save_path
     self._backup_path = (
         backup_path if backup_path else file_locations.backup_path)
-    self.save: dict[str, JsonValue] = self._read_save_file()
+    self.save: ZeroSievertSave = self._read_save_file()
 
-  def _read_save_file(self,) -> dict[str, JsonValue]:
+  def _read_save_file(self,) -> ZeroSievertSave:
     with open(self._save_path, 'r', encoding='utf-8') as f:
       return json.load(f, parse_float=_parse_float_as_decimal)
 
