@@ -9,6 +9,7 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
+# pyright: strict, reportUnusedFunction=false
 """Context manager for reading game data files from ZERO Sievert and writing
 modified save files.
 
@@ -17,11 +18,13 @@ from __future__ import annotations
 
 import datetime
 import enum
+import itertools
 import json
 import os
 import platform
 import winreg
-from typing import TYPE_CHECKING
+from collections.abc import Iterator
+from typing import Any, TYPE_CHECKING
 
 from zero_saver.exceptions import winreg_errors
 
@@ -162,6 +165,13 @@ def _current_datetime_as_valid_filename() -> str:
   current_datetime = datetime.datetime.now().isoformat(
       sep='H', timespec='minutes')
   return current_datetime.replace(':', 'M')
+
+
+def iterator_length(iterator: Iterator[Any]) -> int:
+  itertools_count = itertools.count()
+  for iteration in zip(iterator, itertools_count):
+    del iteration  # unused
+  return next(itertools_count)
 
 
 class GameDataIO:
