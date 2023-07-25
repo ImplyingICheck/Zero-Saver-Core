@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING
 from zero_saver.exceptions import winreg_errors
 
 if TYPE_CHECKING:
-  from _typeshed import StrOrBytesPath
+  from _typeshed import StrOrBytesPath, StrPath
 
 
 class WindowsArchitecture(enum.StrEnum):
@@ -65,7 +65,7 @@ def _read_registry_value(
   return value
 
 
-def _get_windows_steam_install_path():
+def _get_windows_steam_install_path() -> StrPath:
   bits, linkage = platform.architecture()
   del linkage  # unused
   if bits == WindowsArchitecture.BITS_64:
@@ -96,7 +96,7 @@ class FileLocation:
   def _get_save_path(
       self,
       save_name: str = 'save_shared_1.dat',
-  ) -> StrOrBytesPath:
+  ) -> StrPath:
     if self.system == 'Windows':
       root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
       assert isinstance(root, str)
@@ -107,7 +107,7 @@ class FileLocation:
       return os.path.join(root, save_path)
     raise ValueError(f'Invalid operating system: {self.system}')
 
-  def _get_gamedata_order_path(self) -> StrOrBytesPath:
+  def _get_gamedata_order_path(self) -> StrPath:
     if self.system == 'Windows':
       gamedata_order_file_name = 'gamedata_order.json'
       steam_install_path = _get_windows_steam_install_path()
@@ -129,7 +129,7 @@ class GameDataIO:
   """Translation layer for conversion of save data and game data json into Zero
   Saver objects."""
 
-  def __init__(self, save_path: StrOrBytesPath | None = ''):
+  def __init__(self, save_path: StrPath | None = ''):
     file_locations = FileLocation()
     save_path = save_path if save_path else file_locations.save_path
     self.save = self._read_save_file(save_path)
