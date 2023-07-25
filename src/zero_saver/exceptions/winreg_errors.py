@@ -48,8 +48,8 @@ class WinregErrorFormatter:
       value_name: str | None = '',
       shallow_copy: bool = True,
   ):
-    self.winreg_error = winreg_error if shallow_copy else copy.copy(
-        winreg_error)
+    self.winreg_error: FileNotFoundError = (
+        winreg_error if shallow_copy else copy.copy(winreg_error))
     self._hive = hive if hive is not None else ''
     self._key_path = key_path if key_path is not None else ''
     self._value_name = value_name if value_name is not None else ''

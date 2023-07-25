@@ -23,13 +23,16 @@ import os
 import platform
 import winreg
 import cmath
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 from typing import Any, TYPE_CHECKING
 
 from zero_saver.exceptions import winreg_errors
 
 if TYPE_CHECKING:
   from _typeshed import StrOrBytesPath, StrPath
+  JsonValue = (
+      str | int | float | bool | None | list['JsonValue']
+      | Mapping[str, 'JsonValue'])
 
 MAXIMUM_NUMBER_OF_BACKUPS = 10
 
@@ -99,11 +102,11 @@ class FileLocation:
                                            'backup')
 
   def __init__(self, system: str | None = None):
-    self.system = system if system else platform.system()
+    self.system: str = system if system else platform.system()
     self.generate_program_directory()
-    self.save_path = self._get_save_path()
-    self.backup_path = self._get_default_backup_directory()
-    self.gamedata_order_path = self._get_gamedata_order_path()
+    self.save_path: StrPath = self._get_save_path()
+    self.backup_path: StrPath = self._get_default_backup_directory()
+    self.gamedata_order_path: StrPath = self._get_gamedata_order_path()
 
   def _get_save_path(
       self,
@@ -139,7 +142,7 @@ class FileLocation:
       raise ValueError(f'Invalid backup location: {backup_path}')
     return backup_path
 
-  def generate_program_directory(self):
+  def generate_program_directory(self) -> None:
     if self.system == self.WINDOWS:
       root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
       assert isinstance(root, str)
@@ -155,7 +158,7 @@ class FileLocation:
         pass
 
 
-def _parse_float(float_as_str: str):
+def _parse_float(float_as_str: str) -> int | float:
   # ZERO Sievert saves encode ints as 'x.0' for some ungodly reason
   if float_as_str[-2] == '.' and float_as_str[-1] == '0':
     return int(float_as_str.split('.')[0])
@@ -205,12 +208,12 @@ class GameDataIO:
     save_path = save_path if save_path else file_locations.save_path
     backup_path = backup_path if backup_path else file_locations.backup_path
     assert self._backup_save_file(save_path, backup_path)
-    self.save = self._read_save_file(save_path)
+    self.save: dict[str, JsonValue] = self._read_save_file(save_path)
 
   def _read_save_file(
       self,
       save_path: StrOrBytesPath,
-  ) -> dict[str, str | float]:
+  ) -> dict[str, JsonValue]:
     with open(save_path, 'r', encoding='utf-8') as f:
       return json.load(f, parse_float=_parse_float)
 
