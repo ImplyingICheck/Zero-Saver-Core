@@ -29,7 +29,7 @@ from typing import Any, TYPE_CHECKING
 from zero_saver.exceptions import winreg_errors
 
 if TYPE_CHECKING:
-  from _typeshed import StrOrBytesPath, StrPath
+  from _typeshed import StrPath
   JsonValue = (
       str | int | float | bool | None | list['JsonValue']
       | Mapping[str, 'JsonValue'])
@@ -205,24 +205,23 @@ class GameDataIO:
       backup_path: StrPath | None = '',
   ):
     file_locations = FileLocation()
-    save_path = save_path if save_path else file_locations.save_path
-    backup_path = backup_path if backup_path else file_locations.backup_path
-    assert self._backup_save_file(save_path, backup_path)
-    self.save: dict[str, JsonValue] = self._read_save_file(save_path)
+    self._save_path = save_path if save_path else file_locations.save_path
+    self._backup_path = (
+        backup_path if backup_path else file_locations.backup_path)
+    assert self._backup_save_file()
+    self.save: dict[str, JsonValue] = self._read_save_file()
 
-  def _read_save_file(
-      self,
-      save_path: StrOrBytesPath,
-  ) -> dict[str, JsonValue]:
-    with open(save_path, 'r', encoding='utf-8') as f:
+  def _read_save_file(self,) -> dict[str, JsonValue]:
+    with open(self._save_path, 'r', encoding='utf-8') as f:
       return json.load(f, parse_float=_parse_float)
 
-  def _backup_save_file(self, save_path: StrPath, backup_path: StrPath) -> bool:
+  def _backup_save_file(self) -> bool:
+    backup_path = self._backup_path
     blocksize = 2**20
     if _iterator_length(os.scandir(backup_path)) >= MAXIMUM_NUMBER_OF_BACKUPS:
       assert delete_oldest_file(backup_path)
-    with open(save_path, 'rb') as save_file:
-      original_save_filename = os.path.basename(save_path)
+    with open(self._save_path, 'rb') as save_file:
+      original_save_filename = os.path.basename(self._save_path)
       backup_filename = (f'{original_save_filename}'
                          f'{_current_datetime_as_valid_filename()}')
       backup_file_path = os.path.join(backup_path, backup_filename)
