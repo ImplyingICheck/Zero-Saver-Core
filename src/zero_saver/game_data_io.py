@@ -220,7 +220,6 @@ class GameDataIO:
     self._save_path = save_path if save_path else file_locations.save_path
     self._backup_path = (
         backup_path if backup_path else file_locations.backup_path)
-    assert self._backup_save_file()
     self.save: dict[str, JsonValue] = self._read_save_file()
 
   def _read_save_file(self,) -> dict[str, JsonValue]:
@@ -241,6 +240,11 @@ class GameDataIO:
         while chunk := save_file.read(blocksize):
           backup.write(chunk)
     return files_match(self._save_path, backup_file_path)
+
+  def write_save_file(self) -> None:
+    assert self._backup_save_file()
+    with open(self._save_path, 'w', encoding='utf-8') as f:
+      return json.dump(self.save, f)
 
   def _import_gamedata(self):
     pass
