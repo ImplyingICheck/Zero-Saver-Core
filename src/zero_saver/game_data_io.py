@@ -16,6 +16,7 @@ Working data is assumed to be in the form of JSON."""
 from __future__ import annotations
 
 import datetime
+import decimal
 import enum
 import hashlib
 import itertools
@@ -159,12 +160,42 @@ class FileLocation:
         pass
 
 
-def _parse_float(float_as_str: str) -> int | float:
-  # ZERO Sievert saves encode ints as 'x.0' for some ungodly reason
-  if float_as_str[-2] == '.' and float_as_str[-1] == '0':
-    return int(float_as_str.split('.')[0])
-  else:
-    return float(float_as_str)
+def format_with_two_digits_after_e(value: decimal.Decimal, format_str: str):
+  formatted_decimal = format(value, format_str)
+  mantissa, exponent = formatted_decimal.split('e')
+  return f'{mantissa}e{int(exponent):+03}'
+
+
+class ZeroSievertJsonEncoder(json.JSONEncoder):
+  """Used to support writing of decimal.Decimal"""
+  ZERO_SIEVERT_FLOAT_PRECISION = 'e'
+  # Smallest value in scientific notation for ZERO Sievert saves
+  ABS_TOL = 9e-05
+
+  def default(self, o: Any) -> Any:
+    try:
+      if cmath.isclose(
+          o,
+          0,
+          rel_tol=0,
+          abs_tol=self.ABS_TOL,
+      ) and str(o) != '0.0':
+        assert isinstance(o, decimal.Decimal)
+        try:
+          return format_with_two_digits_after_e(
+              o,
+              self.ZERO_SIEVERT_FLOAT_PRECISION,
+          )
+        except ValueError:
+          pass
+    except TypeError:
+      pass
+    return str(o)
+
+
+def _parse_float_as_decimal(float_as_str: str) -> decimal.Decimal:
+  # ZERO Sievert saves encoded ints as 'x.0' for some ungodly reason
+  return decimal.Decimal(float_as_str)
 
 
 def _current_datetime_as_valid_filename() -> str:
@@ -224,7 +255,7 @@ class GameDataIO:
 
   def _read_save_file(self,) -> dict[str, JsonValue]:
     with open(self._save_path, 'r', encoding='utf-8') as f:
-      return json.load(f, parse_float=_parse_float)
+      return json.load(f, parse_float=_parse_float_as_decimal)
 
   def _backup_save_file(self) -> bool:
     backup_path = self._backup_path
@@ -244,7 +275,7 @@ class GameDataIO:
   def write_save_file(self) -> None:
     assert self._backup_save_file()
     with open(self._save_path, 'w', encoding='utf-8') as f:
-      return json.dump(self.save, f)
+      json.dump(self.save, f, cls=ZeroSievertJsonEncoder)
 
   def _import_gamedata(self):
     pass
