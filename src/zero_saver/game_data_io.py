@@ -15,6 +15,7 @@ modified save files.
 Working data is assumed to be in the form of JSON."""
 from __future__ import annotations
 
+import datetime
 import enum
 import json
 import os
@@ -155,6 +156,12 @@ def _parse_float(float_as_str: str):
     return int(float_as_str.split('.')[0])
   else:
     return float(float_as_str)
+
+
+def _current_datetime_as_valid_filename() -> str:
+  current_datetime = datetime.datetime.now().isoformat(
+      sep='H', timespec='minutes')
+  return current_datetime.replace(':', 'M')
 
 
 class GameDataIO:
