@@ -29,12 +29,26 @@ GOLDEN_FILE_DIRECTORY = str(pathlib.PurePath(__file__).parent)
 ENCODING = 'utf-8'
 
 
-def read_golden_file(filename: StrPath) -> TextIO:
-  with open(
-      pathlib.Path(
-          GOLDEN_FILE_DIRECTORY,
-          filename,
-      ),
+def open_golden_file(filename: StrPath) -> TextIO:
+  """A helper function for opening golden files. Prevents the need to track
+  the directory and encoding for each file.
+
+  Args:
+    filename: The complete filename, including any extension
+
+  Examples:
+    >>> with open_golden_file('the_file_you_want.json') as f:
+    >>>   lines = f.readlines()
+
+    >>> f = open_golden_file('some_file')
+    >>> lines = f.readlines()
+    >>> f.close()
+
+  Returns:
+    An IO object with read permissions, encoded in "utf-8"
+  """
+  return open(
+      pathlib.Path(GOLDEN_FILE_DIRECTORY, filename),
       mode='r',
-      encoding=ENCODING) as f:
-    return f
+      encoding=ENCODING,
+  )
