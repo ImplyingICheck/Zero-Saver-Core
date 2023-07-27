@@ -25,8 +25,8 @@ import os
 import platform
 import winreg
 import cmath
-from collections.abc import Iterator, Mapping
-from typing import Any, TYPE_CHECKING
+from collections.abc import Iterator, Mapping, Sequence
+from typing import Any, Generic, TYPE_CHECKING, TypeAlias, TypeVar
 
 from zero_saver.exceptions import winreg_errors
 
@@ -37,6 +37,17 @@ if TYPE_CHECKING:
       str | decimal.Decimal | None | list['ZeroSievertJsonValue']
       | Mapping[str, 'ZeroSievertJsonValue'])
   ZeroSievertSave = dict[str, ZeroSievertJsonValue]
+  _T = TypeVar('_T')
+  _S = TypeVar('_S')
+  _KT = TypeVar('_KT')
+  _VT_co = TypeVar('_VT_co', covariant=True)
+
+  class TerminalValue(Generic[_T]):
+    ...
+
+  NestedStructure: TypeAlias = (
+      Mapping[str, 'NestedStructure[_T]'] | Sequence['NestedStructure[_T]']
+      | TerminalValue[_T])
 
 MAXIMUM_NUMBER_OF_BACKUPS = 10
 
@@ -241,6 +252,57 @@ def files_match(*files: StrOrBytesPath, blocksize: int = 2**20) -> bool:
         hash_function.update(chunk)
     hashes.append(hash_function.digest())
   return hashes.count(hashes[0]) == len(hashes)
+
+
+def _compare_contents(
+    object_1: NestedStructure[_T],
+    object_2: NestedStructure[_S],
+) -> bool:
+  """Strict comparison between two nested objects. Every nested item must be of
+  the same type, not just share a common super class.
+
+  Assumes that any list objects have the same order of contained items.
+
+  Args:
+    object_1:
+    object_2:
+
+  Returns:
+
+  """
+  # pylint: disable=[unidiomatic-typecheck]
+  # Base case: Types do not match
+  if type(object_1) != type(object_2):
+    return False
+  # While object_1 and object_2 should never have differing types, these checks
+  # are necessary to ensure type safety in static analysis.
+  if isinstance(object_1,
+                (Mapping, Sequence)) and isinstance(object_2,
+                                                    (Mapping, Sequence)):
+    if len(object_1) != len(object_2):
+      # Base case: Unequal number of keys
+      return False
+    if isinstance(object_1, Mapping) and isinstance(object_2, Mapping):
+      try:
+        values = [(object_1[key], object_2[key]) for key in object_1]
+      except KeyError:
+        # Base case: key in object_1 is not in object_2
+        return False
+    elif isinstance(object_1, Sequence) and isinstance(object_2, Sequence):
+      values = zip(object_1, object_2)
+    else:
+      raise ValueError(f'Invalid type combination.\n'
+                       f'(object_1 of type: {type(object_1)})\n'
+                       f'(object_2 of type: {type(object_2)})')
+    for value_1, value_2 in values:
+      # Short circuit: Return false if any seen value has been False
+      if not _compare_contents(value_1, value_2):
+        return False
+  else:
+    # Base Case: Type of TerminalValue in NestedStructure matches
+    return type(object_1) == type(object_2)
+  # Recursive : Same type and all contents match
+  return True
 
 
 class GameDataIO:
