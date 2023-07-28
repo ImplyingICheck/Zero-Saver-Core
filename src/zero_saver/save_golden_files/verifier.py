@@ -20,6 +20,7 @@ golden files. If that is not the case, use GOLDEN_FILE_DIRECTORY to set the root
 as desired."""
 from __future__ import annotations
 
+import enum
 import pathlib
 from typing import TextIO, TYPE_CHECKING
 if TYPE_CHECKING:
@@ -27,6 +28,10 @@ if TYPE_CHECKING:
 
 GOLDEN_FILE_DIRECTORY = str(pathlib.PurePath(__file__).parent)
 ENCODING = 'utf-8'
+
+
+class GoldenFilePrefix(enum.StrEnum):
+  SAVE = 'key_structure_'
 
 
 def open_golden_file(filename: StrPath) -> TextIO:
@@ -52,3 +57,8 @@ def open_golden_file(filename: StrPath) -> TextIO:
       mode='r',
       encoding=ENCODING,
   )
+
+
+def golden_save_file_from_version(version: str) -> TextIO:
+  filename = f"{GoldenFilePrefix.SAVE}{version.replace(' ', '_')}.json"
+  return open_golden_file(filename)
