@@ -29,7 +29,6 @@ from collections.abc import Iterator, Mapping, Sequence
 from typing import Any, Generic, TYPE_CHECKING, TypeAlias, TypeVar
 
 from zero_saver.exceptions import winreg_errors
-from zero_saver.save_golden_files import verifier
 from zero_saver import monkey_patch_json
 
 if TYPE_CHECKING:
@@ -227,6 +226,7 @@ def files_match(*files: StrOrBytesPath, blocksize: int = 2**20) -> bool:
 def _compare_contents(
     object_1: NestedStructure[_T],
     object_2: NestedStructure[_S],
+    base_class: type | tuple[type | tuple[Any, ...], ...] = (str, tuple),
 ) -> bool:
   """Strict comparison between two nested objects. Every nested item must be of
   the same type, not just share a common super class.
@@ -246,9 +246,11 @@ def _compare_contents(
     return False
   # While object_1 and object_2 should never have differing types, these checks
   # are necessary to ensure type safety in static analysis.
-  if isinstance(object_1,
-                (Mapping, Sequence)) and isinstance(object_2,
-                                                    (Mapping, Sequence)):
+  if not (isinstance(object_1, base_class) or
+          isinstance(object_2, base_class)) and isinstance(
+              object_1,
+              (Mapping, Sequence)) and isinstance(object_2,
+                                                  (Mapping, Sequence)):
     if len(object_1) != len(object_2):
       # Base case: Unequal number of keys
       return False
