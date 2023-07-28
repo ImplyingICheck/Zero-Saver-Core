@@ -205,6 +205,17 @@ def delete_oldest_file(directory: StrPath) -> bool:
 
 
 def files_match(*files: StrOrBytesPath, blocksize: int = 2**20) -> bool:
+  """
+
+  Args:
+    *files:
+    blocksize:
+
+  Returns:
+
+  Raises:
+    IndexError: If no files are passed in.
+  """
   hashes: list[bytes] = []
   for file in files:
     hash_function = hashlib.sha256()
