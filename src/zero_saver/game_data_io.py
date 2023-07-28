@@ -404,3 +404,15 @@ class GameDataIO:
     temp_player_inventory = copy.deepcopy(player_inventory)
     player_inventory['items'] = inventory_representation
     return player_inventory, temp_player_inventory
+
+  def _remove_player_storage(self) -> tuple[ZeroSievertSave, ZeroSievertSave]:
+    chest_representation = []
+    save = self.save
+    number_of_chests = 14
+    player_chests = [f'chest_{index}' for index in range(number_of_chests)]
+    player_storage = get_nested_value(save, ['data', 'chest'])
+    assert isinstance(player_storage, MutableMapping)
+    temp_player_storage = copy.deepcopy(player_storage)
+    for chest in player_chests:
+      player_storage[chest] = chest_representation
+    return player_storage, temp_player_storage
