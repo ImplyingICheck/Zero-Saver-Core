@@ -27,7 +27,7 @@ import platform
 import re
 import winreg
 import cmath
-from collections.abc import Callable, Iterator, Mapping, Sequence
+from collections.abc import Callable, Iterable, Iterator, Mapping, MutableMapping, MutableSequence, Sequence
 from typing import Any, Generic, TYPE_CHECKING, TypeAlias, TypeVar
 
 from zero_saver.exceptions import winreg_errors
@@ -44,6 +44,10 @@ if TYPE_CHECKING:
   class TerminalValue(Generic[_T]):
     ...
 
+  MutableNestedStructure: TypeAlias = (
+      MutableMapping[str, 'MutableNestedStructure[_T]']
+      | MutableSequence['NestedStructure[_T]']
+      | TerminalValue[_T])
   NestedStructure: TypeAlias = (
       Mapping[str, 'NestedStructure[_T]'] | Sequence['NestedStructure[_T]']
       | TerminalValue[_T])
@@ -173,6 +177,19 @@ class FileLocation:
         os.mkdir(backup_directory)
       except FileExistsError:
         pass
+
+
+def get_nested_value(
+    dictionary: MutableNestedStructure[_T],
+    keys: Iterable[str],
+) -> MutableNestedStructure[_T]:
+  original_dictionary = dictionary
+  for key in keys:
+    if not isinstance(dictionary, MutableMapping):
+      raise ValueError(f'Excess keys passed for mapping (keys: {keys}):'
+                       f' {original_dictionary}')
+    dictionary = dictionary[key]
+  return dictionary
 
 
 def types_match(object_1: Any, object_2: Any) -> bool:
