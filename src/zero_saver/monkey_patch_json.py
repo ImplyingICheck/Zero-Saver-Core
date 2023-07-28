@@ -21,6 +21,8 @@ Insert a space before every "}" and "}"."""
 import cmath
 import decimal
 import json.encoder
+from collections.abc import Generator
+from importlib.resources import Package
 from typing import Any
 # pylint: skip-file
 # pyright: ignore
@@ -28,7 +30,7 @@ from typing import Any
 # pyright: ignore[reportUnboundVariable]
 # Check if c implementation is available. Should be None to ensure the patch is
 # used.
-c_make_encoder = None
+c_make_encoder: Package | None = None
 # __format_spec passed to builtins.format() for decimals near 0 (but not 0.0)
 ZERO_SIEVERT_FLOAT_PRECISION = 'e'
 # Absolute tolerance value for when to write a decimal using
@@ -78,7 +80,11 @@ class _JsonDecimal(float):
 
 class MonkeyPatchedJsonEncoder(json.JSONEncoder):
 
-  def iterencode(self, o, _one_shot=False):
+  def iterencode(
+      self,
+      o: Any,
+      _one_shot: bool = False
+  ) -> Generator[str | Generator[str, Any, None], Any, Any]:
     """Encode the given object and yield each string
     representation as available.
 
