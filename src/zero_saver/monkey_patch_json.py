@@ -355,4 +355,6 @@ class ZeroSievertJsonEncoder(MonkeyPatchedJsonEncoder):
   def default(self, o: Any) -> Any:
     if isinstance(o, decimal.Decimal):
       return _JsonDecimal(o)
+    elif isinstance(o, type):
+      return str(o)
     super().default(o)
