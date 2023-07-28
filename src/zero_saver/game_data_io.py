@@ -19,13 +19,14 @@ import datetime
 import decimal
 import enum
 import hashlib
+import importlib
 import itertools
 import json
 import os
 import platform
 import winreg
 import cmath
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from typing import Any, Generic, TYPE_CHECKING, TypeAlias, TypeVar
 
 from zero_saver.exceptions import winreg_errors
@@ -170,6 +171,33 @@ class FileLocation:
         os.mkdir(backup_directory)
       except FileExistsError:
         pass
+
+
+def get_class(qualifier_path: str) -> Callable[[Any], Any]:
+  """
+
+  Args:
+    qualifier_path: A str consisting of the way the class would be referenced in
+      global name space (i.e. decimal.Decimal or int). Attempts to import
+      missing modules.
+
+  Returns:
+
+  Raises:
+    ModuleNotFoundError: If the module searched for does not exist.
+    AttributionError: If the expected class does not exist in the module. This
+    can be caused by the class name not being capitalized.
+  """
+  parts = qualifier_path.split('.')
+  class_name = parts[-1]
+  if len(parts) == 1 and class_name in globals():
+    return globals()[class_name]
+  elif len(parts) == 1:
+    module_path = 'builtins'
+  else:
+    module_path = ''.join(parts[:-1])
+  module = importlib.import_module(module_path)
+  return getattr(module, class_name)
 
 
 def _current_datetime_as_valid_filename() -> str:
