@@ -35,10 +35,6 @@ from zero_saver import monkey_patch_json
 if TYPE_CHECKING:
   from _typeshed import StrOrBytesPath, StrPath
   # Missing float | int from normal JSON
-  ZeroSievertJsonValue = (
-      str | decimal.Decimal | None | list['ZeroSievertJsonValue']
-      | Mapping[str, 'ZeroSievertJsonValue'])
-  ZeroSievertSave = dict[str, ZeroSievertJsonValue]
   _T = TypeVar('_T')
   _S = TypeVar('_S')
   _KT = TypeVar('_KT')
@@ -50,6 +46,8 @@ if TYPE_CHECKING:
   NestedStructure: TypeAlias = (
       Mapping[str, 'NestedStructure[_T]'] | Sequence['NestedStructure[_T]']
       | TerminalValue[_T])
+  ZeroSievertJsonValue = str | decimal.Decimal | None
+  ZeroSievertSave = NestedStructure[ZeroSievertJsonValue]
 
 MAXIMUM_NUMBER_OF_BACKUPS = 10
 
