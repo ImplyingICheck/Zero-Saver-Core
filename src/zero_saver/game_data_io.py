@@ -175,6 +175,14 @@ class FileLocation:
         pass
 
 
+def types_match(object_1: Any, object_2: Any) -> bool:
+  if not isinstance(object_1, type):
+    object_1 = type(object_1)
+  if not isinstance(object_2, type):
+    object_2 = type(object_2)
+  return object_1 == object_2
+
+
 def get_class(qualifier_path: str) -> ClassConstructor:
   """
 
@@ -292,7 +300,7 @@ def _compare_contents(
   """
   # pylint: disable=[unidiomatic-typecheck]
   # Base case: Types do not match
-  if type(object_1) != type(object_2):
+  if not types_match(object_1, object_2):
     return False
   # While object_1 and object_2 should never have differing types, these checks
   # are necessary to ensure type safety in static analysis.
@@ -322,7 +330,7 @@ def _compare_contents(
         return False
   else:
     # Base Case: Type of TerminalValue in NestedStructure matches
-    return type(object_1) == type(object_2)
+    return types_match(object_1, object_2)
   # Recursive : Same type and all contents match
   return True
 
