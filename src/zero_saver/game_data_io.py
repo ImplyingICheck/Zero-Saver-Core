@@ -175,11 +175,6 @@ class FileLocation:
         pass
 
 
-def _parse_float_as_decimal(float_as_str: str) -> decimal.Decimal:
-  # ZERO Sievert saves encoded ints as 'x.0' for some ungodly reason
-  return decimal.Decimal(float_as_str)
-
-
 def _current_datetime_as_valid_filename() -> str:
   current_datetime = datetime.datetime.now().isoformat(
       sep='H', timespec='minutes')
@@ -288,7 +283,7 @@ class GameDataIO:
 
   def _read_save_file(self,) -> ZeroSievertSave:
     with open(self._save_path, 'r', encoding='utf-8') as f:
-      return json.load(f, parse_float=_parse_float_as_decimal)
+      return json.load(f, parse_float=decimal.Decimal)
 
   def _backup_save_file(self) -> bool:
     backup_path = self._backup_path
