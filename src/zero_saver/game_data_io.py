@@ -24,6 +24,7 @@ import itertools
 import json
 import os
 import platform
+import re
 import winreg
 import cmath
 from collections.abc import Callable, Iterator, Mapping, Sequence
@@ -48,6 +49,7 @@ if TYPE_CHECKING:
       | TerminalValue[_T])
   ZeroSievertJsonValue = str | decimal.Decimal | None
   ZeroSievertSave = NestedStructure[ZeroSievertJsonValue]
+  ClassConstructor = Callable[[Any], Any]
 
 MAXIMUM_NUMBER_OF_BACKUPS = 10
 
@@ -173,7 +175,7 @@ class FileLocation:
         pass
 
 
-def get_class(qualifier_path: str) -> Callable[[Any], Any]:
+def get_class(qualifier_path: str) -> ClassConstructor:
   """
 
   Args:
@@ -198,6 +200,23 @@ def get_class(qualifier_path: str) -> Callable[[Any], Any]:
     module_path = ''.join(parts[:-1])
   module = importlib.import_module(module_path)
   return getattr(module, class_name)
+
+
+def parse_type_hints(
+    dictionary: Mapping[str,
+                        _VT_co],) -> ClassConstructor | Mapping[str, _VT_co]:
+  if type_string := dictionary.get('__type__'):
+    if isinstance(type_string, str):
+      pattern = re.escape("'") + '(.*?)' + re.escape("'")
+      expected_class = re.search(pattern, type_string)
+      if not expected_class:
+        raise ValueError(f'Type value expected but no type found: {dictionary}')
+      else:
+        return get_class(expected_class.group(1))
+    else:
+      raise ValueError(f'Invalid type specified (type: {type_string}): '
+                       f'{dictionary}')
+  return dictionary
 
 
 def _current_datetime_as_valid_filename() -> str:
