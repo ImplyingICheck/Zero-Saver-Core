@@ -15,6 +15,7 @@ modified save files.
 Working data is assumed to be in the form of JSON."""
 from __future__ import annotations
 
+import copy
 import datetime
 import decimal
 import enum
@@ -52,7 +53,7 @@ if TYPE_CHECKING:
       Mapping[str, 'NestedStructure[_T]'] | Sequence['NestedStructure[_T]']
       | TerminalValue[_T])
   ZeroSievertJsonValue = str | decimal.Decimal | None
-  ZeroSievertSave = NestedStructure[ZeroSievertJsonValue]
+  ZeroSievertSave = MutableNestedStructure[ZeroSievertJsonValue]
   ClassConstructor = Callable[[Any], Any]
 
 MAXIMUM_NUMBER_OF_BACKUPS = 10
@@ -393,3 +394,13 @@ class GameDataIO:
 
   def _import_gamedata(self):
     pass
+
+  def _remove_player_inventory(self) -> tuple[ZeroSievertSave, ZeroSievertSave]:
+    inventory_representation = []
+    save = self.save
+    personal_inventory = ['data', 'pre_raid', 'Inventory']
+    player_inventory = get_nested_value(save, personal_inventory)
+    assert isinstance(player_inventory, MutableMapping)
+    temp_player_inventory = copy.deepcopy(player_inventory)
+    player_inventory['items'] = inventory_representation
+    return player_inventory, temp_player_inventory
