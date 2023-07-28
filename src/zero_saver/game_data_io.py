@@ -15,6 +15,7 @@ modified save files.
 Working data is assumed to be in the form of JSON."""
 from __future__ import annotations
 
+import contextlib
 import copy
 import datetime
 import decimal
@@ -416,3 +417,25 @@ class GameDataIO:
     for chest in player_chests:
       player_storage[chest] = chest_representation
     return player_storage, temp_player_storage
+
+  @contextlib.contextmanager
+  def _normalize_player_inventory(self):
+    """Removes all items in a save file. This function serves to make type
+    and key comparisons between the golden file and player save file consistent
+    regardless of the items acquired by the player.
+
+    Example:
+      >>> with self._normalize_player_inventory():
+            do_some_stuff_with_normalized_save()
+          do_some_stuff_with_original_save()
+    """
+    player_inventory = self._remove_player_inventory()
+    player_storage = self._remove_player_storage()
+    try:
+      yield self.save
+    finally:
+      for normalized_data, original_data in [player_inventory, player_storage]:
+        assert isinstance(normalized_data, MutableMapping)
+        assert isinstance(original_data, MutableMapping)
+        normalized_data.clear()
+        normalized_data.update(original_data)
