@@ -192,10 +192,13 @@ def get_class(qualifier_path: str) -> ClassConstructor:
   """
   parts = qualifier_path.split('.')
   class_name = parts[-1]
-  if len(parts) == 1 and class_name in globals():
-    return globals()[class_name]
-  elif len(parts) == 1:
-    module_path = 'builtins'
+  if len(parts) == 1:
+    if class_name in globals():
+      return globals()[class_name]
+    elif class_name == 'NoneType':
+      module_path = 'types'
+    else:
+      module_path = 'builtins'
   else:
     module_path = ''.join(parts[:-1])
   module = importlib.import_module(module_path)
