@@ -363,6 +363,14 @@ class GameDataIO:
     pass
 
   def _remove_player_inventory(self) -> tuple[ZeroSievertSave, ZeroSievertSave]:
+    """
+
+    Returns:
+
+    Raises:
+      copy.Error: If an error occurs while copying the data field associated
+        with a player inventory in a save.
+    """
     inventory_representation = []
     save = self.save
     personal_inventory = ['data', 'pre_raid', 'Inventory']
@@ -373,6 +381,14 @@ class GameDataIO:
     return player_inventory, temp_player_inventory
 
   def _remove_player_storage(self) -> tuple[ZeroSievertSave, ZeroSievertSave]:
+    """
+
+    Returns:
+
+    Raises:
+      copy.Error: If an error occurs while copying the data field associated
+        with a player storage.
+    """
     chest_representation = []
     save = self.save
     number_of_chests = 14
@@ -394,6 +410,11 @@ class GameDataIO:
       >>> with self._normalize_player_inventory():
             do_some_stuff_with_normalized_save()
           do_some_stuff_with_original_save()
+
+    Raises:
+      copy.Error: If an error occurs while copying portions of self.save. See
+        self._remove_player_inventory() and self._remove_player_storage() for
+        implementation details.
     """
     player_inventory = self._remove_player_inventory()
     player_storage = self._remove_player_storage()
