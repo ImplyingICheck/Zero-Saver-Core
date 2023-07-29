@@ -60,5 +60,20 @@ def open_golden_file(filename: StrPath) -> TextIO:
 
 
 def golden_save_file_from_version(version: str) -> TextIO:
+  """Helper function to open a golden file detailing expected save structure.
+
+  Args:
+    version: A string specifying a Zero Sievert save version. The string is
+      sanitised by converting spaces to "_" and appending ".json".
+
+  Returns:
+    A TextIO stream with read permissions, encoded by
+    zero_saver.save_golden_files.verifier.ENCODING.
+
+  Raises:
+    OSError: If an error occurs during open() of the file corresponding to
+      *version*. See zero_saver.save_golden_files.verifier.open_golden_file()
+      for implementation details.
+  """
   filename = f"{GoldenFilePrefix.SAVE}{version.replace(' ', '_')}.json"
   return open_golden_file(filename)
