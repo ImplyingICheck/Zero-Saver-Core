@@ -21,15 +21,13 @@ import datetime
 import decimal
 import enum
 import hashlib
-import importlib
 import itertools
 import json
 import os
 import platform
-import re
 import winreg
 import cmath
-from collections.abc import Callable, Iterable, Iterator, Mapping, MutableMapping, MutableSequence, Sequence
+from collections.abc import Iterable, Iterator, Mapping, MutableMapping, MutableSequence, Sequence
 from typing import Any, Generic, TYPE_CHECKING, TypeAlias, TypeVar
 
 from zero_saver.exceptions import winreg_errors
@@ -42,7 +40,6 @@ if TYPE_CHECKING:
   _T = TypeVar('_T')
   _S = TypeVar('_S')
   _KT = TypeVar('_KT')
-  _VT_co = TypeVar('_VT_co', covariant=True)
 
   class TerminalValue(Generic[_T]):
     ...
@@ -57,7 +54,6 @@ if TYPE_CHECKING:
   ZeroSievertJsonValue = str | decimal.Decimal | None
   ZeroSievertSave = (
       MutableMapping[str, MutableNestedStructure[ZeroSievertJsonValue]])
-  ClassConstructor = Callable[[Any], Any]
 
 MAXIMUM_NUMBER_OF_BACKUPS = 10
 
@@ -199,53 +195,6 @@ def types_match(object_1: Any, object_2: Any) -> bool:
   if not isinstance(object_2, type):
     object_2 = type(object_2)
   return object_1 == object_2
-
-
-def get_class(qualifier_path: str) -> ClassConstructor:
-  """
-
-  Args:
-    qualifier_path: A str consisting of the way the class would be referenced in
-      global name space (i.e. decimal.Decimal or int). Attempts to import
-      missing modules.
-
-  Returns:
-
-  Raises:
-    ModuleNotFoundError: If the module searched for does not exist.
-    AttributionError: If the expected class does not exist in the module. This
-    can be caused by the class name not being capitalized.
-  """
-  parts = qualifier_path.split('.')
-  class_name = parts[-1]
-  if len(parts) == 1:
-    if class_name in globals():
-      return globals()[class_name]
-    elif class_name == 'NoneType':
-      module_path = 'types'
-    else:
-      module_path = 'builtins'
-  else:
-    module_path = ''.join(parts[:-1])
-  module = importlib.import_module(module_path)
-  return getattr(module, class_name)
-
-
-def parse_type_hints(
-    dictionary: Mapping[str,
-                        _VT_co],) -> ClassConstructor | Mapping[str, _VT_co]:
-  if type_string := dictionary.get('__type__'):
-    if isinstance(type_string, str):
-      pattern = re.escape("'") + '(.*?)' + re.escape("'")
-      expected_class = re.search(pattern, type_string)
-      if not expected_class:
-        raise ValueError(f'Type value expected but no type found: {dictionary}')
-      else:
-        return get_class(expected_class.group(1))
-    else:
-      raise ValueError(f'Invalid type specified (type: {type_string}): '
-                       f'{dictionary}')
-  return dictionary
 
 
 def _current_datetime_as_valid_filename() -> str:
@@ -455,6 +404,7 @@ class GameDataIO:
     save_version = self.save['save_version']
     assert isinstance(save_version, str)
     with verifier.golden_save_file_from_version(save_version) as f:
-      expected_save = json.load(f, object_hook=parse_type_hints)
+      expected_save = json.load(
+          f, object_hook=monkey_patch_json.parse_type_hints)
       with self._normalize_player_inventory():
         return _compare_contents(self.save, expected_save)

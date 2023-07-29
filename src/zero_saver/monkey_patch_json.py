@@ -18,12 +18,17 @@ white space formatting is changed as follows, with priority in order of writing:
 If empty "{}" or "[]" write "{ }" or "[ ]" respectively.
 Insert a space after every "{" and "[".
 Insert a space before every "}" and "}"."""
+from __future__ import annotations
+
 import cmath
 import decimal
+import importlib
 import json.encoder
+import re
 from collections.abc import Generator
 from importlib.resources import Package
-from typing import Any
+from typing import Any, Callable, Mapping, TypeVar
+
 # pylint: skip-file
 # pyright: ignore
 # pyright: ignore[reportGeneralTypeIssues]
@@ -364,3 +369,54 @@ class ZeroSievertJsonEncoder(MonkeyPatchedJsonEncoder):
     elif isinstance(o, type):
       return str(o)
     super().default(o)
+
+
+_VT_co = TypeVar('_VT_co', covariant=True)
+ClassConstructor = Callable[[Any], Any]
+
+
+def get_class(qualifier_path: str) -> ClassConstructor:
+  """
+
+  Args:
+    qualifier_path: A str consisting of the way the class would be referenced in
+      global name space (i.e. decimal.Decimal or int). Attempts to import
+      missing modules.
+
+  Returns:
+
+  Raises:
+    ModuleNotFoundError: If the module searched for does not exist.
+    AttributionError: If the expected class does not exist in the module. This
+    can be caused by the class name not being capitalized.
+  """
+  parts = qualifier_path.split('.')
+  class_name = parts[-1]
+  if len(parts) == 1:
+    if class_name in globals():
+      return globals()[class_name]
+    elif class_name == 'NoneType':
+      module_path = 'types'
+    else:
+      module_path = 'builtins'
+  else:
+    module_path = ''.join(parts[:-1])
+  module = importlib.import_module(module_path)
+  return getattr(module, class_name)
+
+
+def parse_type_hints(
+    dictionary: Mapping[str,
+                        _VT_co],) -> ClassConstructor | Mapping[str, _VT_co]:
+  if type_string := dictionary.get('__type__'):
+    if isinstance(type_string, str):
+      pattern = re.escape("'") + '(.*?)' + re.escape("'")
+      expected_class = re.search(pattern, type_string)
+      if not expected_class:
+        raise ValueError(f'Type value expected but no type found: {dictionary}')
+      else:
+        return get_class(expected_class.group(1))
+    else:
+      raise ValueError(f'Invalid type specified (type: {type_string}): '
+                       f'{dictionary}')
+  return dictionary
