@@ -187,8 +187,8 @@ def get_nested_value(
   original_dictionary = dictionary
   for key in keys:
     if not isinstance(dictionary, MutableMapping):
-      raise ValueError(f'Excess keys passed for mapping (keys: {keys}):'
-                       f' {original_dictionary}')
+      raise ValueError(f'Incorrect keys passed for mapping (keys: {keys}): '
+                       f'{original_dictionary}')
     dictionary = dictionary[key]
   return dictionary
 
