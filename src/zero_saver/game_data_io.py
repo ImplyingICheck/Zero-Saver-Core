@@ -262,19 +262,30 @@ def _iterator_length(iterator: Iterator[Any]) -> int:
 
 
 def delete_oldest_file(directory: StrPath) -> bool:
+  """
+
+  Args:
+    directory:
+
+  Returns:
+
+  Raises:
+    ValueError: If directory specifies a an empty directory.
+  """
   oldest_time = cmath.inf
-  oldest_file = None
+  oldest_file: os.DirEntry[str] | None = None
   for file in os.scandir(directory):
     last_modified_time = os.stat(file).st_mtime_ns
     if last_modified_time < oldest_time:
       oldest_time = last_modified_time
       oldest_file = file
-  if oldest_file is not None:
-    try:
-      os.remove(oldest_file.path)
-    except FileNotFoundError:
-      pass
-  return True
+  if oldest_file is None:
+    raise ValueError(f'Found an empty directory: {directory}')
+  try:
+    os.remove(oldest_file.path)
+  except FileNotFoundError:
+    pass
+  return not os.path.exists(oldest_file.path)
 
 
 def files_match(*files: StrOrBytesPath, blocksize: int = 2**20) -> bool:
