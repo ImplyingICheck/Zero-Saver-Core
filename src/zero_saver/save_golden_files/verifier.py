@@ -50,7 +50,12 @@ def open_golden_file(filename: StrPath) -> TextIO:
     >>> f.close()
 
   Returns:
-    An IO object with read permissions, encoded in "utf-8"
+    An IO object with read permissions, encoded in "utf-8".
+
+  Raises:
+    OSError: If an error occurs while handling open() of the file corresponding
+      to the path: zero_saver.save_golden_files.verifier.GOLDEN_FILE_DIRECTORY
+      + *filename*.
   """
   return open(
       pathlib.Path(GOLDEN_FILE_DIRECTORY, filename),
