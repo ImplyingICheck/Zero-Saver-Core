@@ -145,7 +145,7 @@ class FileLocation:
       version = '91826839'
       save_path = os.path.join('ZERO_Sievert', version, save_name)
       return os.path.join(root, save_path)
-    raise ValueError(f'Invalid operating system: {self._system}')
+    raise ValueError(f'Unsupported operating system: {self._system}')
 
   def _get_gamedata_order_path(self) -> StrPath:
     if self._system == self.WINDOWS:
