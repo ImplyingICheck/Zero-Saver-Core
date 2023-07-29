@@ -261,7 +261,7 @@ def _iterator_length(iterator: Iterator[Any]) -> int:
   return next(itertools_count)
 
 
-def delete_oldest_file(directory: StrPath) -> bool:
+def delete_oldest_file(directory: StrPath):
   """
 
   Args:
@@ -285,7 +285,6 @@ def delete_oldest_file(directory: StrPath) -> bool:
     os.remove(oldest_file.path)
   except FileNotFoundError:
     pass
-  return not os.path.exists(oldest_file.path)
 
 
 def files_match(*files: StrOrBytesPath, blocksize: int = 2**20) -> bool:
@@ -387,7 +386,7 @@ class GameDataIO:
     backup_path = self._backup_path
     blocksize = 2**20
     if _iterator_length(os.scandir(backup_path)) >= MAXIMUM_NUMBER_OF_BACKUPS:
-      assert delete_oldest_file(backup_path)
+      delete_oldest_file(backup_path)
     with open(self._save_path, 'rb') as save_file:
       original_save_filename = os.path.basename(self._save_path)
       backup_filename = (f'{original_save_filename}'
@@ -399,8 +398,11 @@ class GameDataIO:
     return files_match(self._save_path, backup_file_path)
 
   def write_save_file(self) -> None:
-    assert self.verify_save_integrity()
-    assert self._backup_save_file()
+    if not self.verify_save_integrity():
+      raise ValueError(f'Save not formatted properly: {self.save}')
+    if not self._backup_save_file():
+      raise RuntimeError('The SHA-256 hash of the written backup file and '
+                         'original save file do not match.')
     with open(self._save_path, 'w', encoding='utf-8') as f:
       json.dump(self.save, f, cls=monkey_patch_json.ZeroSievertJsonEncoder)
 
