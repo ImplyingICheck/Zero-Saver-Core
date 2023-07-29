@@ -54,7 +54,8 @@ if TYPE_CHECKING:
       Mapping[str, 'NestedStructure[_T]'] | Sequence['NestedStructure[_T]']
       | TerminalValue[_T])
   ZeroSievertJsonValue = str | decimal.Decimal | None
-  ZeroSievertSave = MutableNestedStructure[ZeroSievertJsonValue]
+  ZeroSievertSave = (
+      MutableMapping[str, MutableNestedStructure[ZeroSievertJsonValue]])
   ClassConstructor = Callable[[Any], Any]
 
 MAXIMUM_NUMBER_OF_BACKUPS = 10
@@ -435,7 +436,5 @@ class GameDataIO:
       yield self.save
     finally:
       for normalized_data, original_data in [player_inventory, player_storage]:
-        assert isinstance(normalized_data, MutableMapping)
-        assert isinstance(original_data, MutableMapping)
         normalized_data.clear()
         normalized_data.update(original_data)
