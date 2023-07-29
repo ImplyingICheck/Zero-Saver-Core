@@ -33,6 +33,7 @@ from collections.abc import Callable, Iterable, Iterator, Mapping, MutableMappin
 from typing import Any, Generic, TYPE_CHECKING, TypeAlias, TypeVar
 
 from zero_saver.exceptions import winreg_errors
+from zero_saver.save_golden_files import verifier
 from zero_saver import monkey_patch_json
 
 if TYPE_CHECKING:
@@ -390,6 +391,7 @@ class GameDataIO:
     return files_match(self._save_path, backup_file_path)
 
   def write_save_file(self) -> None:
+    assert self.verify_save_integrity()
     assert self._backup_save_file()
     with open(self._save_path, 'w', encoding='utf-8') as f:
       json.dump(self.save, f, cls=monkey_patch_json.ZeroSievertJsonEncoder)
@@ -438,3 +440,11 @@ class GameDataIO:
       for normalized_data, original_data in [player_inventory, player_storage]:
         normalized_data.clear()
         normalized_data.update(original_data)
+
+  def verify_save_integrity(self) -> bool:
+    save_version = self.save['save_version']
+    assert isinstance(save_version, str)
+    with verifier.golden_save_file_from_version(save_version) as f:
+      expected_save = json.load(f, object_hook=parse_type_hints)
+      with self._normalize_player_inventory():
+        return _compare_contents(self.save, expected_save)
