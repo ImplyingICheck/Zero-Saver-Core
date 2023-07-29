@@ -138,8 +138,7 @@ class FileLocation:
       save_name: str = 'save_shared_1.dat',
   ) -> StrPath:
     if self._system == 'Windows':
-      root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
-      assert isinstance(root, str)
+      root = os.getenv(self.WINDOWS_APPDATA_LOCAL, '')
       # TODO: Figure out where this number comes from. Consistent across delete
       #  and launch.
       version = '91826839'
@@ -158,8 +157,7 @@ class FileLocation:
 
   def _get_default_backup_directory(self):
     if self._system == self.WINDOWS:
-      root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
-      assert isinstance(root, str)
+      root = os.getenv(self.WINDOWS_APPDATA_LOCAL, '')
       backup_path = os.path.join(root, self.WINDOWS_BACKUPS_DIRECTORY)
     else:
       raise ValueError(f'Operating system not supported: {self._system}')
@@ -169,8 +167,7 @@ class FileLocation:
 
   def _generate_program_directory(self) -> None:
     if self._system == self.WINDOWS:
-      root = os.getenv(self.WINDOWS_APPDATA_LOCAL)
-      assert isinstance(root, str)
+      root = os.getenv(self.WINDOWS_APPDATA_LOCAL, '')
       program_directory = os.path.join(root, self.WINDOWS_APPDATA_PROGRAM_FILE)
       try:
         os.mkdir(program_directory)
