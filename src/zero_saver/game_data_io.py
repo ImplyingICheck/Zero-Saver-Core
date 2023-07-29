@@ -24,6 +24,7 @@ import hashlib
 import itertools
 import json
 import os
+import pathlib
 import platform
 import winreg
 import cmath
@@ -64,11 +65,13 @@ class WindowsArchitecture(enum.StrEnum):
 
 
 def _read_registry_value(
-    key_path: str,
+    key_path: StrPath,
     value_name: str,
     *,
     hive: int = winreg.HKEY_LOCAL_MACHINE,
 ) -> str:
+  if isinstance(key_path, os.PathLike):
+    key_path = str(key_path)
   try:
     key = winreg.OpenKey(hive, key_path)
   except FileNotFoundError as e:
@@ -99,9 +102,9 @@ def _get_windows_steam_install_path() -> StrPath:
   bits, linkage = platform.architecture()
   del linkage  # unused
   if bits == WindowsArchitecture.BITS_64:
-    key_path = os.path.join('SOFTWARE', 'Wow6432Node', 'Valve', 'Steam')
+    key_path = pathlib.PurePath('SOFTWARE', 'Wow6432Node', 'Valve', 'Steam')
   elif bits == WindowsArchitecture.BITS_32:
-    key_path = os.path.join('SOFTWARE', 'Valve', 'Steam')
+    key_path = pathlib.PurePath('SOFTWARE', 'Valve', 'Steam')
   else:
     raise ValueError(f'Unsupported architecture: {bits}')
   value_name = 'InstallPath'
@@ -116,62 +119,61 @@ class FileLocation:
   can be added here."""
   WINDOWS_APPDATA_PROGRAM_FILE = 'ZeroSaver'
   WINDOWS_APPDATA_LOCAL = 'LOCALAPPDATA'
-  WINDOWS_ZERO_SIEVERT_INSTALL_PATH = os.path.join('steamapps', 'common',
-                                                   'ZERO Sievert')
+  WINDOWS_ZERO_SIEVERT_INSTALL_PATH = pathlib.PurePath('steamapps', 'common',
+                                                       'ZERO Sievert')
   WINDOWS = 'Windows'
-  WINDOWS_BACKUPS_DIRECTORY = os.path.join(WINDOWS_APPDATA_PROGRAM_FILE,
-                                           'backup')
+  WINDOWS_BACKUPS_DIRECTORY = pathlib.PurePath(WINDOWS_APPDATA_PROGRAM_FILE,
+                                               'backup')
 
   def __init__(self, system: str | None = None):
     self._system: str = system if system else platform.system()
     self._generate_program_directory()
-    self.save_path: StrPath = self._get_save_path()
-    self.backup_path: StrPath = self._get_default_backup_directory()
-    self.gamedata_order_path: StrPath = self._get_gamedata_order_path()
+    self.save_path: pathlib.Path = self._get_save_path()
+    self.backup_path: pathlib.Path = self._get_default_backup_directory()
+    self.gamedata_order_path: pathlib.PurePath = self._get_gamedata_order_path()
 
   def _get_save_path(
       self,
       save_name: str = 'save_shared_1.dat',
-  ) -> StrPath:
+  ) -> pathlib.Path:
     if self._system == 'Windows':
       root = os.getenv(self.WINDOWS_APPDATA_LOCAL, '')
       # TODO: Figure out where this number comes from. Consistent across delete
       #  and launch.
       version = '91826839'
-      save_path = os.path.join('ZERO_Sievert', version, save_name)
-      return os.path.join(root, save_path)
+      return pathlib.Path(root, 'ZERO_Sievert', version, save_name)
     raise ValueError(f'Unsupported operating system: {self._system}')
 
-  def _get_gamedata_order_path(self) -> StrPath:
+  def _get_gamedata_order_path(self) -> pathlib.PurePath:
     if self._system == self.WINDOWS:
       gamedata_order_file_name = 'gamedata_order.json'
       steam_install_path = _get_windows_steam_install_path()
-      return os.path.join(steam_install_path,
-                          self.WINDOWS_ZERO_SIEVERT_INSTALL_PATH,
-                          gamedata_order_file_name)
+      return pathlib.PurePath(steam_install_path,
+                              self.WINDOWS_ZERO_SIEVERT_INSTALL_PATH,
+                              gamedata_order_file_name)
     raise ValueError(f'Operating system not supported: {self._system}')
 
-  def _get_default_backup_directory(self):
+  def _get_default_backup_directory(self) -> pathlib.Path:
     if self._system == self.WINDOWS:
       root = os.getenv(self.WINDOWS_APPDATA_LOCAL, '')
-      backup_path = os.path.join(root, self.WINDOWS_BACKUPS_DIRECTORY)
+      backup_path = pathlib.Path(root, self.WINDOWS_BACKUPS_DIRECTORY)
     else:
       raise ValueError(f'Operating system not supported: {self._system}')
-    if not os.path.exists(backup_path) or not os.path.isdir(backup_path):
+    if not backup_path.exists() or not backup_path.is_dir():
       raise ValueError(f'Invalid backup location: {backup_path}')
     return backup_path
 
   def _generate_program_directory(self) -> None:
     if self._system == self.WINDOWS:
       root = os.getenv(self.WINDOWS_APPDATA_LOCAL, '')
-      program_directory = os.path.join(root, self.WINDOWS_APPDATA_PROGRAM_FILE)
+      program_directory = pathlib.Path(root, self.WINDOWS_APPDATA_PROGRAM_FILE)
       try:
-        os.mkdir(program_directory)
+        program_directory.mkdir()
       except FileExistsError:
         pass
-      backup_directory = os.path.join(root, self.WINDOWS_BACKUPS_DIRECTORY)
+      backup_directory = pathlib.Path(root, self.WINDOWS_BACKUPS_DIRECTORY)
       try:
-        os.mkdir(backup_directory)
+        backup_directory.mkdir()
       except FileExistsError:
         pass
 
@@ -210,7 +212,7 @@ def _iterator_length(iterator: Iterator[Any]) -> int:
   return next(itertools_count)
 
 
-def delete_oldest_file(directory: StrPath):
+def delete_oldest_file(directory: StrPath) -> None:
   """
 
   Args:
@@ -322,9 +324,11 @@ class GameDataIO:
       backup_path: StrPath | None = '',
   ):
     file_locations = FileLocation()
-    self._save_path = save_path if save_path else file_locations.save_path
+    self._save_path = pathlib.Path(
+        save_path) if save_path else file_locations.save_path
     self._backup_path = (
-        backup_path if backup_path else file_locations.backup_path)
+        pathlib.Path(backup_path)
+        if backup_path else file_locations.backup_path)
     self.save: ZeroSievertSave = self._read_save_file()
 
   def _read_save_file(self,) -> ZeroSievertSave:
@@ -333,18 +337,14 @@ class GameDataIO:
 
   def _backup_save_file(self) -> bool:
     backup_path = self._backup_path
-    blocksize = 2**20
-    if _iterator_length(os.scandir(backup_path)) >= MAXIMUM_NUMBER_OF_BACKUPS:
+    save_path = self._save_path
+    if _iterator_length(backup_path.iterdir()) >= MAXIMUM_NUMBER_OF_BACKUPS:
       delete_oldest_file(backup_path)
-    with open(self._save_path, 'rb') as save_file:
-      original_save_filename = os.path.basename(self._save_path)
-      backup_filename = (f'{original_save_filename}'
-                         f'{_current_datetime_as_valid_filename()}')
-      backup_file_path = os.path.join(backup_path, backup_filename)
-      with open(backup_file_path, mode='wb') as backup:
-        while chunk := save_file.read(blocksize):
-          backup.write(chunk)
-    return files_match(self._save_path, backup_file_path)
+    backup_filename = (f'{save_path.name}'
+                       f'{_current_datetime_as_valid_filename()}')
+    backup_file_path = backup_path.joinpath(backup_filename)
+    backup_path.write_bytes(save_path.read_bytes())
+    return files_match(save_path, backup_file_path)
 
   def write_save_file(self) -> None:
     if not self.verify_save_integrity():
@@ -381,7 +381,7 @@ class GameDataIO:
     return player_storage, temp_player_storage
 
   @contextlib.contextmanager
-  def _normalize_player_inventory(self):
+  def _normalize_player_inventory(self) -> Iterator[None]:
     """Removes all items in a save file. This function serves to make type
     and key comparisons between the golden file and player save file consistent
     regardless of the items acquired by the player.
@@ -394,7 +394,7 @@ class GameDataIO:
     player_inventory = self._remove_player_inventory()
     player_storage = self._remove_player_storage()
     try:
-      yield self.save
+      yield
     finally:
       for normalized_data, original_data in [player_inventory, player_storage]:
         normalized_data.clear()
