@@ -351,11 +351,17 @@ class GameDataIO:
     return files_match(save_path, backup_file_path)
 
   def write_save_file(self) -> None:
-    if not self.verify_save_integrity():
-      raise ValueError(f'Save not formatted properly: {self.save}')
-    if not self._backup_save_file():
-      raise RuntimeError('The SHA-256 hash of the written backup file and '
-                         'original save file do not match.')
+    try:
+      if not self.verify_save_integrity():
+        raise ValueError(f'Save not formatted properly: {self.save}')
+    except (OSError, copy.Error) as e:
+      raise RuntimeError('Failed during set up of integrity check.') from e
+    try:
+      if not self._backup_save_file():
+        raise RuntimeError('The SHA-256 hash of the written backup file and '
+                           'original save file do not match.')
+    except OSError as e:
+      raise RuntimeError('Failed to create a backup file.') from e
     with open(self._save_path, 'w', encoding='utf-8') as f:
       json.dump(self.save, f, cls=monkey_patch_json.ZeroSievertJsonEncoder)
 
