@@ -13,10 +13,11 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
-"""Context manager for reading game data files from ZERO Sievert and writing
-modified save files.
+"""Collection of tools for accessing and working with "ZERO Sievert" save files.
+Oriented towards providing tools necessary for interfacing with the OS and
+presenting lexed content.
 
-Working data is assumed to be in the form of JSON."""
+"ZERO Sievert" saves must be in the form of JSON."""
 from __future__ import annotations
 
 import contextlib
