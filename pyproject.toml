@@ -60,6 +60,7 @@ based_on_style = "yapf"
 include = ["src", "tests"]
 exclude = ["dev_files/*.py"]
 strict = ["src/zero_saver"]
+ignore = ["src/zero_saver/monkey_patch_json.py"]
 reportMissingImports = true
 reportUntypedFunctionDecorator = true
 reportUntypedClassDecorator = true
