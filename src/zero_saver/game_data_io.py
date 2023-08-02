@@ -395,8 +395,8 @@ def _atomic_write(
 
 
 class GameDataIO:
-  """Translation layer for conversion of save data and game data json into Zero
-  Saver objects."""
+  """Lexer for converting "ZERO Sievert" save files to python objects. All data
+  is preserved; self.save is 1:1 with the input save file."""
 
   def __init__(
       self,
