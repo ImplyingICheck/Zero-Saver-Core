@@ -25,15 +25,17 @@ import datetime
 import decimal
 import enum
 import hashlib
+import io
 import itertools
 import json
 import os
 import pathlib
 import platform
+import tempfile
 import winreg
 import cmath
 from collections.abc import Iterable, Iterator, Mapping, MutableMapping, MutableSequence, Sequence
-from typing import Any, Generic, TYPE_CHECKING, TypeAlias, TypeVar
+from typing import Any, BinaryIO, Generic, Literal, overload, TextIO, TYPE_CHECKING, TypeAlias, TypeVar
 
 from zero_saver.exceptions import winreg_errors
 from zero_saver.save_golden_files import verifier
@@ -318,6 +320,75 @@ def _compare_contents(
   return True
 
 
+@overload
+@contextlib.contextmanager
+def _atomic_write(
+    file_path: StrPath,
+    /,
+    mode: Literal['wb'] = 'wb',
+    buffering: int = -1,
+    encoding: str | None = None,
+    errors: str | None = None,
+    newline: str | None = '',
+    closefd: bool = True,
+    opener: Any = None,
+) -> Iterator[BinaryIO]:
+  ...
+
+
+@overload
+@contextlib.contextmanager
+def _atomic_write(
+    file_path: StrPath,
+    /,
+    mode: Literal['w'] = 'w',
+    buffering: int = -1,
+    encoding: str | None = None,
+    errors: str | None = None,
+    newline: str | None = '',
+    closefd: bool = True,
+    opener: Any = None,
+) -> Iterator[TextIO]:
+  ...
+
+
+@contextlib.contextmanager
+def _atomic_write(
+    file_path: StrPath,
+    /,
+    mode: Literal['w', 'wb'] = 'w',
+    buffering: int = -1,
+    encoding: str | None = None,
+    errors: str | None = None,
+    newline: str | None = None,
+    closefd: bool = True,
+    opener: Any = None,
+) -> Iterator[TextIO | BinaryIO]:
+  directory = pathlib.PurePath(file_path).parent
+  file_descriptor, temporary_file = tempfile.mkstemp(dir=directory)
+  f = os.fdopen(
+      file_descriptor,
+      mode=mode,
+      buffering=buffering,
+      encoding=encoding,
+      errors=errors,
+      newline=newline,
+      closefd=closefd,
+      opener=opener)
+  try:
+    assert isinstance(f, (io.TextIOWrapper, io.BufferedWriter))
+    yield f
+  except Exception as e:
+    f.close()
+    os.remove(temporary_file)
+    raise e
+  else:
+    f.flush()
+    os.fsync(f.fileno())
+    f.close()
+  os.replace(temporary_file, file_path)
+
+
 class GameDataIO:
   """Translation layer for conversion of save data and game data json into Zero
   Saver objects."""
@@ -362,7 +433,7 @@ class GameDataIO:
                            'original save file do not match.')
     except OSError as e:
       raise RuntimeError('Failed to create a backup file.') from e
-    with open(self._save_path, 'w', encoding='utf-8') as f:
+    with _atomic_write(self._save_path, 'w', encoding='utf-8') as f:
       json.dump(self.save, f, cls=monkey_patch_json.ZeroSievertJsonEncoder)
 
   def _import_gamedata(self):
