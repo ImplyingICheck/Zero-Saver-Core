@@ -63,6 +63,9 @@ if TYPE_CHECKING:
   ZeroSievertSave = (
       MutableMapping[str, MutableNestedStructure[ZeroSievertJsonValue]])
 
+# The maximum number of files located in the backup repository used by
+# FileLocation. WARNING: Any files exceeding this limit will be deleted,
+# starting from oldest.
 MAXIMUM_NUMBER_OF_BACKUPS = 10
 
 
@@ -412,6 +415,9 @@ class GameDataIO:
       return json.load(f, parse_float=decimal.Decimal)
 
   def _backup_save_file(self) -> bool:
+    """Assumes that self._backup_path does not contain any files besides
+    backups. This includes subdirectories and symbolic links.
+    """
     backup_path = self._backup_path
     save_path = self._save_path
     if _iterator_length(backup_path.iterdir()) >= MAXIMUM_NUMBER_OF_BACKUPS:
