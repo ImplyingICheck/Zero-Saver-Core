@@ -125,8 +125,8 @@ def _get_windows_steam_install_path() -> StrPath:
 class FileLocation:
   """Handles retrieving path information for various files.
 
-  This section contains OS dependent code. Though currently, only Windows10 is
-  officially supported by ZERO Sievert, Zero Saver support for additional OSes
+  This section contains OS dependent code. As of "ZERO Sievert" version 0.31.24,
+  only Windows10 is officially supported. Zero Saver support for additional OSes
   can be added here."""
   _WINDOWS_APPDATA_PROGRAM_FILE = 'ZeroSaver'
   _WINDOWS_APPDATA_LOCAL = 'LOCALAPPDATA'
