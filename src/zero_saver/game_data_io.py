@@ -33,6 +33,7 @@ import os
 import pathlib
 import platform
 import tempfile
+import uuid
 import winreg
 import cmath
 from collections.abc import Iterable, Iterator, Mapping, MutableMapping, MutableSequence, Sequence
@@ -414,19 +415,28 @@ class GameDataIO:
     with open(self._save_path, 'r', encoding='utf-8') as f:
       return json.load(f, parse_float=decimal.Decimal)
 
-  def _backup_save_file(self) -> bool:
+  def _backup_save_file(self, *, safe_uuid: Any = None) -> bool:
     """Assumes that self._backup_path does not contain any files besides
     backups. This includes subdirectories and symbolic links.
+
+    Due to usage of uuid.uuid4(), this function is not multiprocessing-safe. If
+    multiprocessing, a user-generated *safe_uuid* can be provided.
     """
     backup_path = self._backup_path
     save_path = self._save_path
-    if _iterator_length(backup_path.iterdir()) >= MAXIMUM_NUMBER_OF_BACKUPS:
-      _delete_oldest_file(backup_path)
     backup_filename = (f'{save_path.name}'
-                       f'{_current_datetime_as_valid_filename()}')
+                       f'-{_current_datetime_as_valid_filename()}'
+                       f'-{safe_uuid if safe_uuid else uuid.uuid4()}'
+                       f'.dat')
     backup_file_path = backup_path.joinpath(backup_filename)
     backup_file_path.write_bytes(save_path.read_bytes())
-    return _files_match(save_path, backup_file_path)
+    backup_matches_original = _files_match(save_path, backup_file_path)
+    if backup_matches_original and _iterator_length(
+        backup_path.iterdir()) >= MAXIMUM_NUMBER_OF_BACKUPS:
+      _delete_oldest_file(backup_path)
+    if not backup_matches_original:
+      os.remove(backup_file_path)
+    return backup_matches_original
 
   def write_save_file(self) -> None:
     """Overwrites the Zero Sievert save file on disk. Various possible errors
