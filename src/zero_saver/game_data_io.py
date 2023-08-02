@@ -425,7 +425,7 @@ class GameDataIO:
     backup_filename = (f'{save_path.name}'
                        f'{_current_datetime_as_valid_filename()}')
     backup_file_path = backup_path.joinpath(backup_filename)
-    backup_path.write_bytes(save_path.read_bytes())
+    backup_file_path.write_bytes(save_path.read_bytes())
     return _files_match(save_path, backup_file_path)
 
   def write_save_file(self) -> None:
