@@ -123,13 +123,13 @@ class FileLocation:
   This section contains OS dependent code. Though currently, only Windows10 is
   officially supported by ZERO Sievert, Zero Saver support for additional OSes
   can be added here."""
-  WINDOWS_APPDATA_PROGRAM_FILE = 'ZeroSaver'
-  WINDOWS_APPDATA_LOCAL = 'LOCALAPPDATA'
-  WINDOWS_ZERO_SIEVERT_INSTALL_PATH = pathlib.PurePath('steamapps', 'common',
-                                                       'ZERO Sievert')
-  WINDOWS = 'Windows'
-  WINDOWS_BACKUPS_DIRECTORY = pathlib.PurePath(WINDOWS_APPDATA_PROGRAM_FILE,
-                                               'backup')
+  _WINDOWS_APPDATA_PROGRAM_FILE = 'ZeroSaver'
+  _WINDOWS_APPDATA_LOCAL = 'LOCALAPPDATA'
+  _WINDOWS_ZERO_SIEVERT_INSTALL_PATH = pathlib.PurePath('steamapps', 'common',
+                                                        'ZERO Sievert')
+  _WINDOWS = 'Windows'
+  _WINDOWS_BACKUPS_DIRECTORY = pathlib.PurePath(_WINDOWS_APPDATA_PROGRAM_FILE,
+                                                'backup')
 
   def __init__(self, system: str | None = None):
     self._system: str = system if system else platform.system()
@@ -143,7 +143,7 @@ class FileLocation:
       save_name: str = 'save_shared_1.dat',
   ) -> pathlib.Path:
     if self._system == 'Windows':
-      root = os.getenv(self.WINDOWS_APPDATA_LOCAL, '')
+      root = os.getenv(self._WINDOWS_APPDATA_LOCAL, '')
       # TODO: Figure out where this number comes from. Consistent across delete
       #  and launch.
       version = '91826839'
@@ -151,18 +151,18 @@ class FileLocation:
     raise ValueError(f'Unsupported operating system: {self._system}')
 
   def _get_gamedata_order_path(self) -> pathlib.PurePath:
-    if self._system == self.WINDOWS:
+    if self._system == self._WINDOWS:
       gamedata_order_file_name = 'gamedata_order.json'
       steam_install_path = _get_windows_steam_install_path()
       return pathlib.PurePath(steam_install_path,
-                              self.WINDOWS_ZERO_SIEVERT_INSTALL_PATH,
+                              self._WINDOWS_ZERO_SIEVERT_INSTALL_PATH,
                               gamedata_order_file_name)
     raise ValueError(f'Operating system not supported: {self._system}')
 
   def _get_default_backup_directory(self) -> pathlib.Path:
-    if self._system == self.WINDOWS:
-      root = os.getenv(self.WINDOWS_APPDATA_LOCAL, '')
-      backup_path = pathlib.Path(root, self.WINDOWS_BACKUPS_DIRECTORY)
+    if self._system == self._WINDOWS:
+      root = os.getenv(self._WINDOWS_APPDATA_LOCAL, '')
+      backup_path = pathlib.Path(root, self._WINDOWS_BACKUPS_DIRECTORY)
     else:
       raise ValueError(f'Operating system not supported: {self._system}')
     if not backup_path.exists() or not backup_path.is_dir():
@@ -170,14 +170,14 @@ class FileLocation:
     return backup_path
 
   def _generate_program_directory(self) -> None:
-    if self._system == self.WINDOWS:
-      root = os.getenv(self.WINDOWS_APPDATA_LOCAL, '')
-      program_directory = pathlib.Path(root, self.WINDOWS_APPDATA_PROGRAM_FILE)
+    if self._system == self._WINDOWS:
+      root = os.getenv(self._WINDOWS_APPDATA_LOCAL, '')
+      program_directory = pathlib.Path(root, self._WINDOWS_APPDATA_PROGRAM_FILE)
       try:
         program_directory.mkdir()
       except FileExistsError:
         pass
-      backup_directory = pathlib.Path(root, self.WINDOWS_BACKUPS_DIRECTORY)
+      backup_directory = pathlib.Path(root, self._WINDOWS_BACKUPS_DIRECTORY)
       try:
         backup_directory.mkdir()
       except FileExistsError:
@@ -197,7 +197,7 @@ def get_nested_value(
   return dictionary
 
 
-def types_match(object_1: Any, object_2: Any) -> bool:
+def _types_match(object_1: Any, object_2: Any) -> bool:
   if not isinstance(object_1, type):
     object_1 = type(object_1)
   if not isinstance(object_2, type):
@@ -218,7 +218,7 @@ def _iterator_length(iterator: Iterator[Any]) -> int:
   return next(itertools_count)
 
 
-def delete_oldest_file(directory: StrPath) -> None:
+def _delete_oldest_file(directory: StrPath) -> None:
   """
 
   Args:
@@ -244,7 +244,7 @@ def delete_oldest_file(directory: StrPath) -> None:
     pass
 
 
-def files_match(*files: StrOrBytesPath, blocksize: int = 2**20) -> bool:
+def _files_match(*files: StrOrBytesPath, blocksize: int = 2**20) -> bool:
   """
 
   Args:
@@ -285,7 +285,7 @@ def _compare_contents(
   """
   # pylint: disable=[unidiomatic-typecheck]
   # Base case: Types do not match
-  if not types_match(object_1, object_2):
+  if not _types_match(object_1, object_2):
     return False
   # While object_1 and object_2 should never have differing types, these checks
   # are necessary to ensure type safety in static analysis.
@@ -315,7 +315,7 @@ def _compare_contents(
         return False
   else:
     # Base Case: Type of TerminalValue in NestedStructure matches
-    return types_match(object_1, object_2)
+    return _types_match(object_1, object_2)
   # Recursive : Same type and all contents match
   return True
 
@@ -414,12 +414,12 @@ class GameDataIO:
     backup_path = self._backup_path
     save_path = self._save_path
     if _iterator_length(backup_path.iterdir()) >= MAXIMUM_NUMBER_OF_BACKUPS:
-      delete_oldest_file(backup_path)
+      _delete_oldest_file(backup_path)
     backup_filename = (f'{save_path.name}'
                        f'{_current_datetime_as_valid_filename()}')
     backup_file_path = backup_path.joinpath(backup_filename)
     backup_path.write_bytes(save_path.read_bytes())
-    return files_match(save_path, backup_file_path)
+    return _files_match(save_path, backup_file_path)
 
   def write_save_file(self) -> None:
     """Overwrites the Zero Sievert save file on disk. Various possible errors
