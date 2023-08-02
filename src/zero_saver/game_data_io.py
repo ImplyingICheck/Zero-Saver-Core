@@ -422,6 +422,25 @@ class GameDataIO:
     return files_match(save_path, backup_file_path)
 
   def write_save_file(self) -> None:
+    """Overwrites the Zero Sievert save file on disk. Various possible errors
+    are described in the Raises section.
+
+    Returns:
+      None.
+
+    Raises:
+      OSError: If an error occurs while handling
+        zero_saver.game_data_io._atomic_write() of self._save_path.
+      ValueError: If integrity checks were successfully set up, but self.save
+        does not pass integrity checks. See self.verify_save_integrity() for
+        implementation details.
+      RuntimeError:
+        If a backup of the un-edited save file is created, but their
+          SHA-256 hashes do not match. See self._backup_save_file() for
+          implementation details.
+        If an error occurs during integrity check setup. See
+          self.verify_save_integrity() for implementation details.
+    """
     try:
       if not self.verify_save_integrity():
         raise ValueError(f'Save not formatted properly: {self.save}')
