@@ -81,3 +81,7 @@ class SaveFileJsonCase:
   @pytest_cases.case(tags=['Malformed', 'SaveJson', 'None'])
   def save_json_none(self):
     return None
+
+  @pytest_cases.case(tags=['Malformed', 'SaveJson', 'WrongType'])
+  def save_json_wrong_type_list(self):
+    return []

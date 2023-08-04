@@ -16,7 +16,7 @@
 # pylint: disable=missing-class-docstring
 # pylint: disable=redefined-outer-name
 import pytest
-import pytest_cases
+import pytest_cases.filters
 
 from zero_saver import save_data
 
@@ -111,4 +111,15 @@ def test_get_save_version_well_formed_returns_string(save):
     prefix='save_json')
 def test_get_save_version_malformed_subscriptable_raises_key_error(save):
   with pytest.raises(KeyError):
+    save_data.get_save_version(save)
+
+
+@pytest_cases.parametrize_with_cases(
+    'save',
+    cases=_CASES,
+    filter=pytest_cases.filters.has_tag('Malformed')
+    & ~pytest_cases.filters.has_tag('Subscriptable'),
+    prefix='save_json')
+def test_get_save_version_malformed_not_subscriptable_raises_type_error(save):
+  with pytest.raises(TypeError):
     save_data.get_save_version(save)
