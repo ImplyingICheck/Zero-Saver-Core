@@ -79,8 +79,13 @@ class TestSaveDataFactory:
       save_data_factory.set_difficulty_settings(storage)
 
 
-def test_version_031_production_has_supported_version_version_031_production():
+def test_version_031_production_has_supported_versions_version_031_production():
   assert '0.31 production' in save_data.Version031Production.SUPPORTED_VERSIONS
+
+
+def test_version_031_production_supported_versions_is_frozenset():
+  assert isinstance(save_data.Version031Production.SUPPORTED_VERSIONS,
+                    frozenset)
 
 
 def expected_save_version(save):
