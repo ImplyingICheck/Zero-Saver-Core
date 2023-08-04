@@ -13,8 +13,16 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
-"""Data structure representing a save game."""
+"""Parsing layer"""
 from zero_saver import game_data_io
+
+
+class SaveDataFactory:
+  """Abstract factory representing the methods used to parse a
+  zero_saver.game_data_io.ZeroSievertSave."""
+
+  def __init__(self, save: game_data_io.ZeroSievertSave):
+    self.save = save
 
 
 class SaveData:

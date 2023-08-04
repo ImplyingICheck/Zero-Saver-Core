@@ -24,3 +24,8 @@ _CASES = 'test_save_data.case_save_data'
 @pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
 def test_save_data_init(save):
   assert save_data.SaveData(save)
+
+
+@pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
+def test_save_data_factory_init(save):
+  assert save_data.SaveDataFactory(save)
