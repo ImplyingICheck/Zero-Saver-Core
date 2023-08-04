@@ -15,6 +15,7 @@
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 """Parsing layer"""
 from zero_saver import game_data_io
+from zero_saver import player
 
 
 class SaveDataFactory:
@@ -23,6 +24,9 @@ class SaveDataFactory:
 
   def __init__(self, save: game_data_io.ZeroSievertSave):
     self.save = save
+
+  def get_player(self) -> player.Player:
+    raise NotImplementedError
 
 
 class SaveData:

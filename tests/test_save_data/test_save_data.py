@@ -14,6 +14,8 @@
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
+# pylint: disable=redefined-outer-name
+import pytest
 import pytest_cases
 
 from zero_saver import save_data
@@ -29,3 +31,14 @@ def test_save_data_init(save):
 @pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
 def test_save_data_factory_init(save):
   assert save_data.SaveDataFactory(save)
+
+
+@pytest_cases.fixture
+@pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
+def save_data_factory(save):
+  return save_data.SaveDataFactory(save)
+
+
+def test_save_data_factory_get_player(save_data_factory):
+  with pytest.raises(NotImplementedError):
+    save_data_factory.get_player()
