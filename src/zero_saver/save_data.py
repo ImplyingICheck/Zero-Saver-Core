@@ -14,7 +14,11 @@
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 """Data structure representing a save game."""
+from zero_saver import game_data_io
 
 
 class SaveData:
-  pass
+  """Public interface for accessing the contents of a save file."""
+
+  def __init__(self, save: game_data_io.ZeroSievertSave):
+    self.save = save
