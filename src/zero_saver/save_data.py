@@ -85,5 +85,5 @@ class SaveData:
     if save_version in Version031Production.SUPPORTED_VERSIONS:
       factory = Version031Production(save)
     else:
-      raise ValueError('Unsupported save version.')
+      raise ValueError(f'Unsupported save version: {save_version}')
     self._factory = factory
