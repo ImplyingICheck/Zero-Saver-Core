@@ -14,8 +14,11 @@
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 """Parsing layer"""
+from __future__ import annotations
+
 from zero_saver import game_data_io
 from zero_saver import player
+from zero_saver import stash
 
 
 class SaveDataFactory:
@@ -26,6 +29,9 @@ class SaveDataFactory:
     self.save = save
 
   def get_player(self) -> player.Player:
+    raise NotImplementedError
+
+  def get_storage(self) -> stash.Stash:
     raise NotImplementedError
 
 
