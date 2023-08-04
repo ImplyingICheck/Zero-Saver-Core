@@ -78,7 +78,10 @@ class SaveData:
   """Public interface for accessing the contents of a save file."""
 
   def __init__(self, save: game_data_io.ZeroSievertSave):
-    save_version = get_save_version(save)
+    try:
+      save_version = get_save_version(save)
+    except (TypeError, KeyError) as e:
+      raise ValueError(f'Invalid save: {save}') from e
     if save_version in Version031Production.SUPPORTED_VERSIONS:
       factory = Version031Production(save)
     else:
