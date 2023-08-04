@@ -23,10 +23,23 @@ from zero_saver import save_data
 _CASES = 'test_save_data.case_save_data'
 
 
+@pytest_cases.fixture
+@pytest_cases.parametrize_with_cases(
+    'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
+def save_data_fixture(save):
+  return save_data.SaveData(save)
+
+
 @pytest_cases.parametrize_with_cases(
     'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
 def test_save_data_init_well_formed(save):
   assert save_data.SaveData(save)
+
+
+@pytest_cases.parametrize('expected_properties', ['_factory'])
+def test_save_data_has_expected_properties(save_data_fixture,
+                                           expected_properties):
+  assert hasattr(save_data_fixture, expected_properties)
 
 
 @pytest_cases.fixture
