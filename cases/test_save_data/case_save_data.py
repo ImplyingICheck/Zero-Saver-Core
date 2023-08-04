@@ -17,7 +17,7 @@
 # pylint: disable=redefined-outer-name
 import pytest_cases
 
-from cases.resources import file_util
+from resources import file_util
 
 
 class SaveDataTestingComponents:
@@ -68,3 +68,16 @@ class SaveFileJsonCase:
   def save_json_0_31_save_new_survivor_equipment1(self):
     return file_util.serialize_save_json_from_file(
         '0_31_save_new_survivor_equipment1')
+
+  @pytest_cases.case(
+      tags=['Malformed', 'SaveJson', 'Subscriptable'], id='empty_dict')
+  def save_json_empty_dict(self):
+    return {}
+
+  @pytest_cases.case(tags=['Malformed', 'SaveJson', 'Subscriptable'])
+  def save_json_foo_key_bar_value(self):
+    return {'foo': 'bar'}
+
+  @pytest_cases.case(tags=['Malformed', 'SaveJson', 'None'])
+  def save_json_none(self):
+    return None

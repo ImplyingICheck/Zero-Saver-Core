@@ -92,11 +92,23 @@ def expected_save_version(save):
   return save['save_version']
 
 
-@pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
+@pytest_cases.parametrize_with_cases(
+    'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
 def test_get_save_version_well_formed_returns_correct_version(save):
   assert save_data.get_save_version(save) == expected_save_version(save)
 
 
-@pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
+@pytest_cases.parametrize_with_cases(
+    'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
 def test_get_save_version_well_formed_returns_string(save):
   assert isinstance(save_data.get_save_version(save), str)
+
+
+@pytest_cases.parametrize_with_cases(
+    'save',
+    cases=_CASES,
+    has_tag=['Malformed', 'Subscriptable'],
+    prefix='save_json')
+def test_get_save_version_malformed_subscriptable_raises_key_error(save):
+  with pytest.raises(KeyError):
+    save_data.get_save_version(save)
