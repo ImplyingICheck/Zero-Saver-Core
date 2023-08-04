@@ -50,6 +50,13 @@ def test_save_data_init_malformed_save_correct_error_message(save):
     assert save_data.SaveData(save)
 
 
+def test_save_data_init_unsupported_version_raises_value_error(mocker):
+  save = mocker.MagicMock()
+  save.__getitem__.return_value = 'THIS IS NOT A SUPPORTED SAVE VERSION :('
+  with pytest.raises(ValueError):
+    assert save_data.SaveData(save)
+
+
 @pytest_cases.parametrize('expected_properties', ['_factory'])
 def test_save_data_has_expected_properties(save_data_fixture,
                                            expected_properties):
