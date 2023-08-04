@@ -58,6 +58,16 @@ class SaveDataFactory:
     raise NotImplementedError
 
 
+# Begin concrete SaveDataFactory classes
+
+
+class Version031Production(SaveDataFactory):
+  SUPPORTED_VERSIONS = frozenset(['0.31 production'])
+
+
+# End concrete SaveDataFactory classes
+
+
 class SaveData:
   """Public interface for accessing the contents of a save file."""
 

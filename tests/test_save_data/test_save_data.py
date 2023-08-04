@@ -82,3 +82,7 @@ def test_save_data_factory_set_difficulty_settings_mock(save_data_factory,
   storage = mocker.Mock()
   with pytest.raises(NotImplementedError):
     save_data_factory.set_difficulty_settings(storage)
+
+
+def test_version_031_production_has_supported_version_version_031_production():
+  assert '0.31 production' in save_data.Version031Production.SUPPORTED_VERSIONS
