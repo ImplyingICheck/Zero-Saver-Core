@@ -51,6 +51,12 @@ class SaveDataFactory:
   def set_quest_flags(self, quest_data: quest.Quest) -> None:
     raise NotImplementedError
 
+  def set_difficulty_settings(
+      self,
+      difficulty_settings_data: difficulty_settings.DifficultySettings,
+  ) -> None:
+    raise NotImplementedError
+
 
 class SaveData:
   """Public interface for accessing the contents of a save file."""
