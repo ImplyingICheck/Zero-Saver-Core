@@ -86,3 +86,12 @@ def test_save_data_factory_set_difficulty_settings_mock(save_data_factory,
 
 def test_version_031_production_has_supported_version_version_031_production():
   assert '0.31 production' in save_data.Version031Production.SUPPORTED_VERSIONS
+
+
+def expected_save_version(save):
+  return save['save_version']
+
+
+@pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
+def test_get_save_version_well_formed_returns_correct_version(save):
+  assert save_data.get_save_version(save) == expected_save_version(save)

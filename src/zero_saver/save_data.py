@@ -23,6 +23,12 @@ from zero_saver import quest
 from zero_saver import difficulty_settings
 
 
+def get_save_version(save: game_data_io.ZeroSievertSave) -> str:
+  save_version = save['save_version']
+  assert isinstance(save_version, str)
+  return save_version
+
+
 class SaveDataFactory:
   """Abstract factory representing the methods used to parse a
   zero_saver.game_data_io.ZeroSievertSave."""
