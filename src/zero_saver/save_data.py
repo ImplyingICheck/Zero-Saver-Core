@@ -48,6 +48,9 @@ class SaveDataFactory:
   def set_storage(self, storage_data: stash.Stash) -> None:
     raise NotImplementedError
 
+  def set_quest_flags(self, quest_data: quest.Quest) -> None:
+    raise NotImplementedError
+
 
 class SaveData:
   """Public interface for accessing the contents of a save file."""

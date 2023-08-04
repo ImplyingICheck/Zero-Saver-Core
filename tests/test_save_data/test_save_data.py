@@ -69,3 +69,9 @@ def test_save_data_factory_set_storage_mock(save_data_factory, mocker):
   storage = mocker.Mock()
   with pytest.raises(NotImplementedError):
     save_data_factory.set_storage(storage)
+
+
+def test_save_data_factory_set_quest_flags_mock(save_data_factory, mocker):
+  storage = mocker.Mock()
+  with pytest.raises(NotImplementedError):
+    save_data_factory.set_quest_flags(storage)
