@@ -45,6 +45,9 @@ class SaveDataFactory:
   def set_player(self, player_data: player.Player) -> None:
     raise NotImplementedError
 
+  def set_storage(self, storage_data: stash.Stash) -> None:
+    raise NotImplementedError
+
 
 class SaveData:
   """Public interface for accessing the contents of a save file."""
