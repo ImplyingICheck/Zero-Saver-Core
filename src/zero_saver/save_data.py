@@ -20,6 +20,7 @@ from zero_saver import game_data_io
 from zero_saver import player
 from zero_saver import stash
 from zero_saver import quest
+from zero_saver import difficulty_settings
 
 
 class SaveDataFactory:
@@ -36,6 +37,9 @@ class SaveDataFactory:
     raise NotImplementedError
 
   def get_quest_flags(self) -> quest.Quest:
+    raise NotImplementedError
+
+  def get_difficulty_settings(self) -> difficulty_settings.DifficultySettings:
     raise NotImplementedError
 
 
