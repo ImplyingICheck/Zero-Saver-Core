@@ -28,60 +28,55 @@ def test_save_data_init(save):
   assert save_data.SaveData(save)
 
 
-@pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
-def test_save_data_factory_init(save):
-  assert save_data.SaveDataFactory(save)
-
-
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
 def save_data_factory(save):
   return save_data.SaveDataFactory(save)
 
 
-def test_save_data_factory_get_player(save_data_factory):
-  with pytest.raises(NotImplementedError):
-    save_data_factory.get_player()
+class TestSaveDataFactory:
 
+  @pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
+  def test_save_data_factory_init(self, save):
+    assert save_data.SaveDataFactory(save)
 
-def test_save_data_factory_get_storage(save_data_factory):
-  with pytest.raises(NotImplementedError):
-    save_data_factory.get_storage()
+  def test_save_data_factory_get_player(self, save_data_factory):
+    with pytest.raises(NotImplementedError):
+      save_data_factory.get_player()
 
+  def test_save_data_factory_get_storage(self, save_data_factory):
+    with pytest.raises(NotImplementedError):
+      save_data_factory.get_storage()
 
-def test_save_data_factory_get_quest_flags(save_data_factory):
-  with pytest.raises(NotImplementedError):
-    save_data_factory.get_quest_flags()
+  def test_save_data_factory_get_quest_flags(self, save_data_factory):
+    with pytest.raises(NotImplementedError):
+      save_data_factory.get_quest_flags()
 
+  def test_save_data_factory_get_difficulty_settings(self, save_data_factory):
+    with pytest.raises(NotImplementedError):
+      save_data_factory.get_difficulty_settings()
 
-def test_save_data_factory_get_difficulty_settings(save_data_factory):
-  with pytest.raises(NotImplementedError):
-    save_data_factory.get_difficulty_settings()
+  def test_save_data_factory_set_player_mock(self, save_data_factory, mocker):
+    player = mocker.Mock()
+    with pytest.raises(NotImplementedError):
+      save_data_factory.set_player(player)
 
+  def test_save_data_factory_set_storage_mock(self, save_data_factory, mocker):
+    storage = mocker.Mock()
+    with pytest.raises(NotImplementedError):
+      save_data_factory.set_storage(storage)
 
-def test_save_data_factory_set_player_mock(save_data_factory, mocker):
-  player = mocker.Mock()
-  with pytest.raises(NotImplementedError):
-    save_data_factory.set_player(player)
+  def test_save_data_factory_set_quest_flags_mock(self, save_data_factory,
+                                                  mocker):
+    storage = mocker.Mock()
+    with pytest.raises(NotImplementedError):
+      save_data_factory.set_quest_flags(storage)
 
-
-def test_save_data_factory_set_storage_mock(save_data_factory, mocker):
-  storage = mocker.Mock()
-  with pytest.raises(NotImplementedError):
-    save_data_factory.set_storage(storage)
-
-
-def test_save_data_factory_set_quest_flags_mock(save_data_factory, mocker):
-  storage = mocker.Mock()
-  with pytest.raises(NotImplementedError):
-    save_data_factory.set_quest_flags(storage)
-
-
-def test_save_data_factory_set_difficulty_settings_mock(save_data_factory,
-                                                        mocker):
-  storage = mocker.Mock()
-  with pytest.raises(NotImplementedError):
-    save_data_factory.set_difficulty_settings(storage)
+  def test_save_data_factory_set_difficulty_settings_mock(
+      self, save_data_factory, mocker):
+    storage = mocker.Mock()
+    with pytest.raises(NotImplementedError):
+      save_data_factory.set_difficulty_settings(storage)
 
 
 def test_version_031_production_has_supported_version_version_031_production():
@@ -92,34 +87,35 @@ def expected_save_version(save):
   return save['save_version']
 
 
-@pytest_cases.parametrize_with_cases(
-    'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
-def test_get_save_version_well_formed_returns_correct_version(save):
-  assert save_data.get_save_version(save) == expected_save_version(save)
+class TestGetSaveVersion:
 
+  @pytest_cases.parametrize_with_cases(
+      'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
+  def test_get_save_version_well_formed_returns_correct_version(self, save):
+    assert save_data.get_save_version(save) == expected_save_version(save)
 
-@pytest_cases.parametrize_with_cases(
-    'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
-def test_get_save_version_well_formed_returns_string(save):
-  assert isinstance(save_data.get_save_version(save), str)
+  @pytest_cases.parametrize_with_cases(
+      'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
+  def test_get_save_version_well_formed_returns_string(self, save):
+    assert isinstance(save_data.get_save_version(save), str)
 
+  @pytest_cases.parametrize_with_cases(
+      'save',
+      cases=_CASES,
+      has_tag=['Malformed', 'Subscriptable'],
+      prefix='save_json')
+  def test_get_save_version_malformed_subscriptable_raises_key_error(
+      self, save):
+    with pytest.raises(KeyError):
+      save_data.get_save_version(save)
 
-@pytest_cases.parametrize_with_cases(
-    'save',
-    cases=_CASES,
-    has_tag=['Malformed', 'Subscriptable'],
-    prefix='save_json')
-def test_get_save_version_malformed_subscriptable_raises_key_error(save):
-  with pytest.raises(KeyError):
-    save_data.get_save_version(save)
-
-
-@pytest_cases.parametrize_with_cases(
-    'save',
-    cases=_CASES,
-    filter=pytest_cases.filters.has_tag('Malformed')
-    & ~pytest_cases.filters.has_tag('Subscriptable'),
-    prefix='save_json')
-def test_get_save_version_malformed_not_subscriptable_raises_type_error(save):
-  with pytest.raises(TypeError):
-    save_data.get_save_version(save)
+  @pytest_cases.parametrize_with_cases(
+      'save',
+      cases=_CASES,
+      filter=pytest_cases.filters.has_tag('Malformed')
+      & ~pytest_cases.filters.has_tag('Subscriptable'),
+      prefix='save_json')
+  def test_get_save_version_malformed_not_subscriptable_raises_type_error(
+      self, save):
+    with pytest.raises(TypeError):
+      save_data.get_save_version(save)
