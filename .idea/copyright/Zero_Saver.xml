@@ -1,0 +1,8 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="allowReplaceRegexp" value="[[0-2]0[0-2][0-2]][ ]" />
+    <option name="keyword" value="Copyright [\d,-]+ The Zero Saver Authors\. All Rights Reserved\." />
+    <option name="notice" value="#set( &amp;#36;projectName = &quot;Zero Saver&quot;)&#10;Copyright &amp;#36;originalComment.match(&quot;Copyright ([\d,-]+)&quot;, 1, &quot;,&quot;)&amp;#36;today.year The &amp;#36;projectName Authors. All Rights Reserved.&#10;&#10;This file is part of Zero Saver.&#10;&#10;&amp;#36;projectName is free software: you can redistribute it and/or modify it under&#10;the terms of the GNU General Public License as published by the Free Software&#10;Foundation, either version 3 of the License, or (at your option) any later&#10;version.&#10;&#10;&amp;#36;projectName is distributed in the hope that it will be useful, but WITHOUT ANY&#10;WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR&#10;A PARTICULAR PURPOSE. See the GNU General Public License for more details.&#10;You should have received a copy of the GNU General Public License along with&#10;&amp;#36;projectName. If not, see &lt;https://www.gnu.org/licenses/&gt;." />
+    <option name="myName" value="Zero-Saver" />
+  </copyright>
+</component>
