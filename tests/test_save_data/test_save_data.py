@@ -54,6 +54,12 @@ def test_save_data_factory_get_quest_flags(save_data_factory):
     save_data_factory.get_quest_flags()
 
 
-def test_save_data_factory_get_get_difficulty_settings(save_data_factory):
+def test_save_data_factory_get_difficulty_settings(save_data_factory):
   with pytest.raises(NotImplementedError):
     save_data_factory.get_difficulty_settings()
+
+
+def test_save_data_factory_set_player_mock(save_data_factory, mocker):
+  player = mocker.Mock()
+  with pytest.raises(NotImplementedError):
+    save_data_factory.set_player(player)

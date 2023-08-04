@@ -42,6 +42,9 @@ class SaveDataFactory:
   def get_difficulty_settings(self) -> difficulty_settings.DifficultySettings:
     raise NotImplementedError
 
+  def set_player(self, player_data: player.Player) -> None:
+    raise NotImplementedError
+
 
 class SaveData:
   """Public interface for accessing the contents of a save file."""
