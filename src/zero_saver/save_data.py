@@ -19,6 +19,7 @@ from __future__ import annotations
 from zero_saver import game_data_io
 from zero_saver import player
 from zero_saver import stash
+from zero_saver import quest
 
 
 class SaveDataFactory:
@@ -32,6 +33,9 @@ class SaveDataFactory:
     raise NotImplementedError
 
   def get_storage(self) -> stash.Stash:
+    raise NotImplementedError
+
+  def get_quest_flags(self) -> quest.Quest:
     raise NotImplementedError
 
 

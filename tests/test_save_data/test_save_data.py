@@ -47,3 +47,8 @@ def test_save_data_factory_get_player(save_data_factory):
 def test_save_data_factory_get_storage(save_data_factory):
   with pytest.raises(NotImplementedError):
     save_data_factory.get_storage()
+
+
+def test_save_data_factory_get_quest_flags(save_data_factory):
+  with pytest.raises(NotImplementedError):
+    save_data_factory.get_quest_flags()
