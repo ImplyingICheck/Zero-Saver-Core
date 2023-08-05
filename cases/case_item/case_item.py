@@ -14,6 +14,7 @@
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
+import cmath
 import decimal
 
 import pytest_cases
@@ -43,6 +44,22 @@ def any_value_potential_value(value):
 ])
 def castable_to_int_well_formed(value):
   return value
+
+
+class CastableToIntCase:
+
+  @pytest_cases.case(tags=['CastableToInt', 'Malformed', 'ValueError'])
+  @pytest_cases.parametrize(
+      'value', ['', 'Hello world!'], ids=['empty_string', 'Hello world!'])
+  def castable_to_int_malformed_valueerror(self, value):
+    return value
+
+  @pytest_cases.case(tags=['CastableToInt', 'Malformed', 'OverflowError'])
+  @pytest_cases.parametrize(
+      'value', [cmath.inf, -cmath.inf],
+      ids=['positive_infinity', 'negative_infinity'])
+  def castable_to_int_malformed_overflowerror(self, value):
+    return value
 
 
 class ItemCase:

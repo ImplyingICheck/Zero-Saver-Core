@@ -15,6 +15,7 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
 # pylint: disable=redefined-outer-name
+import pytest
 import pytest_cases
 
 from zero_saver import item
@@ -119,3 +120,10 @@ def test_parse_bool_returns_correct_bool(value):
 def test_parse_int_well_formed_returns_int(value):
   return_value = item.parse_int(value)
   assert isinstance(return_value, int)
+
+
+@pytest_cases.parametrize_with_cases(
+    'value', has_tag=['Malformed'], cases=_CASES, prefix='castable_to_int_')
+def test_parse_int_malformed_raises_exception(value):
+  with pytest.raises(Exception):
+    item.parse_int(value)
