@@ -57,6 +57,17 @@ def parse_int(int_like: CastableToInt) -> int:
 
 
 def _convert_to_int(int_like: CastableToInt, error_message: str = '') -> int:
+  """
+
+  Args:
+    int_like:
+    error_message:
+
+  Returns:
+
+  Raises:
+    ValueError: If *int_like* is cannot be cast into an int.
+  """
   try:
     return parse_int(int_like)
   except (ValueError, OverflowError, TypeError) as e:

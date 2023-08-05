@@ -15,6 +15,7 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
 # pylint: disable=redefined-outer-name
+# pylint: disable=protected-access
 import pytest
 import pytest_cases
 
@@ -176,6 +177,16 @@ class TestParseFunctions:
       returned_value = item.parse_int(MockInt(1))
       assert isinstance(returned_value,
                         MockInt) and not type(returned_value) == int
+
+  @pytest_cases.parametrize_with_cases(
+      'value',
+      has_tag=['Malformed'],
+      cases=_CASES,
+      prefix='castable_to_int_',
+  )
+  def test_convert_to_int_malformed_only_raises_value_error(self, value):
+    with pytest.raises(ValueError):
+      item._convert_to_int(value)
 
 
 class WeaponTestComponents(item.Weapon):
