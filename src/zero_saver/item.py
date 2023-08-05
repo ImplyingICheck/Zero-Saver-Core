@@ -56,6 +56,13 @@ def parse_int(int_like: CastableToInt) -> int:
     return int_like
 
 
+def _convert_to_int(int_like: CastableToInt, error_message: str = '') -> int:
+  try:
+    return parse_int(int_like)
+  except (ValueError, OverflowError, TypeError) as e:
+    raise ValueError(f'{error_message}{int_like}') from e
+
+
 @dataclasses.dataclass(kw_only=True)
 class Item:
   """A dataclass representing the properties inherited by all items in "ZERO
@@ -67,10 +74,7 @@ class Item:
   rotation: NumberLike | bool
 
   def __post_init__(self):
-    try:
-      self.quantity = parse_int(self.quantity)
-    except (ValueError, OverflowError, TypeError) as e:
-      raise ValueError(f'Invalid quantity: {self.quantity}') from e
+    self.quantity = _convert_to_int(self.quantity, 'Invalid quantity: ')
     self.rotation = parse_bool(self.rotation)
 
 
