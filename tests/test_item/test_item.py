@@ -32,6 +32,22 @@ class ItemTestComponents(item.Item):
     super().__init__(*args, **kwargs)
 
 
+class WeaponTestComponents(item.Weapon):
+
+  def __init__(self, *args, **kwargs):
+    self.original_args = args
+    self.original_kwargs = kwargs
+    super().__init__(*args, **kwargs)
+
+
+class GeneratedItemTestComponents(item.GeneratedItem):
+
+  def __init__(self, *args, **kwargs):
+    self.original_args = args
+    self.original_kwargs = kwargs
+    super().__init__(*args, **kwargs)
+
+
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
     'item', has_tag=['Well-Formed'], cases=_CASES, prefix='item_')
@@ -85,14 +101,6 @@ class TestItem:
     error_message = f'Invalid quantity: {malformed_value}'
     with pytest.raises(ValueError, match=error_message):
       item.Item(**item_dict)
-
-
-class GeneratedItemTestComponents(item.GeneratedItem):
-
-  def __init__(self, *args, **kwargs):
-    self.original_args = args
-    self.original_kwargs = kwargs
-    super().__init__(*args, **kwargs)
 
 
 @pytest_cases.fixture
@@ -212,14 +220,6 @@ class TestParseFunctions:
     error_message = 'This is a custom error message'
     with pytest.raises(ValueError, match=error_message):
       item._convert_to_int(value, error_message=error_message)
-
-
-class WeaponTestComponents(item.Weapon):
-
-  def __init__(self, *args, **kwargs):
-    self.original_args = args
-    self.original_kwargs = kwargs
-    super().__init__(*args, **kwargs)
 
 
 @pytest_cases.fixture
