@@ -12,3 +12,19 @@
 #  A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #  You should have received a copy of the GNU General Public License along with
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-class-docstring
+import pytest_cases
+
+
+class ItemCase:
+
+  @pytest_cases.case(tags=['Item', 'Well-Formed'])
+  def item_backpack9(self):
+    return {
+        'item': 'backpack9',
+        'x': 248.0,
+        'rotation': 0.0,
+        'y': 119.0,
+        'quantity': 1.0
+    }

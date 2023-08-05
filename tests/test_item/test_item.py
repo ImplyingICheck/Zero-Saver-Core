@@ -12,3 +12,25 @@
 #  A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #  You should have received a copy of the GNU General Public License along with
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=redefined-outer-name
+import pytest_cases
+
+from zero_saver import item
+
+_CASES = 'case_item.case_item'
+
+
+class ItemTestComponents(item.Item):
+
+  def __init__(self, *args, **kwargs):
+    self.original_args = args
+    self.original_kwargs = kwargs
+    super().__init__(*args, **kwargs)
+
+
+@pytest_cases.parametrize_with_cases(
+    'item', has_tag=['Well-Formed'], cases=_CASES, prefix='item_')
+def test_item_init_well_formed(item):
+  assert ItemTestComponents(**item)

@@ -14,8 +14,20 @@
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 """Dataclasses representing various items. Define supported operations and
 fields."""
+import dataclasses
 from typing import SupportsFloat, TypeAlias
 
 # Most mainstream python types implement __float__. While hacky, this is a good
 # placeholder until a protocol can be defined for the methods used in Item.
 NumberLike: TypeAlias = SupportsFloat
+
+
+@dataclasses.dataclass
+class Item:
+  """A dataclass representing the properties inherited by all items in "ZERO
+  Sievert"."""
+  item: str
+  x: NumberLike
+  y: NumberLike
+  quantity: int
+  rotation: bool
