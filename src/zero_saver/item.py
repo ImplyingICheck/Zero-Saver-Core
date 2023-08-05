@@ -46,7 +46,9 @@ def parse_int(int_like: CastableToInt):
   Returns:
 
   Raises:
-    ValueError: If *int_like* cannot be successfully converted to an int.
+    ValueError: If *int_like* is not a valid representation of an int.
+    OverflowError: If *int_like* is too large to represent as an int.
+    TypeError: If *int_like* is not of type CastableToInt.
   """
   if not isinstance(int_like, int):
     return int(int_like)
