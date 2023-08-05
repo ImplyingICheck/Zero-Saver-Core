@@ -93,3 +93,9 @@ class TestGeneratedItem:
     expected_type = bool
     actual_value = generated_item_fixture.seen
     assert isinstance(actual_value, expected_type)
+
+  def test_generated_item_converts_created_from_player_to_bool(
+      self, generated_item_fixture):
+    expected_type = bool
+    actual_value = generated_item_fixture.created_from_player
+    assert isinstance(actual_value, expected_type)

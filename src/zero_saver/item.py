@@ -72,3 +72,4 @@ class GeneratedItem(Item):
 
   def __post_init__(self):
     self.seen = parse_bool(self.seen)
+    self.created_from_player = parse_bool(self.created_from_player)
