@@ -41,16 +41,17 @@ class Item:
   rotation: NumberLike | bool
 
   def __post_init__(self):
-    self.validate_quantity()
+    self.parse_quantity()
     assert isinstance(self.quantity, int)
-    self.validate_rotation()
+    self.parse_rotation()
+    assert isinstance(self.rotation, bool)
 
-  def validate_quantity(self) -> None:
+  def parse_quantity(self) -> None:
     quantity = self.quantity
     if not isinstance(quantity, int):
       self.quantity = int(quantity)
 
-  def validate_rotation(self) -> None:
+  def parse_rotation(self) -> None:
     rotation = self.rotation
     if not isinstance(rotation, bool):
       self.rotation = bool(rotation)
