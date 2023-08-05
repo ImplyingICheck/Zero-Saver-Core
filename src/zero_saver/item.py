@@ -65,14 +65,8 @@ class Item:
   rotation: NumberLike | bool
 
   def __post_init__(self):
-    self.parse_quantity()
-    assert isinstance(self.quantity, int)
+    self.quantity = parse_int(self.quantity)
     self.rotation = parse_bool(self.rotation)
-
-  def parse_quantity(self) -> None:
-    quantity = self.quantity
-    if not isinstance(quantity, int):
-      self.quantity = int(quantity)
 
 
 @dataclasses.dataclass(kw_only=True)
