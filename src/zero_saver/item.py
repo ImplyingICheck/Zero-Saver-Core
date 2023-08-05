@@ -14,8 +14,16 @@
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 """Dataclasses representing various items. Define supported operations and
 fields."""
+from __future__ import annotations
+
 import dataclasses
-from typing import SupportsFloat, TypeAlias
+from typing import SupportsFloat, SupportsIndex, SupportsInt, TypeAlias, TYPE_CHECKING
+
+if TYPE_CHECKING:
+  from _typeshed import ReadableBuffer, SupportsTrunc
+
+  CastableToInt = (
+      str | ReadableBuffer | SupportsInt | SupportsIndex | SupportsTrunc)
 
 # Most mainstream python types implement __float__. While hacky, this is a good
 # placeholder until a protocol can be defined for the methods used in Item.
@@ -29,5 +37,14 @@ class Item:
   item: str
   x: NumberLike
   y: NumberLike
-  quantity: int
+  quantity: CastableToInt
   rotation: bool
+
+  def __post_init__(self):
+    self.validate_quantity()
+    assert isinstance(self.quantity, int)
+
+  def validate_quantity(self) -> None:
+    quantity = self.quantity
+    if not isinstance(quantity, int):
+      self.quantity = int(quantity)

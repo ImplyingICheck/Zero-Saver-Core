@@ -45,3 +45,9 @@ def test_item_init_well_formed(item_fixture):
                           ['item', 'x', 'y', 'quantity', 'rotation'])
 def test_item_public_properties(item_fixture, expected_property):
   assert hasattr(item_fixture, expected_property)
+
+
+def test_item_converts_quantity_to_int(item_fixture):
+  expected_type = int
+  actual_value = item_fixture.quantity
+  assert isinstance(actual_value, expected_type)
