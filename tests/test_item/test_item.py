@@ -30,7 +30,18 @@ class ItemTestComponents(item.Item):
     super().__init__(*args, **kwargs)
 
 
+@pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
     'item', has_tag=['Well-Formed'], cases=_CASES, prefix='item_')
-def test_item_init_well_formed(item):
-  assert ItemTestComponents(**item)
+def item_fixture(item):
+  return ItemTestComponents(**item)
+
+
+def test_item_init_well_formed(item_fixture):
+  assert item_fixture
+
+
+@pytest_cases.parametrize('expected_property',
+                          ['item', 'x', 'y', 'quantity', 'rotation'])
+def test_item_public_properties(item_fixture, expected_property):
+  assert hasattr(item_fixture, expected_property)
