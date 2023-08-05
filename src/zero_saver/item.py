@@ -37,7 +37,7 @@ def parse_bool(bool_like: Any) -> bool:
     return bool_like
 
 
-def parse_int(int_like: CastableToInt):
+def parse_int(int_like: CastableToInt) -> int:
   """
 
   Args:

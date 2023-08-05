@@ -167,6 +167,16 @@ class TestParseFunctions:
       with pytest.raises(TypeError):
         item.parse_int(value)
 
+    def test_parse_int_maintains_subclass_of_int(self):
+      # pylint: disable=[unidiomatic-typecheck]
+
+      class MockInt(int):
+        pass
+
+      returned_value = item.parse_int(MockInt(1))
+      assert isinstance(returned_value,
+                        MockInt) and not type(returned_value) == int
+
 
 class WeaponTestComponents(item.Weapon):
 
