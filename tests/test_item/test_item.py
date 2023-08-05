@@ -229,40 +229,39 @@ def weapon_fixture(weapon):
   return WeaponTestComponents(**weapon)
 
 
-def test_weapon_init_well_formed(weapon_fixture):
-  assert weapon_fixture
+class TestWeapon:
 
+  def test_weapon_init_well_formed(self, weapon_fixture):
+    assert weapon_fixture
 
-def test_weapon_converts_ammo_quantity_to_int(weapon_fixture):
-  expected_type = int
-  actual_value = weapon_fixture.ammo_quantity
-  assert isinstance(actual_value, expected_type)
+  def test_weapon_converts_ammo_quantity_to_int(self, weapon_fixture):
+    expected_type = int
+    actual_value = weapon_fixture.ammo_quantity
+    assert isinstance(actual_value, expected_type)
 
+  @pytest_cases.parametrize_with_cases(
+      'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_')
+  @pytest_cases.parametrize_with_cases(
+      'malformed_value',
+      has_tag=['Malformed'],
+      cases=_CASES,
+      prefix='castable_to_int_')
+  def test_weapon_raises_value_error_on_malformed_ammo_quantity(
+      self, weapon, malformed_value):
+    weapon['ammo_quantity'] = malformed_value
+    with pytest.raises(ValueError):
+      item.Weapon(**weapon)
 
-@pytest_cases.parametrize_with_cases(
-    'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_')
-@pytest_cases.parametrize_with_cases(
-    'malformed_value',
-    has_tag=['Malformed'],
-    cases=_CASES,
-    prefix='castable_to_int_')
-def test_weapon_raises_value_error_on_malformed_ammo_quantity(
-    weapon, malformed_value):
-  weapon['ammo_quantity'] = malformed_value
-  with pytest.raises(ValueError):
-    item.Weapon(**weapon)
-
-
-@pytest_cases.parametrize_with_cases(
-    'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_')
-@pytest_cases.parametrize_with_cases(
-    'malformed_value',
-    has_tag=['Malformed'],
-    cases=_CASES,
-    prefix='castable_to_int_')
-def test_weapon_raises_malformed_ammo_quantity_error_message_well_formed(
-    weapon, malformed_value):
-  weapon['ammo_quantity'] = malformed_value
-  expected_message = f'Invalid ammo_quantity: {malformed_value}'
-  with pytest.raises(ValueError, match=expected_message):
-    item.Weapon(**weapon)
+  @pytest_cases.parametrize_with_cases(
+      'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_')
+  @pytest_cases.parametrize_with_cases(
+      'malformed_value',
+      has_tag=['Malformed'],
+      cases=_CASES,
+      prefix='castable_to_int_')
+  def test_weapon_raises_malformed_ammo_quantity_error_message_well_formed(
+      self, weapon, malformed_value):
+    weapon['ammo_quantity'] = malformed_value
+    expected_message = f'Invalid ammo_quantity: {malformed_value}'
+    with pytest.raises(ValueError, match=expected_message):
+      item.Weapon(**weapon)
