@@ -58,6 +58,19 @@ class TestItem:
     actual_value = item_fixture.rotation
     assert isinstance(actual_value, expected_type)
 
+  @pytest_cases.parametrize_with_cases(
+      'item_dict', has_tag=['Well-Formed'], cases=_CASES, prefix='item_')
+  @pytest_cases.parametrize_with_cases(
+      'malformed_value',
+      has_tag=['Malformed'],
+      cases=_CASES,
+      prefix='castable_to_int_')
+  def test_item_raises_value_error_on_malformed_quantity(
+      self, item_dict, malformed_value):
+    item_dict['quantity'] = malformed_value
+    with pytest.raises(ValueError):
+      item.Item(**item_dict)
+
 
 class GeneratedItemTestComponents(item.GeneratedItem):
 

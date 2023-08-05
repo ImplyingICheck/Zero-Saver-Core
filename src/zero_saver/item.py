@@ -67,7 +67,10 @@ class Item:
   rotation: NumberLike | bool
 
   def __post_init__(self):
-    self.quantity = parse_int(self.quantity)
+    try:
+      self.quantity = parse_int(self.quantity)
+    except (ValueError, OverflowError, TypeError) as e:
+      raise ValueError(f'Invalid quantity: {self.quantity}') from e
     self.rotation = parse_bool(self.rotation)
 
 
