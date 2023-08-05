@@ -17,7 +17,7 @@ fields."""
 from __future__ import annotations
 
 import dataclasses
-from typing import Any, SupportsFloat, SupportsIndex, SupportsInt, TypeAlias, TYPE_CHECKING
+from typing import Any, Literal, SupportsFloat, SupportsIndex, SupportsInt, TypeAlias, TYPE_CHECKING
 
 if TYPE_CHECKING:
   from _typeshed import ReadableBuffer, SupportsTrunc
@@ -83,3 +83,15 @@ class GeneratedItem(Item):
   def __post_init__(self):
     self.seen = parse_bool(self.seen)
     self.created_from_player = parse_bool(self.created_from_player)
+
+
+class Attachment:
+  pass
+
+
+@dataclasses.dataclass(kw_only=True)
+class Weapon(GeneratedItem):
+  ammo_id: str
+  ammo_quantity: CastableToInt
+  weapon_fire_mode: Literal['automatic', 'semi_automatic', 'bolt_action']
+  mods: Attachment | None

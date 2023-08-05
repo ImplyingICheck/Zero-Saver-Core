@@ -95,3 +95,52 @@ class GeneratedItemCase:
         'item': 'bread',
         'quantity': 1.0
     }
+
+
+class WeaponCase:
+
+  @pytest_cases.case(tags=['Weapon', 'Well-Formed', 'NoItemMods'])
+  def weapon_akm_empty_mods(self):
+    return {
+        'x': 208.385650634765625,
+        'rotation': 0.0,
+        'seen': 1.0,
+        'created_from_player': 0.0,
+        'quantity': 1.0,
+        'y': 30.54736328125,
+        'durability': 91.507999999997849727151333354414,
+        'ammo_id': 'ammo_762x39_hp',
+        'ammo_quantity': 0.0,
+        'item': 'akm',
+        'weapon_fire_mode': 'automatic',
+        'mods': {
+            'magazine': 'no_item',
+            'stock': 'no_item',
+            'handguard': 'no_item',
+            'brake': 'no_item',
+            'att_2': 'no_item',
+            'scope': 'no_item',
+            'att_4': 'no_item',
+            'grip': 'no_item',
+            'barrel': 'no_item',
+            'att_1': 'no_item',
+            'att_3': 'no_item'
+        }
+    }
+
+  @pytest_cases.case(tags=['Weapon', 'Well-Formed', 'NoneMods'])
+  def weapon_akm_none_mods(self):
+    return {
+        'x': 208.385650634765625,
+        'rotation': 0.0,
+        'seen': 1.0,
+        'created_from_player': 0.0,
+        'quantity': 1.0,
+        'y': 30.54736328125,
+        'durability': 91.507999999997849727151333354414,
+        'ammo_id': 'ammo_762x39_hp',
+        'ammo_quantity': 0.0,
+        'item': 'akm',
+        'weapon_fire_mode': 'automatic',
+        'mods': None
+    }

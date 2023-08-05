@@ -166,3 +166,22 @@ class TestParseFunctions:
     def test_parse_int_incompatible_value_raises_value_error(self, value):
       with pytest.raises(TypeError):
         item.parse_int(value)
+
+
+class WeaponTestComponents(item.Weapon):
+
+  def __init__(self, *args, **kwargs):
+    self.original_args = args
+    self.original_kwargs = kwargs
+    super().__init__(*args, **kwargs)
+
+
+@pytest_cases.fixture
+@pytest_cases.parametrize_with_cases(
+    'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_')
+def weapon_fixture(weapon):
+  return WeaponTestComponents(**weapon)
+
+
+def test_weapon_init_well_formed(weapon_fixture):
+  assert weapon_fixture
