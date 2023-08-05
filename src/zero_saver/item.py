@@ -12,3 +12,10 @@
 #  A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #  You should have received a copy of the GNU General Public License along with
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
+"""Dataclasses representing various items. Define supported operations and
+fields."""
+from typing import SupportsFloat, TypeAlias
+
+# Most mainstream python types implement __float__. While hacky, this is a good
+# placeholder until a protocol can be defined for the methods used in Item.
+NumberLike: TypeAlias = SupportsFloat
