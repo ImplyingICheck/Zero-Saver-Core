@@ -263,5 +263,6 @@ def test_weapon_raises_value_error_on_malformed_ammo_quantity(
 def test_weapon_raises_malformed_ammo_quantity_error_message_well_formed(
     weapon, malformed_value):
   weapon['ammo_quantity'] = malformed_value
-  with pytest.raises(ValueError, match='Invalid ammo_quantity: '):
+  expected_message = f'Invalid ammo_quantity: {malformed_value}'
+  with pytest.raises(ValueError, match=expected_message):
     item.Weapon(**weapon)
