@@ -19,14 +19,15 @@ import pytest_cases
 
 @pytest_cases.parametrize(
     'value', [
-        None, '', 'foo', {}, {
+        0, 1, None, '', 'foo', {}, {
             'foo': 'bar'
         }, [], ['bar'], (), ('foo', 'bar'),
         object()
     ],
     ids=[
-        'None', 'empty_string', '', 'empty_dict', '', 'empty_list', '',
-        'empty_tuple', '', 'object()'
+        '0', '1', 'None', 'empty_string', 'non_empty_string', 'empty_dict',
+        'non_empty_dict', 'empty_list', 'non_empty_list', 'empty_tuple',
+        'non_empty_tuple', 'object()'
     ])
 def any_value_potential_value(value):
   return value

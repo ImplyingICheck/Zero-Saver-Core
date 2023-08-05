@@ -105,3 +105,10 @@ class TestGeneratedItem:
 def test_parse_bool_returns_bool(value):
   return_value = item.parse_bool(value)
   assert isinstance(return_value, bool)
+
+
+@pytest_cases.parametrize_with_cases('value', cases=_CASES, prefix='any_value_')
+def test_parse_bool_returns_correct_bool(value):
+  expected_value = bool(value)
+  return_value = item.parse_bool(value)
+  assert return_value == expected_value
