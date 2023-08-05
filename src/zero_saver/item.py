@@ -37,6 +37,23 @@ def parse_bool(bool_like: Any) -> bool:
     return bool_like
 
 
+def parse_int(int_like: CastableToInt):
+  """
+
+  Args:
+    int_like:
+
+  Returns:
+
+  Raises:
+    ValueError: If *int_like* cannot be successfully converted to an int.
+  """
+  if not isinstance(int_like, int):
+    return int(int_like)
+  else:
+    return int_like
+
+
 @dataclasses.dataclass(kw_only=True)
 class Item:
   """A dataclass representing the properties inherited by all items in "ZERO

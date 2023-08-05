@@ -14,6 +14,8 @@
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
+import decimal
+
 import pytest_cases
 
 
@@ -30,6 +32,16 @@ import pytest_cases
         'non_empty_tuple', 'object()'
     ])
 def any_value_potential_value(value):
+  return value
+
+
+@pytest_cases.case(tags=['CastableToInt', 'Well-Formed'])
+@pytest_cases.parametrize('value', [
+    '0', '1', 1, 0,
+    decimal.Decimal(1),
+    decimal.Decimal(1.0), 0.0, 1.0, b'0', b'1'
+])
+def castable_to_int_well_formed(value):
   return value
 
 

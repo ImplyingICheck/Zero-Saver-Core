@@ -112,3 +112,10 @@ def test_parse_bool_returns_correct_bool(value):
   expected_value = bool(value)
   return_value = item.parse_bool(value)
   assert return_value == expected_value
+
+
+@pytest_cases.parametrize_with_cases(
+    'value', has_tag=['Well-Formed'], cases=_CASES, prefix='castable_to_int_')
+def test_parse_int_well_formed_returns_int(value):
+  return_value = item.parse_int(value)
+  assert isinstance(return_value, int)
