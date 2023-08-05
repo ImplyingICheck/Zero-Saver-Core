@@ -101,4 +101,5 @@ class Weapon(GeneratedItem):
   mods: Attachment | None
 
   def __post_init__(self):
-    self.ammo_quantity = parse_int(self.ammo_quantity)
+    self.ammo_quantity = _convert_to_int(self.ammo_quantity,
+                                         'Invalid ammo_quantity: ')

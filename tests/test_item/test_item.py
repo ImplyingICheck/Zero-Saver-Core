@@ -201,3 +201,17 @@ def test_weapon_converts_ammo_quantity_to_int(weapon_fixture):
   expected_type = int
   actual_value = weapon_fixture.ammo_quantity
   assert isinstance(actual_value, expected_type)
+
+
+@pytest_cases.parametrize_with_cases(
+    'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_')
+@pytest_cases.parametrize_with_cases(
+    'malformed_value',
+    has_tag=['Malformed'],
+    cases=_CASES,
+    prefix='castable_to_int_')
+def test_weapon_raises_value_error_on_malformed_ammo_quantity(
+    weapon, malformed_value):
+  weapon['ammo_quantity'] = malformed_value
+  with pytest.raises(ValueError):
+    item.Weapon(**weapon)
