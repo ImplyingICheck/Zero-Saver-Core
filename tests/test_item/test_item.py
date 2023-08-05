@@ -80,3 +80,11 @@ class TestGeneratedItem:
 
   def test_generated_item_init_well_formed(self, generated_item_fixture):
     assert generated_item_fixture
+
+  @pytest_cases.parametrize('expected_property', [
+      'item', 'x', 'y', 'quantity', 'rotation', 'seen', 'durability',
+      'created_from_player'
+  ])
+  def test_generated_item_public_properties(self, generated_item_fixture,
+                                            expected_property):
+    assert hasattr(generated_item_fixture, expected_property)
