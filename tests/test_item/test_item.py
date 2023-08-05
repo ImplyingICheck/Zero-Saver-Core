@@ -137,3 +137,13 @@ def test_parse_int_malformed_raises_exception(value):
 def test_parse_int_large_numbers_raise_overflowerror(value):
   with pytest.raises(OverflowError):
     item.parse_int(value)
+
+
+@pytest_cases.parametrize_with_cases(
+    'value',
+    has_tag=['Malformed', 'ValueError'],
+    cases=_CASES,
+    prefix='castable_to_int_')
+def test_parse_int_incompatible_value_raises_value_error(value):
+  with pytest.raises(ValueError):
+    item.parse_int(value)

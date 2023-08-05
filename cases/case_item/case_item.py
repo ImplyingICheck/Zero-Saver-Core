@@ -50,7 +50,8 @@ class CastableToIntCase:
 
   @pytest_cases.case(tags=['CastableToInt', 'Malformed', 'ValueError'])
   @pytest_cases.parametrize(
-      'value', ['', 'Hello world!'], ids=['empty_string', 'Hello world!'])
+      'value', ['', 'Hello world!', b'', b'Hello world!'],
+      ids=['empty_string', 'Hello world!', 'empty_bytes', 'Hello world!_bytes'])
   def castable_to_int_malformed_valueerror(self, value):
     return value
 
