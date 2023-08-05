@@ -37,23 +37,46 @@ def item_fixture(item):
   return ItemTestComponents(**item)
 
 
-def test_item_init_well_formed(item_fixture):
-  assert item_fixture
+class TestItem:
+
+  def test_item_init_well_formed(self, item_fixture):
+    assert item_fixture
+
+  @pytest_cases.parametrize('expected_property',
+                            ['item', 'x', 'y', 'quantity', 'rotation'])
+  def test_item_public_properties(self, item_fixture, expected_property):
+    assert hasattr(item_fixture, expected_property)
+
+  def test_item_converts_quantity_to_int(self, item_fixture):
+    expected_type = int
+    actual_value = item_fixture.quantity
+    assert isinstance(actual_value, expected_type)
+
+  def test_item_converts_rotation_to_bool(self, item_fixture):
+    expected_type = bool
+    actual_value = item_fixture.rotation
+    assert isinstance(actual_value, expected_type)
 
 
-@pytest_cases.parametrize('expected_property',
-                          ['item', 'x', 'y', 'quantity', 'rotation'])
-def test_item_public_properties(item_fixture, expected_property):
-  assert hasattr(item_fixture, expected_property)
+class GeneratedItemTestComponents(item.GeneratedItem):
+
+  def __init__(self, *args, **kwargs):
+    self.original_args = args
+    self.original_kwargs = kwargs
+    super().__init__(*args, **kwargs)
 
 
-def test_item_converts_quantity_to_int(item_fixture):
-  expected_type = int
-  actual_value = item_fixture.quantity
-  assert isinstance(actual_value, expected_type)
+@pytest_cases.fixture
+@pytest_cases.parametrize_with_cases(
+    'generated_item',
+    has_tag=['Well-Formed'],
+    cases=_CASES,
+    prefix='generated_item_')
+def generated_item_fixture(generated_item):
+  return GeneratedItemTestComponents(**generated_item)
 
 
-def test_item_converts_rotation_to_bool(item_fixture):
-  expected_type = bool
-  actual_value = item_fixture.rotation
-  assert isinstance(actual_value, expected_type)
+class TestGeneratedItem:
+
+  def test_generated_item_init_well_formed(self, generated_item_fixture):
+    assert generated_item_fixture

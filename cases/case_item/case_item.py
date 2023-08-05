@@ -28,3 +28,19 @@ class ItemCase:
         'y': 119.0,
         'quantity': 1.0
     }
+
+
+class GeneratedItemCase:
+
+  @pytest_cases.case(tags=['GeneratedItem', 'Well-Formed'])
+  def generated_item_bread(self):
+    return {
+        'x': 57.0,
+        'rotation': 0.0,
+        'y': 79.0,
+        'durability': 100.0,
+        'seen': 1.0,
+        'created_from_player': 1.0,
+        'item': 'bread',
+        'quantity': 1.0
+    }

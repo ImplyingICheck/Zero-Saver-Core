@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 NumberLike: TypeAlias = SupportsFloat
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(kw_only=True)
 class Item:
   """A dataclass representing the properties inherited by all items in "ZERO
   Sievert"."""
@@ -55,3 +55,10 @@ class Item:
     rotation = self.rotation
     if not isinstance(rotation, bool):
       self.rotation = bool(rotation)
+
+
+@dataclasses.dataclass(kw_only=True)
+class GeneratedItem(Item):
+  seen: NumberLike | bool
+  durability: NumberLike
+  created_from_player: NumberLike | bool
