@@ -16,6 +16,7 @@
 # pylint: disable=missing-class-docstring
 # pylint: disable=redefined-outer-name
 # pylint: disable=protected-access
+import pydantic
 import pytest
 import pytest_cases
 
@@ -282,3 +283,7 @@ class TestAttachment:
 
   def test_attachment_init_well_formed(self, attachments_fixture):
     assert attachments_fixture
+
+  def test_attachments_is_instance_pydantic_base_model(self,
+                                                       attachments_fixture):
+    assert isinstance(attachments_fixture, pydantic.BaseModel)
