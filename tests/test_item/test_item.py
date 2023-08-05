@@ -51,3 +51,9 @@ def test_item_converts_quantity_to_int(item_fixture):
   expected_type = int
   actual_value = item_fixture.quantity
   assert isinstance(actual_value, expected_type)
+
+
+def test_item_converts_rotation_to_bool(item_fixture):
+  expected_type = bool
+  actual_value = item_fixture.rotation
+  assert isinstance(actual_value, expected_type)

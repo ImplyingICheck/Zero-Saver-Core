@@ -38,13 +38,19 @@ class Item:
   x: NumberLike
   y: NumberLike
   quantity: CastableToInt
-  rotation: bool
+  rotation: NumberLike | bool
 
   def __post_init__(self):
     self.validate_quantity()
     assert isinstance(self.quantity, int)
+    self.validate_rotation()
 
   def validate_quantity(self) -> None:
     quantity = self.quantity
     if not isinstance(quantity, int):
       self.quantity = int(quantity)
+
+  def validate_rotation(self) -> None:
+    rotation = self.rotation
+    if not isinstance(rotation, bool):
+      self.rotation = bool(rotation)
