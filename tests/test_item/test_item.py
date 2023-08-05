@@ -188,6 +188,17 @@ class TestParseFunctions:
     with pytest.raises(ValueError):
       item._convert_to_int(value)
 
+  @pytest_cases.parametrize_with_cases(
+      'value',
+      has_tag=['Malformed'],
+      cases=_CASES,
+      prefix='castable_to_int_',
+  )
+  def test_convert_to_int_malformed_shows_custom_error_message(self, value):
+    error_message = 'This is a custom error message'
+    with pytest.raises(ValueError, match=error_message):
+      item._convert_to_int(value, error_message=error_message)
+
 
 class WeaponTestComponents(item.Weapon):
 
