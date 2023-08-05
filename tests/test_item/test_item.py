@@ -48,6 +48,10 @@ class GeneratedItemTestComponents(item.GeneratedItem):
     super().__init__(*args, **kwargs)
 
 
+class AttachmentsTestComponents(item.Attachments):
+  original_kwargs: dict[str, str]
+
+
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
     'item', has_tag=['Well-Formed'], cases=_CASES, prefix='item_')
@@ -265,3 +269,16 @@ class TestWeapon:
     expected_message = f'Invalid ammo_quantity: {malformed_value}'
     with pytest.raises(ValueError, match=expected_message):
       item.Weapon(**weapon)
+
+
+@pytest_cases.fixture
+@pytest_cases.parametrize_with_cases(
+    'attachments', has_tag=['Well-Formed'], cases=_CASES, prefix='attachments_')
+def attachments_fixture(attachments):
+  return AttachmentsTestComponents(original_kwargs=attachments, **attachments)
+
+
+class TestAttachment:
+
+  def test_attachment_init_well_formed(self, attachments_fixture):
+    assert attachments_fixture

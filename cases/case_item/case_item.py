@@ -144,3 +144,22 @@ class WeaponCase:
         'weapon_fire_mode': 'automatic',
         'mods': None
     }
+
+
+class AttachmentsCase:
+
+  @pytest_cases.case(tags=['Attachments', 'Well-Formed', 'NoItem'])
+  def attachments_all_no_item(self):
+    return {
+        'magazine': 'no_item',
+        'stock': 'no_item',
+        'handguard': 'no_item',
+        'brake': 'no_item',
+        'att_2': 'no_item',
+        'scope': 'no_item',
+        'att_4': 'no_item',
+        'grip': 'no_item',
+        'barrel': 'no_item',
+        'att_1': 'no_item',
+        'att_3': 'no_item'
+    }

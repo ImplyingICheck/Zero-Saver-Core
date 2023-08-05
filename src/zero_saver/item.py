@@ -19,6 +19,8 @@ from __future__ import annotations
 import dataclasses
 from typing import Any, Literal, SupportsFloat, SupportsIndex, SupportsInt, TypeAlias, TYPE_CHECKING
 
+import pydantic
+
 if TYPE_CHECKING:
   from _typeshed import ReadableBuffer, SupportsTrunc
 
@@ -100,8 +102,20 @@ class GeneratedItem(Item):
     self.created_from_player = parse_bool(self.created_from_player)
 
 
-class Attachment:
-  pass
+class Attachments(pydantic.BaseModel):
+  """BaseModel representing the "mods" section of a "ZERO Sievert" weapon,
+  typically a firearm."""
+  magazine: str
+  stock: str
+  handguard: str
+  brake: str
+  scope: str
+  grip: str
+  barrel: str
+  att_1: str
+  att_2: str
+  att_3: str
+  att_4: str
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -109,7 +123,7 @@ class Weapon(GeneratedItem):
   ammo_id: str
   ammo_quantity: CastableToInt
   weapon_fire_mode: Literal['automatic', 'semi_automatic', 'bolt_action']
-  mods: Attachment | None
+  mods: Attachments | None
 
   def __post_init__(self):
     self.ammo_quantity = _convert_to_int(self.ammo_quantity,
