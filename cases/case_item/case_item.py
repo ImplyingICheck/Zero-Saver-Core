@@ -17,6 +17,21 @@
 import pytest_cases
 
 
+@pytest_cases.parametrize(
+    'value', [
+        None, '', 'foo', {}, {
+            'foo': 'bar'
+        }, [], ['bar'], (), ('foo', 'bar'),
+        object()
+    ],
+    ids=[
+        'None', 'empty_string', '', 'empty_dict', '', 'empty_list', '',
+        'empty_tuple', '', 'object()'
+    ])
+def any_value_potential_value(value):
+  return value
+
+
 class ItemCase:
 
   @pytest_cases.case(tags=['Item', 'Well-Formed'])

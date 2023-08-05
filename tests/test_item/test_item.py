@@ -99,3 +99,9 @@ class TestGeneratedItem:
     expected_type = bool
     actual_value = generated_item_fixture.created_from_player
     assert isinstance(actual_value, expected_type)
+
+
+@pytest_cases.parametrize_with_cases('value', cases=_CASES, prefix='any_value_')
+def test_parse_bool_returns_bool(value):
+  return_value = item.parse_bool(value)
+  assert isinstance(return_value, bool)
