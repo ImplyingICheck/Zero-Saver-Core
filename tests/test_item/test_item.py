@@ -88,3 +88,8 @@ class TestGeneratedItem:
   def test_generated_item_public_properties(self, generated_item_fixture,
                                             expected_property):
     assert hasattr(generated_item_fixture, expected_property)
+
+  def test_generated_item_converts_seen_to_bool(self, generated_item_fixture):
+    expected_type = bool
+    actual_value = generated_item_fixture.seen
+    assert isinstance(actual_value, expected_type)

@@ -17,7 +17,7 @@ fields."""
 from __future__ import annotations
 
 import dataclasses
-from typing import SupportsFloat, SupportsIndex, SupportsInt, TypeAlias, TYPE_CHECKING
+from typing import Any, SupportsFloat, SupportsIndex, SupportsInt, TypeAlias, TYPE_CHECKING
 
 if TYPE_CHECKING:
   from _typeshed import ReadableBuffer, SupportsTrunc
@@ -28,6 +28,13 @@ if TYPE_CHECKING:
 # Most mainstream python types implement __float__. While hacky, this is a good
 # placeholder until a protocol can be defined for the methods used in Item.
 NumberLike: TypeAlias = SupportsFloat
+
+
+def parse_bool(bool_like: Any) -> bool:
+  if not isinstance(bool_like, bool):
+    return bool(bool_like)
+  else:
+    return bool_like
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -62,3 +69,6 @@ class GeneratedItem(Item):
   seen: NumberLike | bool
   durability: NumberLike
   created_from_player: NumberLike | bool
+
+  def __post_init__(self):
+    self.seen = parse_bool(self.seen)
