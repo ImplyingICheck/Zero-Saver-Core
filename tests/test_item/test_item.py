@@ -195,3 +195,9 @@ def weapon_fixture(weapon):
 
 def test_weapon_init_well_formed(weapon_fixture):
   assert weapon_fixture
+
+
+def test_weapon_converts_ammo_quantity_to_int(weapon_fixture):
+  expected_type = int
+  actual_value = weapon_fixture.ammo_quantity
+  assert isinstance(actual_value, expected_type)

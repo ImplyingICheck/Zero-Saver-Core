@@ -95,3 +95,6 @@ class Weapon(GeneratedItem):
   ammo_quantity: CastableToInt
   weapon_fire_mode: Literal['automatic', 'semi_automatic', 'bolt_action']
   mods: Attachment | None
+
+  def __post_init__(self):
+    self.ammo_quantity = parse_int(self.ammo_quantity)
