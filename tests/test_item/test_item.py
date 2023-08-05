@@ -141,9 +141,9 @@ def test_parse_int_large_numbers_raise_overflowerror(value):
 
 @pytest_cases.parametrize_with_cases(
     'value',
-    has_tag=['Malformed', 'ValueError'],
+    has_tag=['Malformed', 'TypeError'],
     cases=_CASES,
     prefix='castable_to_int_')
 def test_parse_int_incompatible_value_raises_value_error(value):
-  with pytest.raises(ValueError):
+  with pytest.raises(TypeError):
     item.parse_int(value)

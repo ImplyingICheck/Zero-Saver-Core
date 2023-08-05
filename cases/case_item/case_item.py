@@ -62,6 +62,11 @@ class CastableToIntCase:
   def castable_to_int_malformed_overflowerror(self, value):
     return value
 
+  @pytest_cases.case(tags=['CastableToInt', 'Malformed', 'TypeError'])
+  @pytest_cases.parametrize('value', [object()], ids=['object()'])
+  def castable_to_int_malformed_typeerror(self, value):
+    return value
+
 
 class ItemCase:
 
