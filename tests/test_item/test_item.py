@@ -102,48 +102,54 @@ class TestGeneratedItem:
     assert isinstance(actual_value, expected_type)
 
 
-@pytest_cases.parametrize_with_cases('value', cases=_CASES, prefix='any_value_')
-def test_parse_bool_returns_bool(value):
-  return_value = item.parse_bool(value)
-  assert isinstance(return_value, bool)
+class TestParseFunctions:
 
+  class TestParseBool:
 
-@pytest_cases.parametrize_with_cases('value', cases=_CASES, prefix='any_value_')
-def test_parse_bool_returns_correct_bool(value):
-  expected_value = bool(value)
-  return_value = item.parse_bool(value)
-  assert return_value == expected_value
+    @pytest_cases.parametrize_with_cases(
+        'value', cases=_CASES, prefix='any_value_')
+    def test_parse_bool_returns_bool(self, value):
+      return_value = item.parse_bool(value)
+      assert isinstance(return_value, bool)
 
+    @pytest_cases.parametrize_with_cases(
+        'value', cases=_CASES, prefix='any_value_')
+    def test_parse_bool_returns_correct_bool(self, value):
+      expected_value = bool(value)
+      return_value = item.parse_bool(value)
+      assert return_value == expected_value
 
-@pytest_cases.parametrize_with_cases(
-    'value', has_tag=['Well-Formed'], cases=_CASES, prefix='castable_to_int_')
-def test_parse_int_well_formed_returns_int(value):
-  return_value = item.parse_int(value)
-  assert isinstance(return_value, int)
+  class TestParseInt:
 
+    @pytest_cases.parametrize_with_cases(
+        'value',
+        has_tag=['Well-Formed'],
+        cases=_CASES,
+        prefix='castable_to_int_')
+    def test_parse_int_well_formed_returns_int(self, value):
+      return_value = item.parse_int(value)
+      assert isinstance(return_value, int)
 
-@pytest_cases.parametrize_with_cases(
-    'value', has_tag=['Malformed'], cases=_CASES, prefix='castable_to_int_')
-def test_parse_int_malformed_raises_exception(value):
-  with pytest.raises(Exception):
-    item.parse_int(value)
+    @pytest_cases.parametrize_with_cases(
+        'value', has_tag=['Malformed'], cases=_CASES, prefix='castable_to_int_')
+    def test_parse_int_malformed_raises_exception(self, value):
+      with pytest.raises(Exception):
+        item.parse_int(value)
 
+    @pytest_cases.parametrize_with_cases(
+        'value',
+        has_tag=['Malformed', 'OverflowError'],
+        cases=_CASES,
+        prefix='castable_to_int_')
+    def test_parse_int_large_numbers_raise_overflowerror(self, value):
+      with pytest.raises(OverflowError):
+        item.parse_int(value)
 
-@pytest_cases.parametrize_with_cases(
-    'value',
-    has_tag=['Malformed', 'OverflowError'],
-    cases=_CASES,
-    prefix='castable_to_int_')
-def test_parse_int_large_numbers_raise_overflowerror(value):
-  with pytest.raises(OverflowError):
-    item.parse_int(value)
-
-
-@pytest_cases.parametrize_with_cases(
-    'value',
-    has_tag=['Malformed', 'TypeError'],
-    cases=_CASES,
-    prefix='castable_to_int_')
-def test_parse_int_incompatible_value_raises_value_error(value):
-  with pytest.raises(TypeError):
-    item.parse_int(value)
+    @pytest_cases.parametrize_with_cases(
+        'value',
+        has_tag=['Malformed', 'TypeError'],
+        cases=_CASES,
+        prefix='castable_to_int_')
+    def test_parse_int_incompatible_value_raises_value_error(self, value):
+      with pytest.raises(TypeError):
+        item.parse_int(value)
