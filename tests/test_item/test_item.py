@@ -72,6 +72,20 @@ class TestItem:
     with pytest.raises(ValueError):
       item.Item(**item_dict)
 
+  @pytest_cases.parametrize_with_cases(
+      'item_dict', has_tag=['Well-Formed'], cases=_CASES, prefix='item_')
+  @pytest_cases.parametrize_with_cases(
+      'malformed_value',
+      has_tag=['Malformed'],
+      cases=_CASES,
+      prefix='castable_to_int_')
+  def test_item_malformed_quantity_error_message_well_formed(
+      self, item_dict, malformed_value):
+    item_dict['quantity'] = malformed_value
+    error_message = f'Invalid quantity: {malformed_value}'
+    with pytest.raises(ValueError, match=error_message):
+      item.Item(**item_dict)
+
 
 class GeneratedItemTestComponents(item.GeneratedItem):
 
