@@ -17,7 +17,7 @@ fields."""
 from __future__ import annotations
 
 import decimal
-from typing import Any, Literal, SupportsFloat, TypeAlias, TYPE_CHECKING
+from typing import Literal, SupportsFloat, TypeAlias, TYPE_CHECKING
 
 import pydantic
 
@@ -28,18 +28,20 @@ if TYPE_CHECKING:
   # Item.
   NumberLike: TypeAlias = SupportsFloat
 else:
-  from pydantic_core import core_schema
-
-  class NumberLike:
-
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source_type: Any,
-        handler: pydantic.GetCoreSchemaHandler) -> core_schema.CoreSchema:
-      del source_type  # Unused
-      del handler  # Unused
-      return core_schema.no_info_before_validator_function(
-          decimal.Decimal, core_schema.is_instance_schema(SupportsFloat))
+  NumberLike: TypeAlias = decimal.Decimal
+  # This code would extend NumberLike to any number implementing __float__.
+  # This is a hacky way of including most popular, commonly used number types.
+  # from pydantic_core import core_schema
+  # class NumberLike:
+  #
+  #   @classmethod
+  #   def __get_pydantic_core_schema__(
+  #       cls, source_type: Any,
+  #       handler: pydantic.GetCoreSchemaHandler) -> core_schema.CoreSchema:
+  #     del source_type  # Unused
+  #     del handler  # Unused
+  #     return core_schema.no_info_before_validator_function(
+  #         decimal.Decimal, core_schema.is_instance_schema(SupportsFloat))
 
 
 class Item(pydantic.BaseModel):
