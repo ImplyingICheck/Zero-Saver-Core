@@ -207,24 +207,23 @@ class TestAttachment:
     assert isinstance(attachments_fixture, pydantic.BaseModel)
 
 
-@pytest_cases.parametrize('expected_property',
-                          _ITEM_PUBLIC_PROPERTIES + _ITEM_PRIVATE_PROPERTIES)
-def test_item_model_dump_contains_expected_properties(item_fixture,
-                                                      expected_property):
-  assert expected_property in item_fixture.model_dump().keys()
+class TestModelDump:
 
-
-@pytest_cases.parametrize('expected_property',
-                          _GENERATED_ITEM_PUBLIC_PROPERTIES +
-                          _GENERATED_ITEM_PRIVATE_PROPERTIES)
-def test_generated_item_model_dump_contains_expected_properties(
-    generated_item_fixture, expected_property):
-  assert expected_property in generated_item_fixture.model_dump().keys()
-
-
-@pytest_cases.parametrize('expected_property',
-                          _WEAPON_PUBLIC_PROPERTIES + _WEAPON_PRIVATE_PROPERTIES
-                         )
-def test_weapon_model_dump_contains_expected_properties(weapon_fixture,
+  @pytest_cases.parametrize('expected_property',
+                            _ITEM_PUBLIC_PROPERTIES + _ITEM_PRIVATE_PROPERTIES)
+  def test_item_model_dump_contains_expected_properties(self, item_fixture,
                                                         expected_property):
-  assert expected_property in weapon_fixture.model_dump().keys()
+    assert expected_property in item_fixture.model_dump().keys()
+
+  @pytest_cases.parametrize('expected_property',
+                            _GENERATED_ITEM_PUBLIC_PROPERTIES +
+                            _GENERATED_ITEM_PRIVATE_PROPERTIES)
+  def test_generated_item_model_dump_contains_expected_properties(
+      self, generated_item_fixture, expected_property):
+    assert expected_property in generated_item_fixture.model_dump().keys()
+
+  @pytest_cases.parametrize('expected_property', _WEAPON_PUBLIC_PROPERTIES +
+                            _WEAPON_PRIVATE_PROPERTIES)
+  def test_weapon_model_dump_contains_expected_properties(
+      self, weapon_fixture, expected_property):
+    assert expected_property in weapon_fixture.model_dump().keys()
