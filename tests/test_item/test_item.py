@@ -263,6 +263,13 @@ class TestModelDump:
 class TestModelDumpJson:
 
   @pytest_cases.parametrize('expected_json_key_name', _ITEM_JSON_KEY_NAMES)
-  def test_item_model_dump_contains_expected_properties(self, item_fixture,
-                                                        expected_json_key_name):
+  def test_item_model_dump_json_contains_expected_key_names(
+      self, item_fixture, expected_json_key_name):
     assert f'"{expected_json_key_name}"' in item_fixture.model_dump_json()
+
+  @pytest_cases.parametrize('expected_json_key_name',
+                            _GENERATED_ITEM_JSON_KEY_NAMES)
+  def test_generated_item_model_dump_json_contains_expected_key_names(
+      self, generated_item_fixture, expected_json_key_name):
+    assert (f'"{expected_json_key_name}"'
+            in generated_item_fixture.model_dump_json())
