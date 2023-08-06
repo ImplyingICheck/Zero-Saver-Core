@@ -278,3 +278,10 @@ class TestModelDumpJson:
   def test_weapon_model_dump_json_contains_expected_key_names(
       self, weapon_fixture, expected_json_key_name):
     assert f'"{expected_json_key_name}"' in weapon_fixture.model_dump_json()
+
+  @pytest_cases.parametrize('expected_json_key_name',
+                            _ATTACHMENTS_JSON_KEY_NAMES)
+  def test_attachments_model_dump_json_contains_expected_key_names(
+      self, attachments_fixture, expected_json_key_name):
+    assert f'"{expected_json_key_name}"' in attachments_fixture.model_dump_json(
+    )
