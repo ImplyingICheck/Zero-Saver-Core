@@ -27,18 +27,27 @@ from zero_saver import item
 _CASES = 'case_item.case_item'
 _ITEM_PUBLIC_PROPERTIES = ('item', 'x', 'y', 'quantity', 'rotation')
 _ITEM_PRIVATE_PROPERTIES = ()
+_ITEM_JSON_KEY_NAMES = ('item', 'x', 'y', 'quantity', 'rotation')
 _GENERATED_ITEM_PUBLIC_PROPERTIES = ('item', 'x', 'y', 'quantity', 'rotation',
                                      'seen', 'durability',
                                      'created_from_player')
 _GENERATED_ITEM_PRIVATE_PROPERTIES = ()
+_GENERATED_ITEM_JSON_KEY_NAMES = ('item', 'x', 'y', 'quantity', 'rotation',
+                                  'seen', 'durability', 'created_from_player')
 _WEAPON_PUBLIC_PROPERTIES = ('item', 'x', 'y', 'quantity', 'rotation', 'seen',
                              'durability', 'created_from_player', 'ammo_id',
                              'ammo_quantity', 'weapon_fire_mode', 'mods')
 _WEAPON_PRIVATE_PROPERTIES = ()
+_WEAPON_JSON_KEY_NAMES = ('item', 'x', 'y', 'quantity', 'rotation', 'seen',
+                          'durability', 'created_from_player', 'ammo_id',
+                          'ammo_quantity', 'weapon_fire_mode', 'mods')
 _ATTACHMENTS_PUBLIC_PROPERTIES = ('magazine', 'stock', 'handguard', 'brake',
                                   'scope', 'grip', 'barrel', 'att_1', 'att_2',
                                   'att_3', 'att_4')
 _ATTACHMENTS_PRIVATE_PROPERTIES = ()
+_ATTACHMENTS_JSON_KEY_NAMES = ('magazine', 'stock', 'handguard', 'brake',
+                               'scope', 'grip', 'barrel', 'att_1', 'att_2',
+                               'att_3', 'att_4')
 
 
 class TestComponents(pydantic.BaseModel):
@@ -249,3 +258,7 @@ class TestModelDump:
   def test_attachments_model_dump_contains_expected_properties(
       self, attachments_fixture, expected_property):
     assert expected_property in attachments_fixture.model_dump().keys()
+
+
+class TestModelDumpJson:
+  pass
