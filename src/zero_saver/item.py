@@ -17,19 +17,16 @@ fields."""
 from __future__ import annotations
 
 import decimal
-from typing import Any, Literal, SupportsFloat, SupportsIndex, SupportsInt, TypeAlias, TYPE_CHECKING
+from typing import Any, Literal, SupportsFloat, TypeAlias, TYPE_CHECKING
 
 import pydantic
 
 if TYPE_CHECKING:
-  from _typeshed import ReadableBuffer, SupportsTrunc
 
   # Most mainstream python types implement __float__. While hacky, this is a
   # good placeholder until a protocol can be defined for the methods used in
   # Item.
   NumberLike: TypeAlias = SupportsFloat
-  CastableToInt = (
-      str | ReadableBuffer | SupportsInt | SupportsIndex | SupportsTrunc)
 else:
   from pydantic_core import core_schema
 
@@ -45,50 +42,6 @@ else:
           decimal.Decimal, core_schema.is_instance_schema(SupportsFloat))
 
 
-def parse_bool(bool_like: Any) -> bool:
-  if not isinstance(bool_like, bool):
-    return bool(bool_like)
-  else:
-    return bool_like
-
-
-def parse_int(int_like: CastableToInt) -> int:
-  """
-
-  Args:
-    int_like:
-
-  Returns:
-
-  Raises:
-    ValueError: If *int_like* is not a valid representation of an int.
-    OverflowError: If *int_like* is too large to represent as an int.
-    TypeError: If *int_like* is not of type CastableToInt.
-  """
-  if not isinstance(int_like, int):
-    return int(int_like)
-  else:
-    return int_like
-
-
-def _convert_to_int(int_like: CastableToInt, error_message: str = '') -> int:
-  """
-
-  Args:
-    int_like:
-    error_message:
-
-  Returns:
-
-  Raises:
-    ValueError: If *int_like* is cannot be cast into an int.
-  """
-  try:
-    return parse_int(int_like)
-  except (ValueError, OverflowError, TypeError) as e:
-    raise ValueError(f'{error_message}{int_like}') from e
-
-
 class Item(pydantic.BaseModel):
   """A dataclass representing the properties inherited by all items in "ZERO
   Sievert"."""
@@ -98,19 +51,11 @@ class Item(pydantic.BaseModel):
   quantity: int
   rotation: bool
 
-  def model_post_init(self, __context: Any) -> None:
-    self.quantity = _convert_to_int(self.quantity, 'Invalid quantity: ')
-    self.rotation = parse_bool(self.rotation)
-
 
 class GeneratedItem(Item):
   seen: bool
   durability: NumberLike
   created_from_player: bool
-
-  def model_post_init(self, __context: Any) -> None:
-    self.seen = parse_bool(self.seen)
-    self.created_from_player = parse_bool(self.created_from_player)
 
 
 class Attachments(pydantic.BaseModel):
@@ -134,7 +79,3 @@ class Weapon(GeneratedItem):
   ammo_quantity: int
   weapon_fire_mode: Literal['automatic', 'semi_automatic', 'bolt_action']
   mods: Attachments | None
-
-  def model_post_init(self, __context: Any) -> None:
-    self.ammo_quantity = _convert_to_int(self.ammo_quantity,
-                                         'Invalid ammo_quantity: ')
