@@ -261,4 +261,8 @@ class TestModelDump:
 
 
 class TestModelDumpJson:
-  pass
+
+  @pytest_cases.parametrize('expected_json_key_name', _ITEM_JSON_KEY_NAMES)
+  def test_item_model_dump_contains_expected_properties(self, item_fixture,
+                                                        expected_json_key_name):
+    assert f'"{expected_json_key_name}"' in item_fixture.model_dump_json()
