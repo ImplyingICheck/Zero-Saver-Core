@@ -273,3 +273,8 @@ class TestModelDumpJson:
       self, generated_item_fixture, expected_json_key_name):
     assert (f'"{expected_json_key_name}"'
             in generated_item_fixture.model_dump_json())
+
+  @pytest_cases.parametrize('expected_json_key_name', _WEAPON_JSON_KEY_NAMES)
+  def test_weapon_model_dump_json_contains_expected_key_names(
+      self, weapon_fixture, expected_json_key_name):
+    assert f'"{expected_json_key_name}"' in weapon_fixture.model_dump_json()
