@@ -231,57 +231,59 @@ class TestAttachment:
     assert hasattr(attachments_fixture, expected_properties)
 
 
-class TestModelDump:
+class TestPydanticFunctionality:
 
-  @pytest_cases.parametrize('expected_property',
-                            _ITEM_PUBLIC_PROPERTIES + _ITEM_PRIVATE_PROPERTIES)
-  def test_item_model_dump_contains_expected_properties(self, item_fixture,
-                                                        expected_property):
-    assert expected_property in item_fixture.model_dump().keys()
+  class TestModelDump:
 
-  @pytest_cases.parametrize('expected_property',
-                            _GENERATED_ITEM_PUBLIC_PROPERTIES +
-                            _GENERATED_ITEM_PRIVATE_PROPERTIES)
-  def test_generated_item_model_dump_contains_expected_properties(
-      self, generated_item_fixture, expected_property):
-    assert expected_property in generated_item_fixture.model_dump().keys()
+    @pytest_cases.parametrize('expected_property',
+                              _ITEM_PUBLIC_PROPERTIES + _ITEM_PRIVATE_PROPERTIES
+                             )
+    def test_item_model_dump_contains_expected_properties(
+        self, item_fixture, expected_property):
+      assert expected_property in item_fixture.model_dump().keys()
 
-  @pytest_cases.parametrize('expected_property', _WEAPON_PUBLIC_PROPERTIES +
-                            _WEAPON_PRIVATE_PROPERTIES)
-  def test_weapon_model_dump_contains_expected_properties(
-      self, weapon_fixture, expected_property):
-    assert expected_property in weapon_fixture.model_dump().keys()
+    @pytest_cases.parametrize('expected_property',
+                              _GENERATED_ITEM_PUBLIC_PROPERTIES +
+                              _GENERATED_ITEM_PRIVATE_PROPERTIES)
+    def test_generated_item_model_dump_contains_expected_properties(
+        self, generated_item_fixture, expected_property):
+      assert expected_property in generated_item_fixture.model_dump().keys()
 
-  @pytest_cases.parametrize('expected_property',
-                            _ATTACHMENTS_PUBLIC_PROPERTIES +
-                            _ATTACHMENTS_PRIVATE_PROPERTIES)
-  def test_attachments_model_dump_contains_expected_properties(
-      self, attachments_fixture, expected_property):
-    assert expected_property in attachments_fixture.model_dump().keys()
+    @pytest_cases.parametrize('expected_property', _WEAPON_PUBLIC_PROPERTIES +
+                              _WEAPON_PRIVATE_PROPERTIES)
+    def test_weapon_model_dump_contains_expected_properties(
+        self, weapon_fixture, expected_property):
+      assert expected_property in weapon_fixture.model_dump().keys()
 
+    @pytest_cases.parametrize('expected_property',
+                              _ATTACHMENTS_PUBLIC_PROPERTIES +
+                              _ATTACHMENTS_PRIVATE_PROPERTIES)
+    def test_attachments_model_dump_contains_expected_properties(
+        self, attachments_fixture, expected_property):
+      assert expected_property in attachments_fixture.model_dump().keys()
 
-class TestModelDumpJson:
+  class TestModelDumpJson:
 
-  @pytest_cases.parametrize('expected_json_key_name', _ITEM_JSON_KEY_NAMES)
-  def test_item_model_dump_json_contains_expected_key_names(
-      self, item_fixture, expected_json_key_name):
-    assert f'"{expected_json_key_name}"' in item_fixture.model_dump_json()
+    @pytest_cases.parametrize('expected_json_key_name', _ITEM_JSON_KEY_NAMES)
+    def test_item_model_dump_json_contains_expected_key_names(
+        self, item_fixture, expected_json_key_name):
+      assert f'"{expected_json_key_name}"' in item_fixture.model_dump_json()
 
-  @pytest_cases.parametrize('expected_json_key_name',
-                            _GENERATED_ITEM_JSON_KEY_NAMES)
-  def test_generated_item_model_dump_json_contains_expected_key_names(
-      self, generated_item_fixture, expected_json_key_name):
-    assert (f'"{expected_json_key_name}"'
-            in generated_item_fixture.model_dump_json())
+    @pytest_cases.parametrize('expected_json_key_name',
+                              _GENERATED_ITEM_JSON_KEY_NAMES)
+    def test_generated_item_model_dump_json_contains_expected_key_names(
+        self, generated_item_fixture, expected_json_key_name):
+      assert (f'"{expected_json_key_name}"'
+              in generated_item_fixture.model_dump_json())
 
-  @pytest_cases.parametrize('expected_json_key_name', _WEAPON_JSON_KEY_NAMES)
-  def test_weapon_model_dump_json_contains_expected_key_names(
-      self, weapon_fixture, expected_json_key_name):
-    assert f'"{expected_json_key_name}"' in weapon_fixture.model_dump_json()
+    @pytest_cases.parametrize('expected_json_key_name', _WEAPON_JSON_KEY_NAMES)
+    def test_weapon_model_dump_json_contains_expected_key_names(
+        self, weapon_fixture, expected_json_key_name):
+      assert f'"{expected_json_key_name}"' in weapon_fixture.model_dump_json()
 
-  @pytest_cases.parametrize('expected_json_key_name',
-                            _ATTACHMENTS_JSON_KEY_NAMES)
-  def test_attachments_model_dump_json_contains_expected_key_names(
-      self, attachments_fixture, expected_json_key_name):
-    assert f'"{expected_json_key_name}"' in attachments_fixture.model_dump_json(
-    )
+    @pytest_cases.parametrize('expected_json_key_name',
+                              _ATTACHMENTS_JSON_KEY_NAMES)
+    def test_attachments_model_dump_json_contains_expected_key_names(
+        self, attachments_fixture, expected_json_key_name):
+      assert (f'"{expected_json_key_name}"'
+              in attachments_fixture.model_dump_json())
