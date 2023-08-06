@@ -16,6 +16,8 @@
 # pylint: disable=missing-class-docstring
 # pylint: disable=redefined-outer-name
 # pylint: disable=protected-access
+from typing import Any
+
 import pydantic
 import pytest
 import pytest_cases
@@ -25,39 +27,31 @@ from zero_saver import item
 _CASES = 'case_item.case_item'
 
 
-class ItemTestComponents(item.Item):
-
-  def __init__(self, *args, **kwargs):
-    self.original_args = args
-    self.original_kwargs = kwargs
-    super().__init__(*args, **kwargs)
+class TestComponents(pydantic.BaseModel):
+  original_kwargs: dict[str, Any]
 
 
-class WeaponTestComponents(item.Weapon):
-
-  def __init__(self, *args, **kwargs):
-    self.original_args = args
-    self.original_kwargs = kwargs
-    super().__init__(*args, **kwargs)
+class ItemTestComponents(item.Item, TestComponents):
+  pass
 
 
-class GeneratedItemTestComponents(item.GeneratedItem):
-
-  def __init__(self, *args, **kwargs):
-    self.original_args = args
-    self.original_kwargs = kwargs
-    super().__init__(*args, **kwargs)
+class GeneratedItemTestComponents(item.GeneratedItem, TestComponents):
+  pass
 
 
-class AttachmentsTestComponents(item.Attachments):
-  original_kwargs: dict[str, str]
+class WeaponTestComponents(item.Weapon, TestComponents):
+  pass
+
+
+class AttachmentsTestComponents(item.Attachments, TestComponents):
+  pass
 
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
     'item', has_tag=['Well-Formed'], cases=_CASES, prefix='item_')
 def item_fixture(item):
-  return ItemTestComponents(**item)
+  return ItemTestComponents(**item, original_kwargs=item)
 
 
 class TestItem:
@@ -103,8 +97,8 @@ class TestItem:
   def test_item_malformed_quantity_error_message_well_formed(
       self, item_dict, malformed_value):
     item_dict['quantity'] = malformed_value
-    error_message = f'Invalid quantity: {malformed_value}'
-    with pytest.raises(ValueError, match=error_message):
+    expected_message = 'Input should be a (valid integer|finite number)'
+    with pytest.raises(ValueError, match=expected_message):
       item.Item(**item_dict)
 
 
@@ -115,7 +109,8 @@ class TestItem:
     cases=_CASES,
     prefix='generated_item_')
 def generated_item_fixture(generated_item):
-  return GeneratedItemTestComponents(**generated_item)
+  return GeneratedItemTestComponents(
+      **generated_item, original_kwargs=generated_item)
 
 
 class TestGeneratedItem:
@@ -231,7 +226,7 @@ class TestParseFunctions:
 @pytest_cases.parametrize_with_cases(
     'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_')
 def weapon_fixture(weapon):
-  return WeaponTestComponents(**weapon)
+  return WeaponTestComponents(**weapon, original_kwargs=weapon)
 
 
 class TestWeapon:
@@ -267,7 +262,7 @@ class TestWeapon:
   def test_weapon_raises_malformed_ammo_quantity_error_message_well_formed(
       self, weapon, malformed_value):
     weapon['ammo_quantity'] = malformed_value
-    expected_message = f'Invalid ammo_quantity: {malformed_value}'
+    expected_message = 'Input should be a (valid integer|finite number)'
     with pytest.raises(ValueError, match=expected_message):
       item.Weapon(**weapon)
 
@@ -276,7 +271,7 @@ class TestWeapon:
 @pytest_cases.parametrize_with_cases(
     'attachments', has_tag=['Well-Formed'], cases=_CASES, prefix='attachments_')
 def attachments_fixture(attachments):
-  return AttachmentsTestComponents(original_kwargs=attachments, **attachments)
+  return AttachmentsTestComponents(**attachments, original_kwargs=attachments)
 
 
 class TestAttachment:

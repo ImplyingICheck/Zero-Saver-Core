@@ -16,7 +16,7 @@
 fields."""
 from __future__ import annotations
 
-import dataclasses
+import decimal
 from typing import Any, Literal, SupportsFloat, SupportsIndex, SupportsInt, TypeAlias, TYPE_CHECKING
 
 import pydantic
@@ -30,6 +30,29 @@ if TYPE_CHECKING:
   NumberLike: TypeAlias = SupportsFloat
   CastableToInt = (
       str | ReadableBuffer | SupportsInt | SupportsIndex | SupportsTrunc)
+else:
+  from pydantic_core import core_schema
+
+  class CastableToInt(int):
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any,
+        handler: pydantic.GetCoreSchemaHandler) -> core_schema.CoreSchema:
+      del source_type  # Unused
+      del handler  # Unused
+      return core_schema.int_schema()
+
+  class NumberLike:
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any,
+        handler: pydantic.GetCoreSchemaHandler) -> core_schema.CoreSchema:
+      del source_type  # Unused
+      del handler  # Unused
+      return core_schema.no_info_before_validator_function(
+          decimal.Decimal, core_schema.is_instance_schema(SupportsFloat))
 
 
 def parse_bool(bool_like: Any) -> bool:
@@ -76,8 +99,7 @@ def _convert_to_int(int_like: CastableToInt, error_message: str = '') -> int:
     raise ValueError(f'{error_message}{int_like}') from e
 
 
-@dataclasses.dataclass(kw_only=True)
-class Item:
+class Item(pydantic.BaseModel):
   """A dataclass representing the properties inherited by all items in "ZERO
   Sievert"."""
   item: str
@@ -86,18 +108,17 @@ class Item:
   quantity: CastableToInt
   rotation: NumberLike | bool
 
-  def __post_init__(self):
+  def model_post_init(self, __context: Any) -> None:
     self.quantity = _convert_to_int(self.quantity, 'Invalid quantity: ')
     self.rotation = parse_bool(self.rotation)
 
 
-@dataclasses.dataclass(kw_only=True)
 class GeneratedItem(Item):
   seen: NumberLike | bool
   durability: NumberLike
   created_from_player: NumberLike | bool
 
-  def __post_init__(self):
+  def model_post_init(self, __context: Any) -> None:
     self.seen = parse_bool(self.seen)
     self.created_from_player = parse_bool(self.created_from_player)
 
@@ -118,13 +139,12 @@ class Attachments(pydantic.BaseModel):
   att_4: str
 
 
-@dataclasses.dataclass(kw_only=True)
 class Weapon(GeneratedItem):
   ammo_id: str
   ammo_quantity: CastableToInt
   weapon_fire_mode: Literal['automatic', 'semi_automatic', 'bolt_action']
   mods: Attachments | None
 
-  def __post_init__(self):
+  def model_post_init(self, __context: Any) -> None:
     self.ammo_quantity = _convert_to_int(self.ammo_quantity,
                                          'Invalid ammo_quantity: ')
