@@ -205,3 +205,10 @@ class TestAttachment:
   def test_attachments_is_instance_pydantic_base_model(self,
                                                        attachments_fixture):
     assert isinstance(attachments_fixture, pydantic.BaseModel)
+
+
+@pytest_cases.parametrize('expected_property',
+                          _ITEM_PUBLIC_PROPERTIES + _ITEM_PRIVATE_PROPERTIES)
+def test_item_model_dump_contains_expected_properties(item_fixture,
+                                                      expected_property):
+  assert expected_property in item_fixture.model_dump().keys()
