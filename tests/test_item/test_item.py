@@ -210,6 +210,12 @@ class TestAttachment:
                                                        attachments_fixture):
     assert isinstance(attachments_fixture, pydantic.BaseModel)
 
+  @pytest_cases.parametrize('expected_properties',
+                            _ATTACHMENTS_PUBLIC_PROPERTIES)
+  def test_attachments_has_expected_public_properties(self, attachments_fixture,
+                                                      expected_properties):
+    assert hasattr(attachments_fixture, expected_properties)
+
 
 class TestModelDump:
 
