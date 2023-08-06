@@ -193,6 +193,11 @@ class TestWeapon:
     with pytest.raises(ValueError, match=expected_message):
       item.Weapon(**weapon)
 
+  @pytest_cases.parametrize('expected_properties', _WEAPON_PUBLIC_PROPERTIES)
+  def test_weapon_has_expected_public_properties(self, weapon_fixture,
+                                                 expected_properties):
+    assert hasattr(weapon_fixture, expected_properties)
+
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
