@@ -24,12 +24,12 @@ import pydantic
 if TYPE_CHECKING:
   from _typeshed import ReadableBuffer, SupportsTrunc
 
+  # Most mainstream python types implement __float__. While hacky, this is a
+  # good placeholder until a protocol can be defined for the methods used in
+  # Item.
+  NumberLike: TypeAlias = SupportsFloat
   CastableToInt = (
       str | ReadableBuffer | SupportsInt | SupportsIndex | SupportsTrunc)
-
-# Most mainstream python types implement __float__. While hacky, this is a good
-# placeholder until a protocol can be defined for the methods used in Item.
-NumberLike: TypeAlias = SupportsFloat
 
 
 def parse_bool(bool_like: Any) -> bool:
