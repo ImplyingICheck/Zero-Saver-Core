@@ -25,6 +25,16 @@ import pytest_cases
 from zero_saver import item
 
 _CASES = 'case_item.case_item'
+_ITEM_PUBLIC_PROPERTIES = ('item', 'x', 'y', 'quantity', 'rotation')
+_ITEM_PRIVATE_PROPERTIES = ()
+_GENERATED_ITEM_PUBLIC_PROPERTIES = ('item', 'x', 'y', 'quantity', 'rotation',
+                                     'seen', 'durability',
+                                     'created_from_player')
+_GENERATED_ITEM_PRIVATE_PROPERTIES = ()
+_WEAPON_PUBLIC_PROPERTIES = ('item', 'x', 'y', 'quantity', 'rotation', 'seen',
+                             'durability', 'created_from_player', 'ammo_id',
+                             'ammo_quantity', 'weapon_fire_mode', 'mods')
+_WEAPON_PRIVATE_PROPERTIES = ()
 
 
 class TestComponents(pydantic.BaseModel):
@@ -59,8 +69,7 @@ class TestItem:
   def test_item_init_well_formed(self, item_fixture):
     assert item_fixture
 
-  @pytest_cases.parametrize('expected_property',
-                            ['item', 'x', 'y', 'quantity', 'rotation'])
+  @pytest_cases.parametrize('expected_property', _ITEM_PUBLIC_PROPERTIES)
   def test_item_public_properties(self, item_fixture, expected_property):
     assert hasattr(item_fixture, expected_property)
 
@@ -118,10 +127,8 @@ class TestGeneratedItem:
   def test_generated_item_init_well_formed(self, generated_item_fixture):
     assert generated_item_fixture
 
-  @pytest_cases.parametrize('expected_property', [
-      'item', 'x', 'y', 'quantity', 'rotation', 'seen', 'durability',
-      'created_from_player'
-  ])
+  @pytest_cases.parametrize('expected_property',
+                            _GENERATED_ITEM_PUBLIC_PROPERTIES)
   def test_generated_item_public_properties(self, generated_item_fixture,
                                             expected_property):
     assert hasattr(generated_item_fixture, expected_property)
