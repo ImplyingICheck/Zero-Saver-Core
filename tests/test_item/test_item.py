@@ -50,23 +50,23 @@ _ATTACHMENTS_JSON_KEY_NAMES = ('magazine', 'stock', 'handguard', 'brake',
                                'att_3', 'att_4')
 
 
-class TestComponents(pydantic.BaseModel):
+class _TestComponents(pydantic.BaseModel):
   original_kwargs: dict[str, Any]
 
 
-class ItemTestComponents(item.Item, TestComponents):
+class ItemTestComponents(item.Item, _TestComponents):
   pass
 
 
-class GeneratedItemTestComponents(item.GeneratedItem, TestComponents):
+class GeneratedItemTestComponents(item.GeneratedItem, _TestComponents):
   pass
 
 
-class WeaponTestComponents(item.Weapon, TestComponents):
+class WeaponTestComponents(item.Weapon, _TestComponents):
   pass
 
 
-class AttachmentsTestComponents(item.Attachments, TestComponents):
+class AttachmentsTestComponents(item.Attachments, _TestComponents):
   pass
 
 
