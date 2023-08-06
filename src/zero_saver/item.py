@@ -81,3 +81,11 @@ class Weapon(GeneratedItem):
   ammo_quantity: int
   weapon_fire_mode: Literal['automatic', 'semi_automatic', 'bolt_action']
   mods: Attachments | None
+
+
+# This code would make an extensible Item, accepting any item not accounted for
+# above. All methods work as expected. However, a fallback should be defined if
+# the "extra" arguments have types not serialized by pydantic. Extraneous
+# arguments are stored in *__pydantic_extra__*.
+# class ModdedItem(Item):
+#   model_config = pydantic.ConfigDict(extra='allow')
