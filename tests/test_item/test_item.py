@@ -212,3 +212,11 @@ class TestAttachment:
 def test_item_model_dump_contains_expected_properties(item_fixture,
                                                       expected_property):
   assert expected_property in item_fixture.model_dump().keys()
+
+
+@pytest_cases.parametrize('expected_property',
+                          _GENERATED_ITEM_PUBLIC_PROPERTIES +
+                          _GENERATED_ITEM_PRIVATE_PROPERTIES)
+def test_generated_item_model_dump_contains_expected_properties(
+    generated_item_fixture, expected_property):
+  assert expected_property in generated_item_fixture.model_dump().keys()
