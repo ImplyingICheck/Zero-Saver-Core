@@ -33,16 +33,6 @@ if TYPE_CHECKING:
 else:
   from pydantic_core import core_schema
 
-  class CastableToInt(int):
-
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source_type: Any,
-        handler: pydantic.GetCoreSchemaHandler) -> core_schema.CoreSchema:
-      del source_type  # Unused
-      del handler  # Unused
-      return core_schema.int_schema()
-
   class NumberLike:
 
     @classmethod
@@ -105,8 +95,8 @@ class Item(pydantic.BaseModel):
   item: str
   x: NumberLike
   y: NumberLike
-  quantity: CastableToInt
-  rotation: NumberLike | bool
+  quantity: int
+  rotation: bool
 
   def model_post_init(self, __context: Any) -> None:
     self.quantity = _convert_to_int(self.quantity, 'Invalid quantity: ')
@@ -114,9 +104,9 @@ class Item(pydantic.BaseModel):
 
 
 class GeneratedItem(Item):
-  seen: NumberLike | bool
+  seen: bool
   durability: NumberLike
-  created_from_player: NumberLike | bool
+  created_from_player: bool
 
   def model_post_init(self, __context: Any) -> None:
     self.seen = parse_bool(self.seen)
@@ -141,7 +131,7 @@ class Attachments(pydantic.BaseModel):
 
 class Weapon(GeneratedItem):
   ammo_id: str
-  ammo_quantity: CastableToInt
+  ammo_quantity: int
   weapon_fire_mode: Literal['automatic', 'semi_automatic', 'bolt_action']
   mods: Attachments | None
 
