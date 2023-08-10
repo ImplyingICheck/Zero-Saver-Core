@@ -25,16 +25,16 @@ import pytest_cases
 from zero_saver import item
 
 _CASES = 'case_item.case_item'
-_ITEM_PUBLIC_PROPERTIES = ('item', 'x', 'y', 'quantity', 'rotation')
+_ITEM_PUBLIC_PROPERTIES = ('name', 'x', 'y', 'quantity', 'rotation')
 _ITEM_PRIVATE_PROPERTIES = ()
 _ITEM_JSON_KEY_NAMES = ('item', 'x', 'y', 'quantity', 'rotation')
-_GENERATED_ITEM_PUBLIC_PROPERTIES = ('item', 'x', 'y', 'quantity', 'rotation',
+_GENERATED_ITEM_PUBLIC_PROPERTIES = ('name', 'x', 'y', 'quantity', 'rotation',
                                      'seen', 'durability',
                                      'created_from_player')
 _GENERATED_ITEM_PRIVATE_PROPERTIES = ()
 _GENERATED_ITEM_JSON_KEY_NAMES = ('item', 'x', 'y', 'quantity', 'rotation',
                                   'seen', 'durability', 'created_from_player')
-_WEAPON_PUBLIC_PROPERTIES = ('item', 'x', 'y', 'quantity', 'rotation', 'seen',
+_WEAPON_PUBLIC_PROPERTIES = ('name', 'x', 'y', 'quantity', 'rotation', 'seen',
                              'durability', 'created_from_player', 'ammo_id',
                              'ammo_quantity', 'weapon_fire_mode', 'mods')
 _WEAPON_PRIVATE_PROPERTIES = ()

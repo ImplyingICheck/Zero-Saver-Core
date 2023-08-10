@@ -50,8 +50,8 @@ class Item(pydantic.BaseModel):
   over zero_saver.item.Item.
 
   Args:
-    item: A string used by "ZERO Saver" to identify an item. Functions as an
-      item id.
+    name: A string used by "ZERO Saver" to identify an item. Functions as an
+      item id. Serialized as "item", the "ZERO Sievert"-designated identity.
     x: A positional value. Represents the horizontal coordinate within the
       player inventory view.
     y: A positional value. Represents the vertical coordinate within the player
@@ -61,7 +61,7 @@ class Item(pydantic.BaseModel):
     rotation: Whether the item model should be rotated 90° anti-clockwise in the
       player inventory view.
   """
-  item: str
+  name: str = pydantic.Field(alias='item')
   x: NumberLike
   y: NumberLike
   quantity: int
