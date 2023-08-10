@@ -46,7 +46,21 @@ else:
 
 class Item(pydantic.BaseModel):
   """A dataclass representing the properties inherited by all items in "ZERO
-  Sievert"."""
+  Sievert". Generally, zero_saver.item.GeneratedItem should be used to represent
+  over zero_saver.item.Item.
+
+  Args:
+    item: A string used by "ZERO Saver" to identify an item. Functions as an
+      item id.
+    x: A positional value. Represents the horizontal coordinate within the
+      player inventory view.
+    y: A positional value. Represents the vertical coordinate within the player
+      inventory view.
+    quantity: The number of an item. Items that do not stack will still possess
+      a quantity value; e.g., "bread" possesses a quantity value of "1.0".
+    rotation: Whether the item model should be rotated 90° anti-clockwise in the
+      player inventory view.
+  """
   item: str
   x: NumberLike
   y: NumberLike
