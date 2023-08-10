@@ -17,10 +17,10 @@
 import pytest_cases
 
 
-class PlayerCase:
+class StatsCase:
 
-  @pytest_cases.case(tags=['Player', 'Well-Formed'])
-  def player_fresh_spawn_well_formed(self):
+  @pytest_cases.case(tags=['Stats', 'Well-Formed'])
+  def stats_fresh_spawn_well_formed(self):
     return {
         'hp_max': 120.0,
         'stamina_max': 100.0,

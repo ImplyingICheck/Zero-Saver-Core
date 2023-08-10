@@ -30,22 +30,22 @@ class _TestComponents(pydantic.BaseModel):
   original_kwargs: dict[str, Any]
 
 
-class PlayerTestComponents(player.Player, _TestComponents):
+class StatsTestComponents(player.Stats, _TestComponents):
   pass
 
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'player', cases=_CASES, has_tag=['Well-Formed'], prefix='player_')
-def player_fixture(player):
-  return PlayerTestComponents(**player, original_kwargs=player)
+    'stats', cases=_CASES, has_tag=['Well-Formed'], prefix='stats_')
+def stats_fixture(stats):
+  return StatsTestComponents(**stats, original_kwargs=stats)
 
 
-def test_player_init_well_formed(player_fixture):
-  assert player_fixture
+def test_stats_init_well_formed(stats_fixture):
+  assert stats_fixture
 
 
-def test_player_position_matches_x_y_values(player_fixture):
-  expected_x = player_fixture.x
-  expected_y = player_fixture.y
-  assert player_fixture.position == (expected_x, expected_y)
+def test_stats_position_matches_x_y_values(stats_fixture):
+  expected_x = stats_fixture.x
+  expected_y = stats_fixture.y
+  assert stats_fixture.position == (expected_x, expected_y)

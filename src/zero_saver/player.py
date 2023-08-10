@@ -48,7 +48,7 @@ class Reputation:
   pass
 
 
-class Player(pydantic.BaseModel):
+class Stats(pydantic.BaseModel):
   """Represents data pertaining to the player character."""
   hp_max: NumberLike
   stamina_max: NumberLike
