@@ -127,4 +127,13 @@ class TestPydanticFunctionality:
       assert expected_property in model.model_dump().keys()
 
   class TestModelDumpJson:
-    pass
+
+    @pytest_cases.parametrize(
+        'model, expected_json_key_name',
+        parameterize_over_properties(
+            (inventory_fixture, _INVENTORY_JSON_KEY_NAMES),
+            (stats_fixture, _STATS_JSON_KEY_NAMES),
+            (player_fixture, _PLAYER_JSON_KEY_NAMES)))
+    def test_model_dump_contains_expected_properties(self, model,
+                                                     expected_json_key_name):
+      assert expected_json_key_name in model.model_dump().keys()
