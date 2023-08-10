@@ -94,7 +94,11 @@ class GeneratedItem(Item):
 
 class Attachments(pydantic.BaseModel):
   """BaseModel representing the "mods" section of a "ZERO Sievert" weapon,
-  typically a firearm."""
+  typically a firearm.
+
+  For a vanilla "ZERO Sievert" zero_saver.item.Weapon, each attribute should be
+  "no_item" or a string representing the name of an attachment.
+  """
   magazine: str
   stock: str
   handguard: str
