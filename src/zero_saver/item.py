@@ -114,7 +114,20 @@ class Attachments(pydantic.BaseModel):
 
 class Weapon(GeneratedItem):
   """BaseModel representing a weapon in "ZERO Sievert". As of "ZERO Sievert"
-  version 0.31.24, only firearms contain all defined properties."""
+  version 0.31.24, only firearms contain all defined properties.
+
+  "ZERO Saver" defines the receiver and loaded ammunition as the Weapon. All
+  other components are stored in *mods*.
+
+  Inherits from a pydantic.BaseModel.
+
+  Args:
+    ammo_id: The item name of the bullet type loaded into the weapon; e.g.,
+      "ammo_545x39".
+    ammo_quantity: The number of bullets currently loaded into the weapon.
+    weapon_fire_mode: The firing mode currently selected.
+    mods: The attachments and accessories currently equipped to the weapon.
+  """
   ammo_id: str
   ammo_quantity: int
   weapon_fire_mode: Literal['automatic', 'semi_automatic', 'bolt_action']
