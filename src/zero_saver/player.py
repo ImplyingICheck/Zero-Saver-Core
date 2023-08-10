@@ -29,7 +29,7 @@ NumberLike: TypeAlias = item.NumberLike
 
 
 class Inventory(pydantic.BaseModel):
-  items: list[item.Item]
+  items: list[item.Weapon | item.GeneratedItem | item.Item]
 
 
 class Skill:
