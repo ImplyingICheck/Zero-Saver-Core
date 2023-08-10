@@ -24,6 +24,20 @@ import pytest_cases
 from zero_saver import player
 
 _CASES = 'case_player.case_player'
+_INVENTORY_PUBLIC_MODEL_PROPERTIES = ('items',)
+_INVENTORY_PRIVATE_PROPERTIES = ()
+_INVENTORY_JSON_KEY_NAMES = ('items',)
+_STATS_PUBLIC_MODEL_PROPERTIES = ('hp_max', 'stamina_max', 'x', 'y', 'wound',
+                                  'hp', 'energy', 'radiation', 'fatigue',
+                                  'thirst')
+# Explicitly defined in the Python object
+_STATS_PUBLIC_PROPERTIES = ('position',)
+_STATS_PRIVATE_PROPERTIES = ()
+_STATS_JSON_KEY_NAMES = ('hp_max', 'stamina_max', 'x', 'y', 'wound', 'hp',
+                         'energy', 'radiation', 'fatigue', 'thirst')
+_PLAYER_PUBLIC__MODEL_PROPERTIES = ('stats', 'inventory')
+_PLAYER_PRIVATE_PROPERTIES = ()
+_PLAYER_JSON_KEY_NAMES = ('stats', 'inventory')
 
 
 class _TestComponents(pydantic.BaseModel):
@@ -82,3 +96,27 @@ def test_inventory_init_well_formed(inventory_fixture):
 
 def test_player_init_well_formed(player_fixture):
   assert player_fixture
+
+
+def parameterize_over_properties(*fixture_properties_pairs):
+  for fixture, properties in fixture_properties_pairs:
+    for property_ in properties:
+      yield fixture, property_
+
+
+class TestPydanticFunctionality:
+
+  class TestModelDump:
+
+    @pytest_cases.parametrize(
+        'model, expected_property',
+        parameterize_over_properties(
+            (inventory_fixture, _INVENTORY_PUBLIC_MODEL_PROPERTIES),
+            (stats_fixture, _STATS_PUBLIC_MODEL_PROPERTIES),
+            (player_fixture, _PLAYER_PUBLIC__MODEL_PROPERTIES)))
+    def test_model_dump_contains_expected_properties(self, model,
+                                                     expected_property):
+      assert expected_property in model.model_dump().keys()
+
+  class TestModelDumpJson:
+    pass
