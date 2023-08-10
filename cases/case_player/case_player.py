@@ -42,6 +42,6 @@ class InventoryCase:
       'item',
       cases='case_item.case_item',
       has_tag=['Well-Formed'],
-      prefix=('weapon_', 'generated_item_', 'item_'))
-  def inventory_single_well_formed_item_cases(self, item):
+      prefix=('weapon_', 'generated_item_', 'item_'))  # type: ignore
+  def inventory_single_well_formed_item(self, item):
     return {'items': [item]}

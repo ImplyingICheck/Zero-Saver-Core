@@ -38,6 +38,10 @@ class InventoryTestComponents(player.Inventory, _TestComponents):
   pass
 
 
+class PlayerTestComponents(player.Player, _TestComponents):
+  pass
+
+
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
     'stats', cases=_CASES, has_tag=['Well-Formed'], prefix='stats_')
@@ -52,6 +56,16 @@ def inventory_fixture(inventory):
   return InventoryTestComponents(**inventory, original_kwargs=inventory)
 
 
+@pytest_cases.fixture
+@pytest_cases.parametrize_with_cases(
+    'stats', cases=_CASES, has_tag=['Well-Formed'], prefix='stats_')
+@pytest_cases.parametrize_with_cases(
+    'inventory', cases=_CASES, has_tag=['Well-Formed'], prefix='inventory_')
+def player_fixture(stats, inventory):
+  kwargs = {'stats': stats, 'inventory': inventory}
+  return PlayerTestComponents(**kwargs, original_kwargs=kwargs)
+
+
 def test_stats_init_well_formed(stats_fixture):
   assert stats_fixture
 
@@ -64,3 +78,7 @@ def test_stats_position_matches_x_y_values(stats_fixture):
 
 def test_inventory_init_well_formed(inventory_fixture):
   assert inventory_fixture
+
+
+def test_player_init_well_formed(player_fixture):
+  assert player_fixture

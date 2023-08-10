@@ -64,3 +64,10 @@ class Stats(pydantic.BaseModel):
   @property
   def position(self):
     return self.x, self.y
+
+
+class Player(pydantic.BaseModel):
+  """The intended public interface for modifying values related to the player
+  character."""
+  stats: Stats
+  inventory: Inventory
