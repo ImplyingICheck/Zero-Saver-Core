@@ -14,7 +14,7 @@
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
-import pytest_cases
+import pytest_cases.filters
 
 
 class StatsCase:
@@ -33,3 +33,15 @@ class StatsCase:
         'fatigue': 97.632510444442118568986188620329,
         'thirst': 90.0
     }
+
+
+class InventoryCase:
+
+  @pytest_cases.case(tags=['Inventory', 'Well-Formed', 'ExternalCases'])
+  @pytest_cases.parametrize_with_cases(
+      'item',
+      cases='case_item.case_item',
+      has_tag=['Well-Formed'],
+      prefix=('weapon_', 'generated_item_', 'item_'))
+  def inventory_single_well_formed_item_cases(self, item):
+    return {'items': [item]}

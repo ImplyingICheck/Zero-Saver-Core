@@ -28,8 +28,8 @@ from zero_saver import item
 NumberLike: TypeAlias = item.NumberLike
 
 
-class Inventory:
-  pass
+class Inventory(pydantic.BaseModel):
+  items: list[item.Item]
 
 
 class Skill:
