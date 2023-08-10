@@ -62,7 +62,7 @@ class Stats(pydantic.BaseModel):
   thirst: NumberLike
 
   @property
-  def position(self):
+  def position(self) -> tuple[NumberLike, NumberLike]:
     return self.x, self.y
 
 
