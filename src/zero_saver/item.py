@@ -55,6 +55,24 @@ class Item(pydantic.BaseModel):
 
 
 class GeneratedItem(Item):
+  """Data fields common to many vanilla "ZERO Sievert" items, but not
+  universally possessed.
+
+  Almost all items will be of this class.
+
+  Inherits from a pydantic.BaseModel.
+
+  Args:
+    seen: Represents if the item model should be obscured from the player. This
+      flag is set when items are first "searched" for when looting.
+    durability: Equivalent to "durability" in "ZERO Sievert". Items that do not
+      display a durability value may still contain this field; e.g., "bread"
+      possesses a durability value, but is always "100.0".
+    created_from_player: Represents if an item was manufactured by the player
+      character. Certain actions in "ZERO Sievert" use this value for
+      calculations; e.g., the "Cooking" skill gives bonuses when consuming
+      player-created consumables.
+  """
   seen: bool
   durability: NumberLike
   created_from_player: bool
