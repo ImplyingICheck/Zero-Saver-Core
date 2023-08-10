@@ -19,6 +19,13 @@ The values supported are money quantity, faction reputation,
 fatigue/health/stamina/radiation values, skills, inventory, equipment, and
 character metadata.
 """
+from typing import TypeAlias
+
+import pydantic
+
+from zero_saver import item
+
+NumberLike: TypeAlias = item.NumberLike
 
 
 class Inventory:
@@ -41,5 +48,15 @@ class Reputation:
   pass
 
 
-class Player:
-  pass
+class Player(pydantic.BaseModel):
+  """Represents data pertaining to the player character."""
+  hp_max: NumberLike
+  stamina_max: NumberLike
+  x: NumberLike
+  y: NumberLike
+  wound: NumberLike
+  hp: NumberLike
+  energy: NumberLike
+  radiation: NumberLike
+  fatigue: NumberLike
+  thirst: NumberLike

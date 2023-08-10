@@ -12,3 +12,24 @@
 #  A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #  You should have received a copy of the GNU General Public License along with
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-class-docstring
+import pytest_cases
+
+
+class PlayerCase:
+
+  @pytest_cases.case(tags=['Player', 'Well-Formed'])
+  def player_fresh_spawn_well_formed(self):
+    return {
+        'hp_max': 120.0,
+        'stamina_max': 100.0,
+        'x': 323.99322509765625,
+        'wound': 0.0,
+        'y': 873.85711669921875,
+        'hp': 120.0,
+        'energy': 90.0,
+        'radiation': 0.0,
+        'fatigue': 97.632510444442118568986188620329,
+        'thirst': 90.0
+    }
