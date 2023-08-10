@@ -43,3 +43,9 @@ def player_fixture(player):
 
 def test_player_init_well_formed(player_fixture):
   assert player_fixture
+
+
+def test_player_position_matches_x_y_values(player_fixture):
+  expected_x = player_fixture.x
+  expected_y = player_fixture.y
+  assert player_fixture.position == (expected_x, expected_y)

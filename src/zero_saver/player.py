@@ -60,3 +60,7 @@ class Player(pydantic.BaseModel):
   radiation: NumberLike
   fatigue: NumberLike
   thirst: NumberLike
+
+  @property
+  def position(self):
+    return self.x, self.y
