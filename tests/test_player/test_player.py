@@ -80,26 +80,30 @@ def player_fixture(stats, inventory):
   return PlayerTestComponents(**kwargs, original_kwargs=kwargs)
 
 
-def test_stats_init_well_formed(stats_fixture):
-  assert stats_fixture
+class TestStats:
+
+  def test_stats_init_well_formed(self, stats_fixture):
+    assert stats_fixture
+
+  def test_stats_position_matches_x_y_values(self, stats_fixture):
+    expected_x = stats_fixture.x
+    expected_y = stats_fixture.y
+    assert stats_fixture.position == (expected_x, expected_y)
+
+  def test_stats_has_position_property(self, stats_fixture):
+    assert hasattr(stats_fixture, 'position')
 
 
-def test_stats_position_matches_x_y_values(stats_fixture):
-  expected_x = stats_fixture.x
-  expected_y = stats_fixture.y
-  assert stats_fixture.position == (expected_x, expected_y)
+class TestInventory:
+
+  def test_inventory_init_well_formed(self, inventory_fixture):
+    assert inventory_fixture
 
 
-def test_stats_has_position_property(stats_fixture):
-  assert hasattr(stats_fixture, 'position')
+class TestPlayer:
 
-
-def test_inventory_init_well_formed(inventory_fixture):
-  assert inventory_fixture
-
-
-def test_player_init_well_formed(player_fixture):
-  assert player_fixture
+  def test_player_init_well_formed(self, player_fixture):
+    assert player_fixture
 
 
 def parameterize_over_properties(*fixture_properties_pairs):
