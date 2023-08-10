@@ -90,6 +90,10 @@ def test_stats_position_matches_x_y_values(stats_fixture):
   assert stats_fixture.position == (expected_x, expected_y)
 
 
+def test_stats_has_position_property(stats_fixture):
+  assert hasattr(stats_fixture, 'position')
+
+
 def test_inventory_init_well_formed(inventory_fixture):
   assert inventory_fixture
 
