@@ -155,3 +155,8 @@ class TestPydanticFunctionality:
     def test_model_dump_contains_expected_properties(self, model,
                                                      expected_json_key_name):
       assert expected_json_key_name in model.model_dump().keys()
+
+  class TestCustomClassTypeAdapter:
+
+    def test_inventory_type_adapter(self):
+      assert pydantic.TypeAdapter(player.Inventory)
