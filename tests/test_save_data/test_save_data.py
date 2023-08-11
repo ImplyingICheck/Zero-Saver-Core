@@ -20,7 +20,7 @@ import pytest_cases.filters
 
 from zero_saver import save_data
 
-_CASES = 'test_save_data.case_save_data'
+_CASES = 'case_save_data.case_save_data'
 
 
 @pytest_cases.fixture
