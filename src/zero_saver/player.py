@@ -21,7 +21,7 @@ character metadata.
 """
 from __future__ import annotations
 
-from typing import Any, Iterable, TypeAlias
+from typing import Any, TypeAlias
 
 import pydantic
 from pydantic_core import core_schema
@@ -43,15 +43,10 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
       cls, source_type: Any,
       handler: pydantic.GetCoreSchemaHandler) -> core_schema.CoreSchema:
     del source_type  # unused
-    del handler  # unused
-    return core_schema.no_info_plain_validator_function(cls)
-
-  @pydantic.validate_call
-  def __init__(self,
-               iterable: Iterable[item.Weapon | item.GeneratedItem
-                                  | item.Item] = (),
-               /):
-    super().__init__(iterable)
+    validation_schema = handler(list[item.Weapon | item.GeneratedItem
+                                     | item.Item])
+    return core_schema.no_info_after_validator_function(
+        cls, schema=validation_schema)
 
 
 class Skill:

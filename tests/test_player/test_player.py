@@ -158,5 +158,11 @@ class TestPydanticFunctionality:
 
   class TestCustomClassTypeAdapter:
 
-    def test_inventory_type_adapter(self):
-      assert pydantic.TypeAdapter(player.Inventory)
+    def test_inventory_type_adapter(self,
+                                    adapter=pydantic.TypeAdapter(
+                                        player.Inventory)):
+      assert adapter
+
+    def test_inventory_type_adapter_has_json_schema(self):
+      print(pydantic.TypeAdapter(player.Inventory).json_schema())
+      assert pydantic.TypeAdapter(player.Inventory).json_schema()
