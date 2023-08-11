@@ -112,6 +112,11 @@ class TestInventory:
     actual_inventory = player.Inventory(expected_items)
     assert actual_inventory == expected_items
 
+  def test_inventory_empty_init_returns_empty_list(self):
+    # pylint: disable=use-implicit-booleaness-not-comparison
+    actual_inventory = player.Inventory()
+    assert actual_inventory == []
+
 
 class TestPlayer:
 
