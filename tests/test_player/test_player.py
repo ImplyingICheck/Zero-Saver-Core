@@ -19,9 +19,11 @@
 from typing import Any
 
 import pydantic
+import pytest
 import pytest_cases
 
 from zero_saver import player
+from zero_saver import item
 
 _CASES = 'case_player.case_player'
 _INVENTORY_PUBLIC_MODEL_PROPERTIES = ()
@@ -98,6 +100,17 @@ class TestInventory:
 
   def test_inventory_init_well_formed(self, inventory_fixture):
     assert inventory_fixture
+
+  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
+  def test_inventory_iter_traverses_items(self, mocker):
+    # pydantic __fields__ is deprecated. Used by unittest.Mock() in spec call.
+    expected_items = [
+        mocker.Mock(spec=item.Weapon),
+        mocker.Mock(spec=item.GeneratedItem),
+        mocker.Mock(spec=item.Item),
+    ]
+    actual_inventory = player.Inventory(expected_items)
+    assert actual_inventory == expected_items
 
 
 class TestPlayer:
