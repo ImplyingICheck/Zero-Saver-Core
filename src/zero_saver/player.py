@@ -19,17 +19,39 @@ The values supported are money quantity, faction reputation,
 fatigue/health/stamina/radiation values, skills, inventory, equipment, and
 character metadata.
 """
-from typing import TypeAlias
+from __future__ import annotations
+
+from typing import Any, Iterable, TypeAlias
 
 import pydantic
+from pydantic_core import core_schema
 
 from zero_saver import item
 
 NumberLike: TypeAlias = item.NumberLike
 
 
-class Inventory(pydantic.BaseModel):
-  items: list[item.Weapon | item.GeneratedItem | item.Item]
+class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
+  """An interface for interacting with the inventory of a player character.
+  Contains methods useful for transforming contained items.
+
+  Additionally, provides methods defined by python list.
+  """
+
+  @classmethod
+  def __get_pydantic_core_schema__(
+      cls, source_type: Any,
+      handler: pydantic.GetCoreSchemaHandler) -> core_schema.CoreSchema:
+    del source_type  # unused
+    del handler  # unused
+    return core_schema.no_info_plain_validator_function(cls)
+
+  @pydantic.validate_call
+  def __init__(self,
+               iterable: Iterable[item.Weapon | item.GeneratedItem
+                                  | item.Item] = (),
+               /):
+    super().__init__(iterable)
 
 
 class Skill:

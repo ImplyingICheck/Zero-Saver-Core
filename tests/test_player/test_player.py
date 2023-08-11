@@ -24,9 +24,9 @@ import pytest_cases
 from zero_saver import player
 
 _CASES = 'case_player.case_player'
-_INVENTORY_PUBLIC_MODEL_PROPERTIES = ('items',)
+_INVENTORY_PUBLIC_MODEL_PROPERTIES = ()
 _INVENTORY_PRIVATE_PROPERTIES = ()
-_INVENTORY_JSON_KEY_NAMES = ('items',)
+_INVENTORY_JSON_KEY_NAMES = ()
 _STATS_PUBLIC_MODEL_PROPERTIES = ('hp_max', 'stamina_max', 'x', 'y', 'wound',
                                   'hp', 'energy', 'radiation', 'fatigue',
                                   'thirst')
@@ -48,7 +48,7 @@ class StatsTestComponents(player.Stats, _TestComponents):
   pass
 
 
-class InventoryTestComponents(player.Inventory, _TestComponents):
+class InventoryTestComponents(player.Inventory):
   pass
 
 
@@ -67,7 +67,7 @@ def stats_fixture(stats):
 @pytest_cases.parametrize_with_cases(
     'inventory', cases=_CASES, has_tag=['Well-Formed'], prefix='inventory_')
 def inventory_fixture(inventory):
-  return InventoryTestComponents(**inventory, original_kwargs=inventory)
+  return InventoryTestComponents(inventory)
 
 
 @pytest_cases.fixture
