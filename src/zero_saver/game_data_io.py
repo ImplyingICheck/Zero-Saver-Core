@@ -189,19 +189,6 @@ class FileLocation:
         pass
 
 
-def _get_nested_value(
-    dictionary: MutableNestedStructure[_T],
-    keys: Iterable[str],
-) -> MutableNestedStructure[_T]:
-  original_dictionary = dictionary
-  for key in keys:
-    if not isinstance(dictionary, MutableMapping):
-      raise ValueError(f'Incorrect keys passed for mapping (keys: {keys}): '
-                       f'{original_dictionary}')
-    dictionary = dictionary[key]
-  return dictionary
-
-
 def _types_match(object_1: Any, object_2: Any) -> bool:
   if not isinstance(object_1, type):
     object_1 = type(object_1)
@@ -486,8 +473,7 @@ class GameDataIO:
     """
     inventory_representation = []
     save = self.save
-    personal_inventory = ['data', 'pre_raid', 'Inventory']
-    player_inventory = _get_nested_value(save, personal_inventory)
+    player_inventory = save['data']['pre_raid']['Inventory']
     assert isinstance(player_inventory, MutableMapping)
     temp_player_inventory = copy.deepcopy(player_inventory)
     player_inventory['items'] = inventory_representation
@@ -506,7 +492,7 @@ class GameDataIO:
     save = self.save
     number_of_chests = 14
     player_chests = [f'chest_{index}' for index in range(number_of_chests)]
-    player_storage = _get_nested_value(save, ['data', 'chest'])
+    player_storage = save['data']['chest']
     assert isinstance(player_storage, MutableMapping)
     temp_player_storage = copy.deepcopy(player_storage)
     for chest in player_chests:
