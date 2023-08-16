@@ -173,6 +173,14 @@ class TestInventory:
     inventory.extend([item_])
     assert isinstance(inventory[0], item_type)
 
+  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
+  def test_inventory_extend_mocked_objects(self, mocked_inventory):
+    inventory, expected_items = mocked_inventory
+    del inventory  # Unused
+    inventory = player.Inventory()
+    inventory.extend(expected_items)
+    assert inventory == expected_items
+
   @pytest.mark.slow
   @pytest_cases.parametrize_with_cases(
       'dump_json_arguments',
