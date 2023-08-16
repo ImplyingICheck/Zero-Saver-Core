@@ -117,6 +117,9 @@ class TestInventory:
     actual_inventory = player.Inventory()
     assert actual_inventory == []
 
+  def test_inventory_model_dump_json_returns_string(self, inventory_fixture):
+    assert isinstance(inventory_fixture.model_dump_json(), str)
+
 
 class TestPlayer:
 

@@ -48,6 +48,33 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
     return core_schema.no_info_after_validator_function(
         cls, schema=validation_schema)
 
+  def model_dump_json(self,
+                      *,
+                      indent: int | None = None,
+                      include: pydantic.main.IncEx = None,
+                      exclude: pydantic.main.IncEx = None,
+                      by_alias: bool = False,
+                      exclude_unset: bool = False,
+                      exclude_defaults: bool = False,
+                      exclude_none: bool = False,
+                      round_trip: bool = False,
+                      warnings: bool = True) -> str:
+    return pydantic.TypeAdapter(Inventory).dump_json(
+        self,
+        indent=indent,
+        include=include,
+        exclude=exclude,
+        by_alias=by_alias,
+        exclude_unset=exclude_unset,
+        exclude_defaults=exclude_defaults,
+        exclude_none=exclude_none,
+        round_trip=round_trip,
+        warnings=warnings).decode(encoding='utf-8')
+
+
+class InventoryProto(pydantic.BaseModel):
+  pass
+
 
 class Skill:
   pass
