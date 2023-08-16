@@ -36,33 +36,28 @@ import tempfile
 import uuid
 import winreg
 import cmath
-from collections.abc import Iterable, Iterator, Mapping, MutableMapping, MutableSequence, Sequence
-from typing import Any, BinaryIO, Generic, Literal, overload, TextIO, TYPE_CHECKING, TypeAlias, TypeVar
+from collections.abc import Iterator, Mapping, Sequence
+from typing import Any, BinaryIO, Literal, overload, TextIO, TYPE_CHECKING, TypeAlias, TypeVar
 
 from zero_saver.exceptions import winreg_errors
 from zero_saver.save_golden_files import verifier
+from zero_saver.save_golden_files import typed_dict_0_31_production
 from zero_saver import monkey_patch_json
 
 if TYPE_CHECKING:
   from _typeshed import StrOrBytesPath, StrPath
-  # Missing float | int from normal JSON
   _T = TypeVar('_T')
   _S = TypeVar('_S')
   _KT = TypeVar('_KT')
 
-  class TerminalValue(Generic[_T]):
-    ...
-
-  MutableNestedStructure: TypeAlias = (
-      MutableMapping[str, 'MutableNestedStructure[_T]']
-      | MutableSequence['NestedStructure[_T]']
-      | TerminalValue[_T])
   NestedStructure: TypeAlias = (
       Mapping[str, 'NestedStructure[_T]'] | Sequence['NestedStructure[_T]']
-      | TerminalValue[_T])
+      | _T)
+  # Missing float | int compared to Python equivalent JSON
   ZeroSievertJsonValue = str | decimal.Decimal | None
-  ZeroSievertSave = (
-      MutableMapping[str, MutableNestedStructure[ZeroSievertJsonValue]])
+  ZeroSievertInventory: TypeAlias = typed_dict_0_31_production.Inventory
+  ZeroSievertChest: TypeAlias = typed_dict_0_31_production.Chest
+  ZeroSievertSave: TypeAlias = typed_dict_0_31_production.Model
 
 # The maximum number of files located in the backup repository used by
 # FileLocation. WARNING: Any files exceeding this limit will be deleted,
@@ -259,8 +254,8 @@ def _files_match(*files: StrOrBytesPath, blocksize: int = 2**20) -> bool:
 
 
 def _compare_contents(
-    object_1: NestedStructure[_T],
-    object_2: NestedStructure[_S],
+    object_1: NestedStructure[Any],
+    object_2: NestedStructure[Any],
     base_class: type | tuple[type | tuple[Any, ...], ...] = (str, tuple),
 ) -> bool:
   """Strict comparison between two nested objects. Every nested item must be of
@@ -276,6 +271,7 @@ def _compare_contents(
 
   """
   # pylint: disable=[unidiomatic-typecheck]
+  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
   # Base case: Types do not match
   if not _types_match(object_1, object_2):
     return False
@@ -462,7 +458,8 @@ class GameDataIO:
   def _import_gamedata(self):
     pass
 
-  def _remove_player_inventory(self) -> tuple[ZeroSievertSave, ZeroSievertSave]:
+  def _remove_player_inventory(
+      self) -> tuple[ZeroSievertInventory, ZeroSievertInventory]:
     """
 
     Returns:
@@ -474,12 +471,11 @@ class GameDataIO:
     inventory_representation = []
     save = self.save
     player_inventory = save['data']['pre_raid']['Inventory']
-    assert isinstance(player_inventory, MutableMapping)
     temp_player_inventory = copy.deepcopy(player_inventory)
     player_inventory['items'] = inventory_representation
     return player_inventory, temp_player_inventory
 
-  def _remove_player_storage(self) -> tuple[ZeroSievertSave, ZeroSievertSave]:
+  def _remove_player_storage(self) -> tuple[ZeroSievertChest, ZeroSievertChest]:
     """
 
     Returns:
@@ -493,7 +489,6 @@ class GameDataIO:
     number_of_chests = 14
     player_chests = [f'chest_{index}' for index in range(number_of_chests)]
     player_storage = save['data']['chest']
-    assert isinstance(player_storage, MutableMapping)
     temp_player_storage = copy.deepcopy(player_storage)
     for chest in player_chests:
       player_storage[chest] = chest_representation
@@ -515,13 +510,16 @@ class GameDataIO:
         self._remove_player_inventory() and self._remove_player_storage() for
         implementation details.
     """
+    # pylint: disable=unsupported-delete-operation
     player_inventory = self._remove_player_inventory()
     player_storage = self._remove_player_storage()
     try:
       yield
     finally:
       for normalized_data, original_data in [player_inventory, player_storage]:
-        normalized_data.clear()
+        for key in list(normalized_data):
+          if key not in original_data:
+            del normalized_data[key]
         normalized_data.update(original_data)
 
   def verify_save_integrity(self) -> bool:
