@@ -16,6 +16,7 @@
 # pylint: disable=missing-class-docstring
 # pylint: disable=redefined-outer-name
 # pylint: disable=protected-access
+import itertools
 from typing import Any
 
 import pydantic
@@ -116,6 +117,14 @@ class TestInventory:
     # pylint: disable=use-implicit-booleaness-not-comparison
     actual_inventory = player.Inventory()
     assert actual_inventory == []
+
+  def test_inventory_init_validates_input(self, inventory_fixture):
+    assert all(
+        map(
+            isinstance,
+            inventory_fixture,
+            itertools.repeat(item.Weapon | item.GeneratedItem | item.Item),
+        ))
 
   def test_inventory_model_dump_json_returns_string(self, inventory_fixture):
     assert isinstance(inventory_fixture.model_dump_json(), str)

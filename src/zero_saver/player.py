@@ -21,6 +21,7 @@ character metadata.
 """
 from __future__ import annotations
 
+from collections.abc import Iterable
 from typing import Any, TypeAlias
 
 import pydantic
@@ -47,6 +48,13 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
                                      | item.Item])
     return core_schema.no_info_after_validator_function(
         cls, schema=validation_schema)
+
+  @pydantic.validate_call
+  def __init__(self,
+               iterable: Iterable[item.Weapon | item.GeneratedItem
+                                  | item.Item] = (),
+               /):
+    super().__init__(iterable)
 
   def model_dump_json(self,
                       *,
