@@ -116,7 +116,7 @@ class TestInventory:
         mocker.Mock(spec=item.Item),
     ]
     actual_inventory = player.Inventory(expected_items)
-    assert actual_inventory == expected_items
+    assert list(actual_inventory) == expected_items
 
   def test_inventory_empty_init_returns_empty_list(self):
     # pylint: disable=use-implicit-booleaness-not-comparison
