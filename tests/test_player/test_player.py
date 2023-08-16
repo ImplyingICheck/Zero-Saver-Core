@@ -246,6 +246,33 @@ class TestInventory:
     inventory[::2] = [mocked_item] * fill_count
     assert inventory == expected_inventory
 
+  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
+  @pytest_cases.parametrize_with_cases(
+      'item_, item_type',
+      cases=_CASES,
+      has_tag=['Well-Formed'],
+      prefix='tuple_inventory_')
+  def test_inventory_setitem_validates_object(self, mocked_inventory, item_,
+                                              item_type):
+    inventory, expected_items = mocked_inventory
+    del expected_items  # Unused
+    inventory[0] = item_
+    assert isinstance(inventory[0], item_type)
+
+  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
+  @pytest_cases.parametrize_with_cases(
+      'item_, item_type',
+      cases=_CASES,
+      has_tag=['Well-Formed'],
+      prefix='tuple_inventory_')
+  def test_inventory_setitem_slice_validates_object(self, mocked_inventory,
+                                                    item_, item_type):
+    inventory, expected_items = mocked_inventory
+    del expected_items  # Unused
+    inventory[:2] = [item_] * 2
+    assert isinstance(inventory[0], item_type) and isinstance(
+        inventory[1], item_type)
+
   @pytest.mark.slow
   @pytest_cases.parametrize_with_cases(
       'dump_json_arguments',

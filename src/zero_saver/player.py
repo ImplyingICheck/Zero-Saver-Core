@@ -133,7 +133,6 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
                   /) -> None:
     ...
 
-  @pydantic.validate_call
   def __setitem__(self, i: SupportsIndex | Slice,
                   o: item.Weapon | item.GeneratedItem
                   | item.Item
@@ -141,10 +140,14 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
                   /) -> None:
     # Duplicated code to pass pyright check
     if isinstance(i, slice):
-      assert not isinstance(o, item.Weapon | item.GeneratedItem | item.Item)
+      validator = pydantic.TypeAdapter(Iterable[item.Weapon | item.GeneratedItem
+                                                | item.Item]).validate_python(o)
+      o = typing.cast(Iterable[item.Weapon | item.GeneratedItem | item.Item],
+                      validator)
       super().__setitem__(i, o)
     else:
-      assert isinstance(o, item.Weapon | item.GeneratedItem | item.Item)
+      o = pydantic.TypeAdapter(item.Weapon | item.GeneratedItem
+                               | item.Item).validate_python(o)
       super().__setitem__(i, o)
 
 
