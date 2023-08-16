@@ -119,6 +119,7 @@ class TestInventory:
   def test_inventory_init_well_formed(self, inventory_fixture):
     assert inventory_fixture
 
+  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
   def test_inventory_iter_traverses_items(self, mocked_inventory):
     actual_inventory, expected_items = mocked_inventory
     assert list(actual_inventory) == expected_items
@@ -144,12 +145,23 @@ class TestInventory:
   def test_inventory_model_dump_json_returns_string(self, inventory_fixture):
     assert isinstance(inventory_fixture.model_dump_json(), str)
 
+  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
   def test_inventory_append_mocked_item(self, mocker, mocked_inventory):
     inventory, expected_items = mocked_inventory
     del expected_items  # unused
     appended_object = mocker.Mock(spec=item.Item)
     inventory.append(appended_object)
-    assert inventory[-1] == appended_object
+    assert inventory[-1] is appended_object
+
+  @pytest_cases.parametrize_with_cases(
+      'item_, item_type',
+      cases=_CASES,
+      has_tag=['Well-Formed'],
+      prefix='tuple_inventory_')
+  def test_inventory_append_validates_object(self, item_, item_type):
+    inventory = player.Inventory()
+    inventory.append(item_)
+    assert isinstance(inventory[0], item_type)
 
   @pytest.mark.slow
   @pytest_cases.parametrize_with_cases(

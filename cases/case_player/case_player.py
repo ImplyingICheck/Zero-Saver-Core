@@ -14,7 +14,10 @@
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
+import pydantic
 import pytest_cases.filters
+
+from zero_saver import item
 
 
 class StatsCase:
@@ -39,12 +42,24 @@ class InventoryCase:
 
   @pytest_cases.case(tags=['Inventory', 'Well-Formed', 'ExternalCases'])
   @pytest_cases.parametrize_with_cases(
-      'item',
+      'item_',
       cases='case_item.case_item',
       has_tag=['Well-Formed'],
       prefix=('weapon_', 'generated_item_', 'item_'))  # type: ignore
-  def inventory_single_well_formed_item(self, item):
-    return [item]
+  def inventory_single_well_formed_item(self, item_):
+    return [item_]
+
+  @pytest_cases.case(
+      tags=['TupleTestValue', 'Item', 'Well-Formed', 'ExternalCases'])
+  @pytest_cases.parametrize_with_cases(
+      'item_',
+      cases='case_item.case_item',
+      has_tag=['Well-Formed'],
+      prefix=('weapon_', 'generated_item_', 'item_'))  # type: ignore
+  def tuple_inventory_item_type(self, item_):
+    validated_item = pydantic.TypeAdapter(item.Weapon | item.GeneratedItem
+                                          | item.Item).validate_python(item_)
+    return item_, type(validated_item)
 
 
 class PydanticDumpArgumentsCase:
