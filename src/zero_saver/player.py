@@ -80,10 +80,6 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
         warnings=warnings).decode(encoding='utf-8')
 
 
-class InventoryProto(pydantic.BaseModel):
-  pass
-
-
 class Skill:
   pass
 
