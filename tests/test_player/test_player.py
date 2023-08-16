@@ -19,9 +19,9 @@
 import itertools
 from typing import Any
 
+import pytest_cases
 import pydantic
 import pytest
-import pytest_cases
 
 from zero_saver import player
 from zero_saver import item
@@ -97,6 +97,11 @@ class TestStats:
     assert hasattr(stats_fixture, 'position')
 
 
+@pytest.fixture(scope='module')
+def inventory_type_adapter():
+  return pydantic.TypeAdapter(player.Inventory)
+
+
 class TestInventory:
 
   def test_inventory_init_well_formed(self, inventory_fixture):
@@ -133,6 +138,20 @@ class TestInventory:
 
   def test_inventory_model_dump_json_returns_string(self, inventory_fixture):
     assert isinstance(inventory_fixture.model_dump_json(), str)
+
+  @pytest.mark.slow
+  @pytest_cases.parametrize_with_cases(
+      'dump_json_arguments',
+      cases=_CASES,
+      prefix='pydantic_dump_',
+      idstyle='explicit',
+      import_fixtures=True)
+  def test_inventory_model_dump_json_matches_type_adapter(
+      self, inventory_fixture, dump_json_arguments, inventory_type_adapter):
+    expected_value = inventory_type_adapter.dump_json(inventory_fixture,
+                                                      **dump_json_arguments)
+    actual_value = inventory_fixture.model_dump_json(**dump_json_arguments)
+    assert actual_value.encode() == expected_value
 
 
 class TestPlayer:
@@ -186,6 +205,6 @@ class TestPydanticFunctionality:
                                         player.Inventory)):
       assert adapter
 
-    def test_inventory_type_adapter_has_json_schema(self):
-      print(pydantic.TypeAdapter(player.Inventory).json_schema())
-      assert pydantic.TypeAdapter(player.Inventory).json_schema()
+    def test_inventory_type_adapter_has_json_schema(self,
+                                                    inventory_type_adapter):
+      assert inventory_type_adapter.json_schema()

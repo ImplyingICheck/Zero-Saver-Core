@@ -45,3 +45,82 @@ class InventoryCase:
       prefix=('weapon_', 'generated_item_', 'item_'))  # type: ignore
   def inventory_single_well_formed_item(self, item):
     return [item]
+
+
+class PydanticDumpArgumentsCase:
+
+  @pytest_cases.case(tags=['Well-Formed', 'ModelDumpJson'])
+  def indent_4(self):
+    return 4
+
+  @pytest_cases.case(tags=['Well-Formed', 'ModelDumpJson'])
+  def indent_none(self):
+    return None
+
+  @pytest_cases.case(tags=['Well-Formed', 'ModelDumpJson'])
+  def include_none(self):
+    return None
+
+  @pytest_cases.case(tags=['Exclude', 'Well-Formed', 'ModelDumpJson'])
+  def exclude_none(self):
+    return None
+
+  @pytest_cases.case(tags=['Well-Formed', 'ModelDumpJson'])
+  @pytest_cases.parametrize('by_alias', [True, False])
+  def by_alias_all(self, by_alias):
+    return by_alias
+
+  @pytest_cases.case(tags=['Well-Formed', 'ModelDumpJson'])
+  @pytest_cases.parametrize('exclude_unset', [True, False])
+  def exclude_unset_all(self, exclude_unset):
+    return exclude_unset
+
+  @pytest_cases.case(tags=['Well-Formed', 'ModelDumpJson'])
+  @pytest_cases.parametrize('exclude_defaults', [True, False])
+  def exclude_defaults_all(self, exclude_defaults):
+    return exclude_defaults
+
+  @pytest_cases.case(tags=['ExcludeNone', 'Well-Formed', 'ModelDumpJson'])
+  @pytest_cases.parametrize('exclude_none', [True, False])
+  def exclude_none_all(self, exclude_none):
+    return exclude_none
+
+  @pytest_cases.case(tags=['Well-Formed', 'ModelDumpJson'])
+  @pytest_cases.parametrize('round_trip', [True, False])
+  def round_trip_all(self, round_trip):
+    return round_trip
+
+  @pytest_cases.case(tags=['Well-Formed', 'ModelDumpJson'])
+  @pytest_cases.parametrize('warnings', [True, False])
+  def warnings_all(self, warnings):
+    return warnings
+
+
+@pytest_cases.parametrize_with_cases('indent', cases='.', prefix='indent_')
+@pytest_cases.parametrize_with_cases('include', cases='.', prefix='include_')
+@pytest_cases.parametrize_with_cases(
+    'exclude', cases='.', has_tag=['Exclude'], prefix='exclude_')
+@pytest_cases.parametrize_with_cases('by_alias', cases='.', prefix='by_alias_')
+@pytest_cases.parametrize_with_cases(
+    'exclude_unset', cases='.', prefix='exclude_unset_')
+@pytest_cases.parametrize_with_cases(
+    'exclude_defaults', cases='.', prefix='exclude_defaults_')
+@pytest_cases.parametrize_with_cases(
+    'exclude_none', cases='.', has_tag=['ExcludeNone'], prefix='exclude_none_')
+@pytest_cases.parametrize_with_cases(
+    'round_trip', cases='.', prefix='round_trip_')
+@pytest_cases.parametrize_with_cases('warnings', cases='.', prefix='warnings_')
+def pydantic_dump_arguments_well_formed(indent, include, exclude, by_alias,
+                                        exclude_unset, exclude_defaults,
+                                        exclude_none, round_trip, warnings):
+  return {
+      'indent': indent,
+      'include': include,
+      'exclude': exclude,
+      'by_alias': by_alias,
+      'exclude_unset': exclude_unset,
+      'exclude_defaults': exclude_defaults,
+      'exclude_none': exclude_none,
+      'round_trip': round_trip,
+      'warnings': warnings
+  }
