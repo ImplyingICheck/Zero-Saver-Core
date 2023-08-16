@@ -114,6 +114,11 @@ def mocked_inventory(mocker):
   return player.Inventory(expected_items), expected_items
 
 
+@pytest.fixture
+def mocked_item(mocker):
+  return mocker.Mock(spec=item.Item)
+
+
 class TestInventory:
 
   def test_inventory_init_well_formed(self, inventory_fixture):
@@ -146,10 +151,10 @@ class TestInventory:
     assert isinstance(inventory_fixture.model_dump_json(), str)
 
   @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
-  def test_inventory_append_mocked_item(self, mocker, mocked_inventory):
+  def test_inventory_append_mocked_item(self, mocked_item, mocked_inventory):
     inventory, expected_items = mocked_inventory
     del expected_items  # unused
-    appended_object = mocker.Mock(spec=item.Item)
+    appended_object = mocked_item
     inventory.append(appended_object)
     assert inventory[-1] is appended_object
 
@@ -182,10 +187,10 @@ class TestInventory:
     assert inventory == expected_items
 
   @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
-  def test_inventory_insert_mocked_object(self, mocker, mocked_inventory):
+  def test_inventory_insert_mocked_object(self, mocked_item, mocked_inventory):
     inventory, expected_items = mocked_inventory
     del expected_items  # unused
-    inserted_object = mocker.Mock(spec=item.Item)
+    inserted_object = mocked_item
     inventory.insert(1, inserted_object)
     assert inventory[1] is inserted_object
 
@@ -200,12 +205,46 @@ class TestInventory:
     assert isinstance(inventory[0], item_type)
 
   @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
-  def test_inventory_setitem_mocked_object(self, mocker, mocked_inventory):
+  def test_inventory_setitem_mocked_object(self, mocked_item, mocked_inventory):
     inventory, expected_items = mocked_inventory
     del expected_items  # unused
-    setitem = mocker.Mock(spec=item.Item)
+    setitem = mocked_item
     inventory[1] = setitem
     assert inventory[1] is setitem
+
+  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
+  def test_inventory_setitem_slice_0_2(self, mocked_inventory):
+    inventory, expected_items = mocked_inventory
+    expected_inventory = expected_items
+    expected_inventory[0:2] = []
+    inventory[0:2] = []
+    assert inventory == expected_inventory
+
+  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
+  def test_inventory_setitem_slice_all(self, mocked_inventory):
+    inventory, expected_items = mocked_inventory
+    expected_inventory = expected_items
+    expected_inventory[::] = []
+    inventory[::] = []
+    assert inventory == expected_inventory
+
+  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
+  def test_inventory_setitem_slice_odd(self, mocked_item, mocked_inventory):
+    inventory, expected_items = mocked_inventory
+    expected_inventory = expected_items
+    fill_count = len(expected_inventory[1::2])
+    expected_inventory[1::2] = [mocked_item] * fill_count
+    inventory[1::2] = [mocked_item] * fill_count
+    assert inventory == expected_inventory
+
+  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
+  def test_inventory_setitem_slice_even(self, mocked_item, mocked_inventory):
+    inventory, expected_items = mocked_inventory
+    expected_inventory = expected_items
+    fill_count = len(expected_inventory[::2])
+    expected_inventory[::2] = [mocked_item] * fill_count
+    inventory[::2] = [mocked_item] * fill_count
+    assert inventory == expected_inventory
 
   @pytest.mark.slow
   @pytest_cases.parametrize_with_cases(
