@@ -126,6 +126,11 @@ class TestInventory:
             itertools.repeat(item.Weapon | item.GeneratedItem | item.Item),
         ))
 
+  def test_inventory_init_malformed_raises_validation_error(self, mocker):
+    malformed_argument = mocker.Mock()
+    with pytest.raises(pydantic.ValidationError):
+      player.Inventory(malformed_argument)
+
   def test_inventory_model_dump_json_returns_string(self, inventory_fixture):
     assert isinstance(inventory_fixture.model_dump_json(), str)
 
