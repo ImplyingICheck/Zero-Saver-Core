@@ -188,6 +188,16 @@ class TestInventory:
     inventory.insert(1, inserted_object)
     assert inventory[1] is inserted_object
 
+  @pytest_cases.parametrize_with_cases(
+      'item_, item_type',
+      cases=_CASES,
+      has_tag=['Well-Formed'],
+      prefix='tuple_inventory_')
+  def test_inventory_insert_validates_object(self, item_, item_type):
+    inventory = player.Inventory()
+    inventory.insert(0, item_)
+    assert isinstance(inventory[0], item_type)
+
   @pytest.mark.slow
   @pytest_cases.parametrize_with_cases(
       'dump_json_arguments',
