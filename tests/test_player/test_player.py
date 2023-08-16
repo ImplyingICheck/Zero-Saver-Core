@@ -140,6 +140,9 @@ class TestPlayer:
   def test_player_init_well_formed(self, player_fixture):
     assert player_fixture
 
+  def test_player_inventory_correct_type(self, player_fixture):
+    assert isinstance(player_fixture.inventory, player.Inventory)
+
 
 def parameterize_over_properties(*fixture_properties_pairs):
   for fixture, properties in fixture_properties_pairs:
