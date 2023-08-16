@@ -163,6 +163,16 @@ class TestInventory:
     inventory.append(item_)
     assert isinstance(inventory[0], item_type)
 
+  @pytest_cases.parametrize_with_cases(
+      'item_, item_type',
+      cases=_CASES,
+      has_tag=['Well-Formed'],
+      prefix='tuple_inventory_')
+  def test_inventory_extend_validates_object(self, item_, item_type):
+    inventory = player.Inventory()
+    inventory.extend([item_])
+    assert isinstance(inventory[0], item_type)
+
   @pytest.mark.slow
   @pytest_cases.parametrize_with_cases(
       'dump_json_arguments',
