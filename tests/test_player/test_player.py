@@ -102,20 +102,25 @@ def inventory_type_adapter():
   return pydantic.TypeAdapter(player.Inventory)
 
 
+@pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
+@pytest.fixture
+def mocked_inventory(mocker):
+  # pydantic __fields__ is deprecated. Used by unittest.Mock() in spec call.
+  expected_items = [
+      mocker.Mock(spec=item.Weapon),
+      mocker.Mock(spec=item.GeneratedItem),
+      mocker.Mock(spec=item.Item),
+  ]
+  return player.Inventory(expected_items), expected_items
+
+
 class TestInventory:
 
   def test_inventory_init_well_formed(self, inventory_fixture):
     assert inventory_fixture
 
-  @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
-  def test_inventory_iter_traverses_items(self, mocker):
-    # pydantic __fields__ is deprecated. Used by unittest.Mock() in spec call.
-    expected_items = [
-        mocker.Mock(spec=item.Weapon),
-        mocker.Mock(spec=item.GeneratedItem),
-        mocker.Mock(spec=item.Item),
-    ]
-    actual_inventory = player.Inventory(expected_items)
+  def test_inventory_iter_traverses_items(self, mocked_inventory):
+    actual_inventory, expected_items = mocked_inventory
     assert list(actual_inventory) == expected_items
 
   def test_inventory_empty_init_returns_empty_list(self):
@@ -138,6 +143,13 @@ class TestInventory:
 
   def test_inventory_model_dump_json_returns_string(self, inventory_fixture):
     assert isinstance(inventory_fixture.model_dump_json(), str)
+
+  def test_inventory_append_mocked_item(self, mocker, mocked_inventory):
+    inventory, expected_items = mocked_inventory
+    del expected_items  # unused
+    appended_object = mocker.Mock(spec=item.Item)
+    inventory.append(appended_object)
+    assert inventory[-1] == appended_object
 
   @pytest.mark.slow
   @pytest_cases.parametrize_with_cases(

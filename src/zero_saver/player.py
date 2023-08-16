@@ -79,6 +79,11 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
         round_trip=round_trip,
         warnings=warnings).decode(encoding='utf-8')
 
+  @pydantic.validate_call()
+  def append(self, object_: item.Weapon | item.GeneratedItem | item.Item,
+             /) -> None:
+    super().append(object_)
+
 
 class Skill:
   pass
