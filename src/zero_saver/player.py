@@ -23,16 +23,18 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 import typing
-from typing import Any, TypeAlias, SupportsIndex, TYPE_CHECKING
+from typing import Any, overload, TypeAlias, SupportsIndex, TYPE_CHECKING
 
 import pydantic
 from pydantic_core import core_schema
 
 from zero_saver import item
 
-if not TYPE_CHECKING:
-  #pylint: disable=[function-redefined]
-  class SupportsIndex:
+if TYPE_CHECKING:
+  Slice: TypeAlias = slice
+else:
+
+  class SupportsIndex:  # pylint: disable=function-redefined
     """A validation schema used by pydantic. Equivalent to typing.SupportsIndex.
     """
 
@@ -42,6 +44,17 @@ if not TYPE_CHECKING:
       del source_type  # Unused
       del handler  # Unused
       return core_schema.is_instance_schema(typing.SupportsIndex)
+
+  class Slice:
+    """A validation schema used by pydantic. Equivalent to slice.
+    """
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source_type: Any,
+                                     handler: pydantic.GetCoreSchemaHandler):
+      del source_type  # Unused
+      del handler  # Unused
+      return core_schema.is_instance_schema(slice)
 
 
 NumberLike: TypeAlias = item.NumberLike
@@ -108,6 +121,31 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
   def insert(self, index: SupportsIndex,
              object_: item.Weapon | item.GeneratedItem | item.Item, /) -> None:
     super().insert(index, object_)
+
+  @overload
+  def __setitem__(self, i: SupportsIndex,
+                  o: item.Weapon | item.GeneratedItem | item.Item, /) -> None:
+    ...
+
+  @overload
+  def __setitem__(self, s: slice,
+                  o: Iterable[item.Weapon | item.GeneratedItem | item.Item],
+                  /) -> None:
+    ...
+
+  @pydantic.validate_call
+  def __setitem__(self, i: SupportsIndex | Slice,
+                  o: item.Weapon | item.GeneratedItem
+                  | item.Item
+                  | Iterable[item.Weapon | item.GeneratedItem | item.Item],
+                  /) -> None:
+    # Duplicated code to pass pyright check
+    if isinstance(i, slice):
+      assert not isinstance(o, item.Weapon | item.GeneratedItem | item.Item)
+      super().__setitem__(i, o)
+    else:
+      assert isinstance(o, item.Weapon | item.GeneratedItem | item.Item)
+      super().__setitem__(i, o)
 
 
 class Skill:
