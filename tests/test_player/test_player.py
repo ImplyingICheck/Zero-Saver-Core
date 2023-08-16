@@ -143,6 +143,9 @@ class TestPlayer:
   def test_player_inventory_correct_type(self, player_fixture):
     assert isinstance(player_fixture.inventory, player.Inventory)
 
+  def test_player_stats_correct_type(self, player_fixture):
+    assert isinstance(player_fixture.stats, player.Stats)
+
 
 def parameterize_over_properties(*fixture_properties_pairs):
   for fixture, properties in fixture_properties_pairs:
