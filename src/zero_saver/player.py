@@ -22,12 +22,27 @@ character metadata.
 from __future__ import annotations
 
 from collections.abc import Iterable
-from typing import Any, TypeAlias
+import typing
+from typing import Any, TypeAlias, SupportsIndex, TYPE_CHECKING
 
 import pydantic
 from pydantic_core import core_schema
 
 from zero_saver import item
+
+if not TYPE_CHECKING:
+  #pylint: disable=[function-redefined]
+  class SupportsIndex:
+    """A validation schema used by pydantic. Equivalent to typing.SupportsIndex.
+    """
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source_type: Any,
+                                     handler: pydantic.GetCoreSchemaHandler):
+      del source_type  # Unused
+      del handler  # Unused
+      return core_schema.is_instance_schema(typing.SupportsIndex)
+
 
 NumberLike: TypeAlias = item.NumberLike
 
@@ -80,15 +95,19 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
         warnings=warnings).decode(encoding='utf-8')
 
   @pydantic.validate_call
-  def append(self,
-             object_: item.Weapon | item.GeneratedItem | item.Item) -> None:
+  def append(self, object_: item.Weapon | item.GeneratedItem | item.Item,
+             /) -> None:
     super().append(object_)
 
   @pydantic.validate_call
-  def extend(
-      self, iterable: Iterable[item.Weapon | item.GeneratedItem
-                               | item.Item]) -> None:
+  def extend(self, iterable: Iterable[item.Weapon | item.GeneratedItem
+                                      | item.Item], /) -> None:
     super().extend(iterable)
+
+  @pydantic.validate_call
+  def insert(self, index: SupportsIndex,
+             object_: item.Weapon | item.GeneratedItem | item.Item, /) -> None:
+    super().insert(index, object_)
 
 
 class Skill:

@@ -181,6 +181,13 @@ class TestInventory:
     inventory.extend(expected_items)
     assert inventory == expected_items
 
+  def test_inventory_insert_mocked_object(self, mocker, mocked_inventory):
+    inventory, expected_items = mocked_inventory
+    del expected_items  # unused
+    inserted_object = mocker.Mock(spec=item.Item)
+    inventory.insert(1, inserted_object)
+    assert inventory[1] is inserted_object
+
   @pytest.mark.slow
   @pytest_cases.parametrize_with_cases(
       'dump_json_arguments',
