@@ -63,7 +63,7 @@ class TestSaveData:
     with pytest.raises(ValueError, match='Unsupported save version'):
       assert save_data.SaveData(save)
 
-  @pytest_cases.parametrize('expected_properties', ['_factory'])
+  @pytest_cases.parametrize('expected_properties', ['_factory', 'player'])
   def test_save_data_has_expected_properties(self, save_data_fixture,
                                              expected_properties):
     assert hasattr(save_data_fixture, expected_properties)

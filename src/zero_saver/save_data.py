@@ -96,3 +96,4 @@ class SaveData:
     else:
       raise ValueError(f'Unsupported save version: {save_version}')
     self._factory = factory
+    self.player = factory.get_player()
