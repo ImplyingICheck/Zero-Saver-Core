@@ -19,6 +19,7 @@ import pytest
 import pytest_cases.filters
 
 from zero_saver import save_data
+from zero_saver import player
 
 _CASES = 'case_save_data.case_save_data'
 
@@ -148,6 +149,11 @@ class TestVersion031Production:
   def test_version_031_production_supported_versions_is_frozenset(self):
     assert isinstance(save_data.Version031Production.SUPPORTED_VERSIONS,
                       frozenset)
+
+  def test_version_031_production_get_player_returns_correct_type(
+      self, save_file_fixture):
+    player_data = save_data.Version031Production(save_file_fixture).get_player()
+    assert isinstance(player_data, player.Player)
 
 
 def expected_save_version(save):

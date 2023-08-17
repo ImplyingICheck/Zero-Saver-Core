@@ -16,6 +16,8 @@
 """Parsing layer"""
 from __future__ import annotations
 
+import typing
+
 from zero_saver import game_data_io
 from zero_saver import player
 from zero_saver import stash
@@ -69,6 +71,13 @@ class SaveDataFactory:
 
 class Version031Production(SaveDataFactory):
   SUPPORTED_VERSIONS = frozenset(['0.31 production'])
+
+  def get_player(self) -> player.Player:
+    player_stats = self.save['data']['pre_raid']['player']
+    player_inventory = self.save['data']['pre_raid']['Inventory']['items']
+    return player.Player(
+        stats=typing.cast(player.Stats, player_stats),
+        inventory=typing.cast(player.Inventory, player_inventory))
 
 
 # End concrete SaveDataFactory classes
