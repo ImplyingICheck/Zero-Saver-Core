@@ -15,6 +15,8 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
 # pylint: disable=redefined-outer-name
+import copy
+
 import pytest
 import pytest_cases.filters
 
@@ -85,11 +87,6 @@ def save_data_factory_fixture(save_file_fixture):
   return save_data.SaveDataFactory(save_file_fixture)
 
 
-@pytest.fixture
-def version_031_production_fixture(save_file_fixture):
-  save_data.Version031Production(save_file_fixture)
-
-
 class TestSaveDataFactory:
 
   @pytest_cases.parametrize_with_cases('save', cases=_CASES, prefix='save_json')
@@ -139,6 +136,11 @@ class TestSaveDataFactory:
       save_data_factory_fixture.set_difficulty_settings(storage)
 
 
+@pytest_cases.fixture
+def version_031_production_fixture(save_file_fixture):
+  return save_data.Version031Production(save_file_fixture)
+
+
 class TestVersion031Production:
 
   def test_version_031_production_has_supported_versions_version_031_production(
@@ -151,9 +153,16 @@ class TestVersion031Production:
                       frozenset)
 
   def test_version_031_production_get_player_returns_correct_type(
-      self, save_file_fixture):
-    player_data = save_data.Version031Production(save_file_fixture).get_player()
+      self, version_031_production_fixture):
+    player_data = version_031_production_fixture.get_player()
     assert isinstance(player_data, player.Player)
+
+  def test_version_031_production_set_player_stable_round_trip(
+      self, version_031_production_fixture):
+    original_save = copy.deepcopy(version_031_production_fixture.save)
+    player_data = version_031_production_fixture.get_player()
+    version_031_production_fixture.set_player(player_data)
+    assert version_031_production_fixture.save == original_save
 
 
 def expected_save_version(save):

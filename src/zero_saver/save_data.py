@@ -23,6 +23,7 @@ from zero_saver import player
 from zero_saver import stash
 from zero_saver import quest
 from zero_saver import difficulty_settings
+from zero_saver.save_golden_files import typed_dict_0_31_production
 
 
 def get_save_version(save: game_data_io.ZeroSievertSave) -> str:
@@ -70,6 +71,7 @@ class SaveDataFactory:
 
 
 class Version031Production(SaveDataFactory):
+  """A concrete SaveDataFactory for reading saves of version 0.31 production."""
   SUPPORTED_VERSIONS = frozenset(['0.31 production'])
 
   def get_player(self) -> player.Player:
@@ -78,6 +80,14 @@ class Version031Production(SaveDataFactory):
     return player.Player(
         stats=typing.cast(player.Stats, player_stats),
         inventory=typing.cast(player.Inventory, player_inventory))
+
+  def set_player(self, player_data: player.Player) -> None:
+    player_stats = self.save['data']['pre_raid']['player']
+    player_inventory = self.save['data']['pre_raid']['Inventory']
+    player_stats.update(
+        typing.cast(typed_dict_0_31_production.Player,
+                    player_data.stats.model_dump()))
+    player_inventory['items'] = player_data.inventory.model_dump(by_alias=True)
 
 
 # End concrete SaveDataFactory classes
