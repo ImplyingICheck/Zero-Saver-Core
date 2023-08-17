@@ -177,6 +177,19 @@ class TestVersion031Production:
         'player']
     assert actual_data == stats
 
+  @pytest_cases.parametrize_with_cases(
+      'inventory', cases='case_player.case_player', prefix='inventory_')
+  def test_version_031_production_set_player_updates_inventory(
+      self, mocker, version_031_production_fixture, inventory):
+    player_data = version_031_production_fixture.get_player()
+    mocked_inventory = mocker.Mock(spec=dir(player.Inventory))
+    mocked_inventory.model_dump = lambda by_alias: inventory
+    player_data.inventory = mocked_inventory
+    version_031_production_fixture.set_player(player_data)
+    actual_data = version_031_production_fixture.save['data']['pre_raid'][
+        'Inventory']['items']
+    assert actual_data == inventory
+
 
 def expected_save_version(save):
   return save['save_version']
