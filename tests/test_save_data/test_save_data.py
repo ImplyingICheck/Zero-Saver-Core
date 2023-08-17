@@ -164,6 +164,19 @@ class TestVersion031Production:
     version_031_production_fixture.set_player(player_data)
     assert version_031_production_fixture.save == original_save
 
+  @pytest_cases.parametrize_with_cases(
+      'stats', cases='case_player.case_player', prefix='stats_')
+  def test_version_031_production_set_player_updates_stats(
+      self, mocker, version_031_production_fixture, stats):
+    player_data = version_031_production_fixture.get_player()
+    mocked_stats = mocker.Mock(spec=player.Stats)
+    mocked_stats.model_dump = lambda: stats
+    player_data.stats = mocked_stats
+    version_031_production_fixture.set_player(player_data)
+    actual_data = version_031_production_fixture.save['data']['pre_raid'][
+        'player']
+    assert actual_data == stats
+
 
 def expected_save_version(save):
   return save['save_version']
