@@ -15,10 +15,12 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
 # pylint: disable=redefined-outer-name
+# pylint: disable=protected-access
 import copy
 
 import pytest
 import pytest_cases.filters
+import pytest_mock
 
 from zero_saver import save_data
 from zero_saver import player
@@ -31,6 +33,15 @@ _CASES = 'case_save_data.case_save_data'
     'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
 def save_data_fixture(save):
   return save_data.SaveData(save)
+
+
+@pytest.fixture
+def mocked_save_data(mocker: pytest_mock.MockerFixture):
+  mocker.patch(
+      'zero_saver.save_data._get_save_factory',
+      side_effect=mocker.Mock(name='_factory', spec=save_data.SaveDataFactory))
+  mocked_save_data = save_data.SaveData(mocker.Mock(name='mocked_save'))
+  return mocked_save_data
 
 
 class TestSaveData:
@@ -76,6 +87,13 @@ class TestSaveData:
     mocked_save = mocker.Mock(name='mocked_save')
     save_data.SaveData(mocked_save)
     mocked_get_save_factory.assert_called_once_with(mocked_save)
+
+  def test_save_data_set_player_uses_correct_player_data_none(
+      self, mocked_save_data):
+    mocked_save_data.set_player()
+    method_under_test = mocked_save_data._factory.set_player
+    expected_player_data = mocked_save_data.player
+    method_under_test.assert_called_once_with(expected_player_data)
 
 
 @pytest_cases.fixture(scope='module')

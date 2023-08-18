@@ -114,3 +114,8 @@ class SaveData:
   def __init__(self, save: game_data_io.ZeroSievertSave):
     self._factory = _get_save_factory(save)
     self.player = self._factory.get_player()
+
+  def set_player(self, player_data: player.Player | None = None):
+    if player_data is None:
+      player_data = self.player
+    self._factory.set_player(player_data)
