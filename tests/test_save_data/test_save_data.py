@@ -70,6 +70,13 @@ class TestSaveData:
                                              expected_properties):
     assert hasattr(save_data_fixture, expected_properties)
 
+  def test_save_data_init_calls_get_save_factory_correctly(self, mocker):
+    mocked_get_save_factory = mocker.patch(
+        'zero_saver.save_data._get_save_factory')
+    mocked_save = mocker.Mock(name='mocked_save')
+    save_data.SaveData(mocked_save)
+    mocked_get_save_factory.assert_called_once_with(mocked_save)
+
 
 @pytest_cases.fixture(scope='module')
 @pytest_cases.parametrize_with_cases(

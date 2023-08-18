@@ -93,17 +93,24 @@ class Version031Production(SaveDataFactory):
 # End concrete SaveDataFactory classes
 
 
+def _get_save_factory(save: game_data_io.ZeroSievertSave):
+  try:
+    save_version = get_save_version(save)
+  except (TypeError, KeyError) as e:
+    raise ValueError(f'Invalid save: {save}') from e
+  if save_version in Version031Production.SUPPORTED_VERSIONS:
+    factory = Version031Production(save)
+  else:
+    raise ValueError(f'Unsupported save version: {save_version}')
+  return factory
+
+
 class SaveData:
-  """Public interface for accessing the contents of a save file."""
+  """Public interface for accessing the contents of a save file. Interactions
+  with the structured data from *save* should be handled with public methods of
+  zero_saver.save_data.SaveData. The underlying constructor factory is not
+  guaranteed to have consistent implementation."""
 
   def __init__(self, save: game_data_io.ZeroSievertSave):
-    try:
-      save_version = get_save_version(save)
-    except (TypeError, KeyError) as e:
-      raise ValueError(f'Invalid save: {save}') from e
-    if save_version in Version031Production.SUPPORTED_VERSIONS:
-      factory = Version031Production(save)
-    else:
-      raise ValueError(f'Unsupported save version: {save_version}')
-    self._factory = factory
-    self.player = factory.get_player()
+    self._factory = _get_save_factory(save)
+    self.player = self._factory.get_player()
