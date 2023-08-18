@@ -90,9 +90,16 @@ class TestSaveData:
 
   def test_save_data_set_player_uses_correct_player_data_none(
       self, mocked_save_data):
-    mocked_save_data.set_player()
+    mocked_save_data.set_player(None)
     method_under_test = mocked_save_data._factory.set_player
     expected_player_data = mocked_save_data.player
+    method_under_test.assert_called_once_with(expected_player_data)
+
+  def test_save_data_set_player_uses_correct_player_data_mocked_argument(
+      self, mocker, mocked_save_data):
+    expected_player_data = mocker.Mock(name='player_data')
+    mocked_save_data.set_player(expected_player_data)
+    method_under_test = mocked_save_data._factory.set_player
     method_under_test.assert_called_once_with(expected_player_data)
 
 
