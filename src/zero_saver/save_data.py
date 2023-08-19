@@ -115,7 +115,14 @@ class SaveData:
     self._factory = _get_save_factory(save)
     self.player = self._factory.get_player()
 
-  def set_player(self, player_data: player.Player | None = None):
+  def set_player(self, player_data: player.Player | None = None) -> None:
+    """Update the underlying player data of *save* from initialisation of
+    SaveData.
+
+    Args:
+      player_data: Data with which the update is completed. self.player is used
+        if no *player_data* is specified.
+    """
     if player_data is None:
       player_data = self.player
     self._factory.set_player(player_data)
