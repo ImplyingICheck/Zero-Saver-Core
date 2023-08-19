@@ -16,6 +16,9 @@
 # pylint: disable=missing-class-docstring
 # pylint: disable=redefined-outer-name
 # pylint: disable=protected-access
+import pathlib
+import re
+
 import pydantic
 import pytest
 import pytest_cases
@@ -25,6 +28,11 @@ from zero_saver import game_data_io
 from zero_saver.save_golden_files import typed_dict_0_31_production
 
 _CASES = 'case_game_data_io.case_game_data_io'
+
+
+def strip_white_space(string):
+  pattern = re.compile(r'\s*')
+  pattern.sub('', string)
 
 
 @pytest.fixture
@@ -141,3 +149,16 @@ def test_game_data_io_write_save_file_well_formed_writes_to_file_stream(
   del expected_save_path  # Unused
   game_data_io_.write_save_file()
   mocked_open().write.assert_called()
+
+
+def test_game_data_io_write_save_file_well_formed_writes_expected_contents(
+    mocker: pytest_mock.MockFixture, game_data_io_fixture, file_like_fixture):
+  mocker.patch.object(
+      game_data_io.GameDataIO, '_backup_save_file', return_value=True)
+  mocker.patch('zero_saver.game_data_io._atomic_write', file_like_fixture())
+  game_data_io_, expected_save_path = game_data_io_fixture
+  game_data_io_.write_save_file()
+  expected_data = pathlib.Path(expected_save_path).read_text(encoding='utf-8')
+  file_like_fixture.go_to_start()
+  actual_data = file_like_fixture.read()
+  assert strip_white_space(actual_data) == strip_white_space(expected_data)
