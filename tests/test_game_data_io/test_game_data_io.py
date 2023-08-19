@@ -18,10 +18,13 @@
 # pylint: disable=protected-access
 import pydantic
 import pytest
+import pytest_cases
 import pytest_mock
 
 from zero_saver import game_data_io
 from zero_saver.save_golden_files import typed_dict_0_31_production
+
+_CASES = 'case_game_data_io.case_game_data_io'
 
 
 @pytest.fixture
@@ -42,6 +45,17 @@ def mocked_game_data_io(mocker, mocked_save):
   return game_data_io.GameDataIO()
 
 
+@pytest_cases.fixture
+@pytest_cases.parametrize_with_cases(
+    'save_file',
+    cases=_CASES,
+    prefix='save_file_path_',
+    has_tag=['Well-Formed'])
+def game_data_io_fixture(mocker, save_file):
+  mocker.patch('zero_saver.game_data_io.FileLocation')
+  return game_data_io.GameDataIO(save_file)
+
+
 def test_game_data_io_verify_save_integrity_invalid_save_raises_validation_error(  # pylint: disable=line-too-long
     mocked_game_data_io):
   with pytest.raises(pydantic.ValidationError):
@@ -60,3 +74,8 @@ def test_game_data_io_verify_save_integrity_missing_save_version_raises_key_erro
   mocked_game_data_io.save = {}
   with pytest.raises(KeyError):
     mocked_game_data_io.verify_save_integrity()
+
+
+def test_game_data_io_verify_save_integrity_no_error_well_formed(
+    game_data_io_fixture):
+  game_data_io_fixture.verify_save_integrity()
