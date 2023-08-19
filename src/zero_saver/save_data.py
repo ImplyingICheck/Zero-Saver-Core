@@ -93,7 +93,7 @@ class Version031Production(SaveDataFactory):
 # End concrete SaveDataFactory classes
 
 
-def _get_save_factory(save: game_data_io.ZeroSievertSave):
+def _get_save_factory(save: game_data_io.ZeroSievertSave) -> SaveDataFactory:
   try:
     save_version = get_save_version(save)
   except (TypeError, KeyError) as e:
@@ -106,7 +106,10 @@ def _get_save_factory(save: game_data_io.ZeroSievertSave):
 
 
 class SaveData:
-  """Public interface for accessing the contents of a save file. Interactions
+  """Extracts data from *save* into a structured format of zero_saver objects.
+  Each object is stored in an attribute.
+
+  Public interface for accessing the contents of a save file. Interactions
   with the structured data from *save* should be handled with public methods of
   zero_saver.save_data.SaveData. The underlying constructor factory is not
   guaranteed to have consistent implementation."""
