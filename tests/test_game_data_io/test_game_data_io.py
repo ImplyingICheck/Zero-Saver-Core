@@ -88,8 +88,15 @@ def test_game_data_io_write_save_file_raises_value_error_invalid_save(
     mocked_game_data_io.write_save_file()
 
 
-def test_game_data_io_write_save_file_invalid_save_version_raises_runtime_error(  # pylint: disable=line-too-long
+def test_game_data_io_write_save_file_invalid_save_version_raises_runtime_error(
     mocked_game_data_io):
   mocked_game_data_io.save.save_version = 'Unsupported save version'
   with pytest.raises(RuntimeError):
     mocked_game_data_io.write_save_file()
+
+
+def test_game_data_io_write_save_file_missing_save_version_raises_runtime_error(
+    mocked_game_data_io):
+  mocked_game_data_io.save = {}
+  with pytest.raises(KeyError):
+    mocked_game_data_io.verify_save_integrity()
