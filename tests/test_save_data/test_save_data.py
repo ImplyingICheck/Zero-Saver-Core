@@ -170,7 +170,7 @@ class TestSaveDataFactory:
 
 @pytest_cases.fixture
 def version_031_production_fixture(save_file_fixture):
-  return save_data.Version031Production(save_file_fixture)
+  return save_data._Version031Production(save_file_fixture)
 
 
 class TestVersion031Production:
@@ -178,10 +178,10 @@ class TestVersion031Production:
   def test_version_031_production_has_supported_versions_version_031_production(
       self):
     assert ('0.31 production'
-            in save_data.Version031Production.SUPPORTED_VERSIONS)
+            in save_data._Version031Production.SUPPORTED_VERSIONS)
 
   def test_version_031_production_supported_versions_is_frozenset(self):
-    assert isinstance(save_data.Version031Production.SUPPORTED_VERSIONS,
+    assert isinstance(save_data._Version031Production.SUPPORTED_VERSIONS,
                       frozenset)
 
   def test_version_031_production_get_player_returns_correct_type(

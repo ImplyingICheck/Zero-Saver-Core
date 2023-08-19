@@ -70,7 +70,7 @@ class SaveDataFactory:
 # Begin concrete SaveDataFactory classes
 
 
-class Version031Production(SaveDataFactory):
+class _Version031Production(SaveDataFactory):
   """A concrete SaveDataFactory for reading saves of version 0.31 production."""
   SUPPORTED_VERSIONS = frozenset(['0.31 production'])
 
@@ -98,8 +98,8 @@ def _get_save_factory(save: game_data_io.ZeroSievertSave) -> SaveDataFactory:
     save_version = get_save_version(save)
   except (TypeError, KeyError) as e:
     raise ValueError(f'Invalid save: {save}') from e
-  if save_version in Version031Production.SUPPORTED_VERSIONS:
-    factory = Version031Production(save)
+  if save_version in _Version031Production.SUPPORTED_VERSIONS:
+    factory = _Version031Production(save)
   else:
     raise ValueError(f'Unsupported save version: {save_version}')
   return factory
