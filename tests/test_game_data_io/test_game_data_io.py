@@ -85,6 +85,7 @@ def test_game_data_io_verify_save_integrity_missing_save_version_raises_key_erro
     mocked_game_data_io.verify_save_integrity()
 
 
+@pytest.mark.slow
 def test_game_data_io_verify_save_integrity_no_error_well_formed(
     game_data_io_fixture):
   game_data_io_, save_file = game_data_io_fixture
@@ -129,6 +130,7 @@ def test_game_data_io_write_save_file_failed_backup_raises_runtime_error(
     mocked_game_data_io.write_save_file()
 
 
+@pytest.mark.slow
 def test_game_data_io_write_save_file_well_formed_passes_correct_arguments_to_atomic_write(  # pylint: disable=line-too-long
     mocker: pytest_mock.MockFixture, game_data_io_fixture):
   mocker.patch.object(
@@ -139,6 +141,7 @@ def test_game_data_io_write_save_file_well_formed_passes_correct_arguments_to_at
   mocked_open.assert_called_with(expected_save_path, 'w', encoding='utf-8')
 
 
+@pytest.mark.slow
 def test_game_data_io_write_save_file_well_formed_writes_to_file_stream(
     mocker: pytest_mock.MockFixture, game_data_io_fixture):
   mocker.patch.object(
@@ -151,6 +154,7 @@ def test_game_data_io_write_save_file_well_formed_writes_to_file_stream(
   mocked_open().write.assert_called()
 
 
+@pytest.mark.slow
 def test_game_data_io_write_save_file_well_formed_writes_expected_contents(
     mocker: pytest_mock.MockFixture, game_data_io_fixture, file_like_fixture):
   mocker.patch.object(
