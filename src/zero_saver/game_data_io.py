@@ -522,27 +522,22 @@ class GameDataIO:
             del normalized_data[key]
         normalized_data.update(original_data)
 
-  def verify_save_integrity(self) -> bool:
-    """Checks that a save file contains the correct, expected fields.
+  def verify_save_integrity(self) -> None:
+    """Compares the save file to the JSON Schema corresponding to supported
+    save types. Raises an exception if self.save does not match the JSON Schema.
 
     Important: This function does not check if values are well-formed, only that
      they are of the expected type.
 
-    Returns:
-      A bool signifying if all keys exist, and their corresponding value types
-        match.
     Raises:
-      copy.Error: If an error occurs while generating a deepcopy of self.save
-        values. See self._normalize_player_inventory() for implementation
-        details.
-      OSError: If an error occurs while handling builtins.open() of the golden
-        file specified by the save version. See
-        verifier.golden_save_file_from_version() for implementation details.
+      pydantic.ValidationError: If self.save does not match the expected
+        JSON schema corresponding to the save version.
+      KeyError: If self.save does not contain the field 'save_version'.
+      ModuleNotFoundError: If no TypedDict corresponding to the version of
+        self.save exists. See zero_saver.save_golden_files.verifier for
+        implementation details.
+
     """
     save_version = self.save['save_version']
-    assert isinstance(save_version, str)
-    with verifier.golden_save_file_from_version(save_version) as f:
-      expected_save = json.load(
-          f, object_hook=monkey_patch_json.parse_type_hints)
-      with self._normalize_player_inventory():
-        return _compare_contents(self.save, expected_save)
+    verifier.get_json_validator(save_version).validate_python(
+        self.save, strict=True)
