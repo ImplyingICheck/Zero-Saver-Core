@@ -125,7 +125,19 @@ def test_game_data_io_write_save_file_well_formed_passes_correct_arguments_to_at
     mocker: pytest_mock.MockFixture, game_data_io_fixture):
   mocker.patch.object(
       game_data_io.GameDataIO, '_backup_save_file', return_value=True)
-  mocked_write = mocker.patch('zero_saver.game_data_io._atomic_write')
+  mocked_open = mocker.patch('zero_saver.game_data_io._atomic_write')
   game_data_io_, expected_save_path = game_data_io_fixture
   game_data_io_.write_save_file()
-  mocked_write.assert_called_with(expected_save_path, 'w', encoding='utf-8')
+  mocked_open.assert_called_with(expected_save_path, 'w', encoding='utf-8')
+
+
+def test_game_data_io_write_save_file_well_formed_writes_to_file_stream(
+    mocker: pytest_mock.MockFixture, game_data_io_fixture):
+  mocker.patch.object(
+      game_data_io.GameDataIO, '_backup_save_file', return_value=True)
+  mocked_open = mocker.patch('zero_saver.game_data_io._atomic_write',
+                             mocker.mock_open())
+  game_data_io_, expected_save_path = game_data_io_fixture
+  del expected_save_path  # Unused
+  game_data_io_.write_save_file()
+  mocked_open().write.assert_called()
