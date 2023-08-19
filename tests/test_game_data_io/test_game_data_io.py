@@ -53,3 +53,10 @@ def test_game_data_io_verify_save_integrity_invalid_save_version_raises_module_n
   mocked_game_data_io.save.save_version = 'Unsupported save version'
   with pytest.raises(ModuleNotFoundError):
     mocked_game_data_io.verify_save_integrity()
+
+
+def test_game_data_io_verify_save_integrity_missing_save_version_raises_key_error(  # pylint: disable=line-too-long
+    mocked_game_data_io):
+  mocked_game_data_io.save = {}
+  with pytest.raises(KeyError):
+    mocked_game_data_io.verify_save_integrity()
