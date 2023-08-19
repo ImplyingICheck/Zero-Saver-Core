@@ -46,3 +46,10 @@ def test_game_data_io_verify_save_integrity_invalid_save_raises_validation_error
     mocked_game_data_io):
   with pytest.raises(pydantic.ValidationError):
     mocked_game_data_io.verify_save_integrity()
+
+
+def test_game_data_io_verify_save_integrity_invalid_save_version_raises_module_not_found_error(  # pylint: disable=line-too-long
+    mocked_game_data_io):
+  mocked_game_data_io.save.save_version = 'Unsupported save version'
+  with pytest.raises(ModuleNotFoundError):
+    mocked_game_data_io.verify_save_integrity()
