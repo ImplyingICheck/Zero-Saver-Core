@@ -39,6 +39,7 @@ def mocked_save(mocker: pytest_mock.MockFixture):
 
 @pytest.fixture
 def mocked_game_data_io(mocker, mocked_save):
+  mocker.patch('builtins.open')
   mocker.patch('zero_saver.game_data_io.FileLocation')
   mocker.patch.object(
       game_data_io.GameDataIO, '_read_save_file', return_value=mocked_save)
@@ -79,3 +80,8 @@ def test_game_data_io_verify_save_integrity_missing_save_version_raises_key_erro
 def test_game_data_io_verify_save_integrity_no_error_well_formed(
     game_data_io_fixture):
   game_data_io_fixture.verify_save_integrity()
+
+
+def test_write_save_file_raises_value_error_invalid_save(mocked_game_data_io):
+  with pytest.raises(ValueError):
+    mocked_game_data_io.write_save_file()

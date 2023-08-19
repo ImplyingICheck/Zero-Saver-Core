@@ -21,7 +21,6 @@ presenting lexed content.
 from __future__ import annotations
 
 import contextlib
-import copy
 import datetime
 import decimal
 import enum
@@ -38,6 +37,8 @@ import winreg
 import cmath
 from collections.abc import Iterator, Mapping, Sequence
 from typing import Any, BinaryIO, Literal, overload, TextIO, TYPE_CHECKING, TypeAlias, TypeVar
+
+import pydantic
 
 from zero_saver.exceptions import winreg_errors
 from zero_saver.save_golden_files import verifier
@@ -368,9 +369,9 @@ class GameDataIO:
     Raises:
       OSError: If an error occurs while handling
         zero_saver.game_data_io._atomic_write() of self._save_path.
-      ValueError: If integrity checks were successfully set up, but self.save
-        does not pass integrity checks. See self.verify_save_integrity() for
-        implementation details.
+      ValueError: If integrity checks were successfully set up,
+        but self.save does not pass integrity checks. See
+        self.verify_save_integrity() for implementation details.
       RuntimeError:
         If a backup of the un-edited save file is created, but their
           SHA-256 hashes do not match. See self._backup_save_file() for
@@ -379,10 +380,11 @@ class GameDataIO:
           self.verify_save_integrity() for implementation details.
     """
     try:
-      if not self.verify_save_integrity():
-        raise ValueError(f'Save not formatted properly: {self.save}')
-    except (OSError, copy.Error) as e:
+      self.verify_save_integrity()
+    except (KeyError, ModuleNotFoundError) as e:
       raise RuntimeError('Failed during set up of integrity check.') from e
+    except pydantic.ValidationError as e:
+      raise ValueError('Save not formatted properly.') from e
     try:
       if not self._backup_save_file():
         raise RuntimeError('The SHA-256 hash of the written backup file and '
