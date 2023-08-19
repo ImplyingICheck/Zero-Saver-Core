@@ -184,14 +184,6 @@ class FileLocation:
         pass
 
 
-def _types_match(object_1: Any, object_2: Any) -> bool:
-  if not isinstance(object_1, type):
-    object_1 = type(object_1)
-  if not isinstance(object_2, type):
-    object_2 = type(object_2)
-  return object_1 == object_2
-
-
 def _current_datetime_as_valid_filename() -> str:
   current_datetime = datetime.datetime.now().isoformat(
       sep='H', timespec='minutes')
@@ -251,61 +243,6 @@ def _files_match(*files: StrOrBytesPath, blocksize: int = 2**20) -> bool:
         hash_function.update(chunk)
     hashes.append(hash_function.digest())
   return hashes.count(hashes[0]) == len(hashes)
-
-
-def _compare_contents(
-    object_1: NestedStructure[Any],
-    object_2: NestedStructure[Any],
-    base_class: type | tuple[type | tuple[Any, ...], ...] = (str, tuple),
-) -> bool:
-  """Strict comparison between two nested objects. Every nested item must be of
-  the same type, not just share a common super class.
-
-  Assumes that any list objects have the same order of contained items.
-
-  Args:
-    object_1:
-    object_2:
-
-  Returns:
-
-  """
-  # pylint: disable=[unidiomatic-typecheck]
-  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
-  # Base case: Types do not match
-  if not _types_match(object_1, object_2):
-    return False
-  # While object_1 and object_2 should never have differing types, these checks
-  # are necessary to ensure type safety in static analysis.
-  if not (isinstance(object_1, base_class) or
-          isinstance(object_2, base_class)) and isinstance(
-              object_1,
-              (Mapping, Sequence)) and isinstance(object_2,
-                                                  (Mapping, Sequence)):
-    if len(object_1) != len(object_2):
-      # Base case: Unequal number of keys
-      return False
-    if isinstance(object_1, Mapping) and isinstance(object_2, Mapping):
-      try:
-        values = [(object_1[key], object_2[key]) for key in object_1]
-      except KeyError:
-        # Base case: key in object_1 is not in object_2
-        return False
-    elif isinstance(object_1, Sequence) and isinstance(object_2, Sequence):
-      values = zip(object_1, object_2)
-    else:
-      raise ValueError(f'Invalid type combination.\n'
-                       f'(object_1 of type: {type(object_1)})\n'
-                       f'(object_2 of type: {type(object_2)})')
-    for value_1, value_2 in values:
-      # Short circuit: Return false if any seen value has been False
-      if not _compare_contents(value_1, value_2):
-        return False
-  else:
-    # Base Case: Type of TerminalValue in NestedStructure matches
-    return _types_match(object_1, object_2)
-  # Recursive : Same type and all contents match
-  return True
 
 
 @overload
@@ -457,70 +394,6 @@ class GameDataIO:
 
   def _import_gamedata(self):
     pass
-
-  def _remove_player_inventory(
-      self) -> tuple[ZeroSievertInventory, ZeroSievertInventory]:
-    """
-
-    Returns:
-
-    Raises:
-      copy.Error: If an error occurs while copying the data field associated
-        with a player inventory in a save.
-    """
-    inventory_representation = []
-    save = self.save
-    player_inventory = save['data']['pre_raid']['Inventory']
-    temp_player_inventory = copy.deepcopy(player_inventory)
-    player_inventory['items'] = inventory_representation
-    return player_inventory, temp_player_inventory
-
-  def _remove_player_storage(self) -> tuple[ZeroSievertChest, ZeroSievertChest]:
-    """
-
-    Returns:
-
-    Raises:
-      copy.Error: If an error occurs while copying the data field associated
-        with a player storage.
-    """
-    chest_representation = []
-    save = self.save
-    number_of_chests = 14
-    player_chests = [f'chest_{index}' for index in range(number_of_chests)]
-    player_storage = save['data']['chest']
-    temp_player_storage = copy.deepcopy(player_storage)
-    for chest in player_chests:
-      player_storage[chest] = chest_representation
-    return player_storage, temp_player_storage
-
-  @contextlib.contextmanager
-  def _normalize_player_inventory(self) -> Iterator[None]:
-    """Removes all items in a save file. This function serves to make type
-    and key comparisons between the golden file and player save file consistent
-    regardless of the items acquired by the player.
-
-    Example:
-      >>> with self._normalize_player_inventory():
-            do_some_stuff_with_normalized_save()
-          do_some_stuff_with_original_save()
-
-    Raises:
-      copy.Error: If an error occurs while copying portions of self.save. See
-        self._remove_player_inventory() and self._remove_player_storage() for
-        implementation details.
-    """
-    # pylint: disable=unsupported-delete-operation
-    player_inventory = self._remove_player_inventory()
-    player_storage = self._remove_player_storage()
-    try:
-      yield
-    finally:
-      for normalized_data, original_data in [player_inventory, player_storage]:
-        for key in list(normalized_data):
-          if key not in original_data:
-            del normalized_data[key]
-        normalized_data.update(original_data)
 
   def verify_save_integrity(self) -> None:
     """Compares the save file to the JSON Schema corresponding to supported
