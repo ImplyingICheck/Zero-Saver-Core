@@ -150,6 +150,9 @@ class TestInventory:
   def test_inventory_model_dump_json_returns_string(self, inventory_fixture):
     assert isinstance(inventory_fixture.model_dump_json(), str)
 
+  def test_inventory_model_dump_returns_list(self, inventory_fixture):
+    assert isinstance(inventory_fixture.model_dump(), list)
+
   @pytest.mark.filterwarnings('ignore::pydantic.PydanticDeprecatedSince20')
   def test_inventory_append_mocked_item(self, mocked_item, mocked_inventory):
     inventory, expected_items = mocked_inventory

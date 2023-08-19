@@ -31,6 +31,8 @@ from typing_extensions import NotRequired, TypedDict
 
 ZeroSievertJsonValue = str | decimal.Decimal | None
 ZeroSievertLexedItem = dict[str, ZeroSievertJsonValue]
+ZeroSievertParsedValue = ZeroSievertJsonValue | bool | dict[str, str] | int
+ZeroSievertParsedItem = dict[str, ZeroSievertParsedValue]
 
 Base = TypedDict(
     'Base',
@@ -703,7 +705,7 @@ class Player(TypedDict):
 
 
 class Inventory(TypedDict):
-  items: List[ZeroSievertLexedItem]
+  items: List[ZeroSievertLexedItem] | List[ZeroSievertParsedItem]
 
 
 class PreRaid(TypedDict):

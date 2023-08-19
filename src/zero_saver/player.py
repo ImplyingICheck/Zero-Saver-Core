@@ -23,12 +23,13 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 import typing
-from typing import Any, overload, TypeAlias, SupportsIndex, TYPE_CHECKING
+from typing import Any, overload, TypeAlias, SupportsIndex, TYPE_CHECKING, Literal
 
 import pydantic
 from pydantic_core import core_schema
 
 from zero_saver import item
+from zero_saver.save_golden_files import typed_dict_0_31_production
 
 if TYPE_CHECKING:
   Slice: TypeAlias = slice
@@ -149,6 +150,31 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
       o = pydantic.TypeAdapter(item.Weapon | item.GeneratedItem
                                | item.Item).validate_python(o)
       super().__setitem__(i, o)
+
+  def model_dump(
+      self,
+      *,
+      mode: Literal['json', 'python'] = 'python',
+      include: pydantic.main.IncEx = None,
+      exclude: pydantic.main.IncEx = None,
+      by_alias: bool = False,
+      exclude_unset: bool = False,
+      exclude_defaults: bool = False,
+      exclude_none: bool = False,
+      round_trip: bool = False,
+      warnings: bool = True
+  ) -> list[typed_dict_0_31_production.ZeroSievertParsedItem]:
+    return pydantic.TypeAdapter(Inventory).dump_python(
+        self,
+        mode=mode,
+        include=include,
+        exclude=exclude,
+        by_alias=by_alias,
+        exclude_unset=exclude_unset,
+        exclude_defaults=exclude_defaults,
+        exclude_none=exclude_none,
+        round_trip=round_trip,
+        warnings=warnings)
 
 
 class Skill:
