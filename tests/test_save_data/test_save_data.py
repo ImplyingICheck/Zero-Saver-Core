@@ -202,6 +202,13 @@ class TestVersion031Production:
     version_031_production_fixture.set_player(player_data)
     assert version_031_production_fixture.save == original_save
 
+  def test_version_031_production_set_storage_stable_round_trip(
+      self, version_031_production_fixture):
+    original_save = copy.deepcopy(version_031_production_fixture.save)
+    storage_data = version_031_production_fixture.get_storage()
+    version_031_production_fixture.set_storage(storage_data)
+    assert version_031_production_fixture.save == original_save
+
   @pytest_cases.parametrize_with_cases(
       'stats', cases='case_player.case_player', prefix='stats_')
   def test_version_031_production_set_player_updates_stats(
