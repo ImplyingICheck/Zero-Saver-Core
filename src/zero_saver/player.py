@@ -29,7 +29,7 @@ import pydantic
 from pydantic_core import core_schema
 
 from zero_saver import item
-from zero_saver.save_golden_files import typed_dict_0_31_production
+from zero_saver.save_golden_files import _save_typed_dict
 
 if TYPE_CHECKING:
   Slice: TypeAlias = slice
@@ -162,8 +162,7 @@ class Inventory(list[item.Weapon | item.GeneratedItem | item.Item]):
       exclude_defaults: bool = False,
       exclude_none: bool = False,
       round_trip: bool = False,
-      warnings: bool = True
-  ) -> list[typed_dict_0_31_production.ZeroSievertParsedItem]:
+      warnings: bool = True) -> list[_save_typed_dict.ZeroSievertParsedItem]:
     return pydantic.TypeAdapter(Inventory).dump_python(
         self,
         mode=mode,

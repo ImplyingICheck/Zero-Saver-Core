@@ -26,14 +26,9 @@ from __future__ import annotations
 
 import decimal
 from typing import Any, Dict, List
-
 from typing_extensions import NotRequired, TypedDict
 
-ZeroSievertAttachments = dict[str, str]
-ZeroSievertJsonValue = str | decimal.Decimal | None | ZeroSievertAttachments
-ZeroSievertLexedItem = dict[str, ZeroSievertJsonValue]
-ZeroSievertParsedValue = ZeroSievertJsonValue | bool | dict[str, str] | int
-ZeroSievertParsedItem = dict[str, ZeroSievertParsedValue]
+from zero_saver.save_golden_files import _save_typed_dict
 
 Base = TypedDict(
     'Base',
@@ -662,7 +657,7 @@ General = TypedDict(
 
 
 class ChestContents(TypedDict):
-  items: List[ZeroSievertLexedItem]
+  items: List[_save_typed_dict.ZeroSievertLexedItem]
 
 
 class Chest(TypedDict):
@@ -710,7 +705,8 @@ class Player(TypedDict):
 
 
 class Inventory(TypedDict):
-  items: List[ZeroSievertLexedItem] | List[ZeroSievertParsedItem]
+  items: List[_save_typed_dict.ZeroSievertLexedItem] | List[
+      _save_typed_dict.ZeroSievertParsedItem]
 
 
 class PreRaid(TypedDict):
