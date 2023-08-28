@@ -20,6 +20,13 @@ import pytest_cases
 from zero_saver import stash
 
 _CASES = 'case_stash.case_stash'
+_STASH_PUBLIC_MODEL_PROPERTIES = ('chests',)
+_STASH_PRIVATE_PROPERTIES = ()
+_STASH_JSON_KEY_NAMES = ('chest',)
+# Explicitly defined in the Python object
+_CHEST_PUBLIC_PROPERTIES = ('items',)
+_CHEST_PRIVATE_PROPERTIES = ()
+_CHEST_JSON_KEY_NAMES = ('items',)
 
 
 @pytest_cases.fixture
@@ -42,3 +49,20 @@ def test_stash_init_well_formed(stash_fixture):
 
 def test_chest_init_well_formed(chest_fixture):
   assert chest_fixture
+
+
+def parameterize_over_properties(*fixture_properties_pairs):
+  for fixture, properties in fixture_properties_pairs:
+    for property_ in properties:
+      yield fixture, property_
+
+
+class TestModelDumpJson:
+
+  @pytest_cases.parametrize('model, expected_json_key_name',
+                            parameterize_over_properties(
+                                (stash_fixture, _STASH_JSON_KEY_NAMES),
+                                (chest_fixture, _CHEST_JSON_KEY_NAMES)))
+  def test_model_dump_contains_expected_properties(self, model,
+                                                   expected_json_key_name):
+    assert expected_json_key_name in model.model_dump(by_alias=True).keys()
