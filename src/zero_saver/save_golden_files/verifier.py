@@ -21,10 +21,17 @@ as desired."""
 from __future__ import annotations
 
 import enum
+import importlib
 import pathlib
-from typing import TextIO, TYPE_CHECKING
+from typing import Any, TextIO, TYPE_CHECKING, TypeAlias
+
+import pydantic
+from pydantic import TypeAdapter
+
 if TYPE_CHECKING:
   from _typeshed import StrPath
+
+  Validator: TypeAlias = TypeAdapter[Any]
 
 GOLDEN_FILE_DIRECTORY = str(pathlib.PurePath(__file__).parent)
 ENCODING = 'utf-8'
@@ -82,3 +89,24 @@ def golden_save_file_from_version(version: str) -> TextIO:
   """
   filename = f"{GoldenFilePrefix.SAVE}{version.replace(' ', '_')}.json"
   return open_golden_file(filename)
+
+
+def get_json_validator(version: str) -> Validator:
+  """Interface for accessing the pydantic.TypeAdapter corresponding to a save
+  *version*.
+
+  Args:
+    version: The version of the save to be validated.
+
+  Returns:
+    A pydantic.TypeAdapter corresponding to the TypedDict of *version*.
+  """
+  clean_version_name = version.translate(str.maketrans('. ', '__'))
+  file_name = f'typed_dict_{clean_version_name}'
+  module = f'zero_saver.save_golden_files.{file_name}'
+  try:
+    module = importlib.import_module(module)
+  except ModuleNotFoundError:
+    raise ModuleNotFoundError(
+        f'The validation class does not exist: {module}') from None
+  return pydantic.TypeAdapter(module.Model)

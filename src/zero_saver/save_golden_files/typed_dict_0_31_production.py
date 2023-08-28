@@ -29,7 +29,8 @@ from typing import Any, Dict, List
 
 from typing_extensions import NotRequired, TypedDict
 
-ZeroSievertJsonValue = str | decimal.Decimal | None
+ZeroSievertAttachments = dict[str, str]
+ZeroSievertJsonValue = str | decimal.Decimal | None | ZeroSievertAttachments
 ZeroSievertLexedItem = dict[str, ZeroSievertJsonValue]
 ZeroSievertParsedValue = ZeroSievertJsonValue | bool | dict[str, str] | int
 ZeroSievertParsedItem = dict[str, ZeroSievertParsedValue]
@@ -71,7 +72,7 @@ class Item(TypedDict):
   ammo_id: NotRequired[str]
   ammo_quantity: NotRequired[decimal.Decimal]
   weapon_fire_mode: NotRequired[str]
-  mods: NotRequired[None]
+  mods: NotRequired[dict[str, str] | None]
 
 
 class TraderFaction1Trader(TypedDict):
@@ -660,21 +661,25 @@ General = TypedDict(
 )
 
 
+class ChestContents(TypedDict):
+  items: List[ZeroSievertLexedItem]
+
+
 class Chest(TypedDict):
-  chest_0: NotRequired[List[ZeroSievertLexedItem]]
-  chest_1: NotRequired[List[ZeroSievertLexedItem]]
-  chest_2: NotRequired[List[ZeroSievertLexedItem]]
-  chest_3: NotRequired[List[ZeroSievertLexedItem]]
-  chest_4: NotRequired[List[ZeroSievertLexedItem]]
-  chest_5: NotRequired[List[ZeroSievertLexedItem]]
-  chest_6: NotRequired[List[ZeroSievertLexedItem]]
-  chest_7: NotRequired[List[ZeroSievertLexedItem]]
-  chest_8: NotRequired[List[ZeroSievertLexedItem]]
-  chest_9: NotRequired[List[ZeroSievertLexedItem]]
-  chest_10: NotRequired[List[ZeroSievertLexedItem]]
-  chest_11: NotRequired[List[ZeroSievertLexedItem]]
-  chest_12: NotRequired[List[ZeroSievertLexedItem]]
-  chest_13: NotRequired[List[ZeroSievertLexedItem]]
+  chest_0: NotRequired[ChestContents]
+  chest_1: NotRequired[ChestContents]
+  chest_2: NotRequired[ChestContents]
+  chest_3: NotRequired[ChestContents]
+  chest_4: NotRequired[ChestContents]
+  chest_5: NotRequired[ChestContents]
+  chest_6: NotRequired[ChestContents]
+  chest_7: NotRequired[ChestContents]
+  chest_8: NotRequired[ChestContents]
+  chest_9: NotRequired[ChestContents]
+  chest_10: NotRequired[ChestContents]
+  chest_11: NotRequired[ChestContents]
+  chest_12: NotRequired[ChestContents]
+  chest_13: NotRequired[ChestContents]
 
 
 class NPC(TypedDict):

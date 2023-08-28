@@ -32,3 +32,9 @@ def serialize_save_json_from_file(file_name: StrPath):
   file_path = _SAVE_FILE_DIRECTORY.joinpath(file_name)
   with open(file_path, encoding='utf-8') as f:
     return simplejson.load(f, use_decimal=True)
+
+
+def full_file_path(file_name: StrPath):
+  if pathlib.PurePath(file_name).suffix != '.json':
+    file_name = f'{file_name}.json'
+  return _SAVE_FILE_DIRECTORY.joinpath(file_name)

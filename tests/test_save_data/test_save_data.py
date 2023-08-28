@@ -201,7 +201,7 @@ class TestVersion031Production:
   def test_version_031_production_set_player_updates_stats(
       self, mocker, version_031_production_fixture, stats):
     player_data = version_031_production_fixture.get_player()
-    mocked_stats = mocker.Mock(spec=player.Stats)
+    mocked_stats = mocker.Mock(spec=dir(player.Stats))
     mocked_stats.model_dump = lambda: stats
     player_data.stats = mocked_stats
     version_031_production_fixture.set_player(player_data)
