@@ -89,6 +89,10 @@ class _Version031Production(SaveDataFactory):
                     player_data.stats.model_dump()))
     player_inventory['items'] = player_data.inventory.model_dump(by_alias=True)
 
+  def get_storage(self) -> stash.Stash:
+    player_storage = self.save['data']['chest']
+    return stash.Stash(chest=typing.cast(dict[str, typing.Any], player_storage))
+
 
 # End concrete SaveDataFactory classes
 
