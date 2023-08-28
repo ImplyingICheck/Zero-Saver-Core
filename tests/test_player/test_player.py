@@ -333,7 +333,7 @@ class TestPydanticFunctionality:
             (player_fixture, _PLAYER_JSON_KEY_NAMES)))
     def test_model_dump_contains_expected_properties(self, model,
                                                      expected_json_key_name):
-      assert expected_json_key_name in model.model_dump().keys()
+      assert expected_json_key_name in model.model_dump(by_alias=True).keys()
 
   class TestCustomClassTypeAdapter:
 

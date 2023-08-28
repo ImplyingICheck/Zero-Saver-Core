@@ -24,6 +24,7 @@ import pytest_mock
 
 from zero_saver import save_data
 from zero_saver import player
+from zero_saver import stash
 
 _CASES = 'case_save_data.case_save_data'
 
@@ -189,11 +190,23 @@ class TestVersion031Production:
     player_data = version_031_production_fixture.get_player()
     assert isinstance(player_data, player.Player)
 
+  def test_version_031_production_get_storage_returns_correct_type(
+      self, version_031_production_fixture):
+    player_data = version_031_production_fixture.get_storage()
+    assert isinstance(player_data, stash.Stash)
+
   def test_version_031_production_set_player_stable_round_trip(
       self, version_031_production_fixture):
     original_save = copy.deepcopy(version_031_production_fixture.save)
     player_data = version_031_production_fixture.get_player()
     version_031_production_fixture.set_player(player_data)
+    assert version_031_production_fixture.save == original_save
+
+  def test_version_031_production_set_storage_stable_round_trip(
+      self, version_031_production_fixture):
+    original_save = copy.deepcopy(version_031_production_fixture.save)
+    storage_data = version_031_production_fixture.get_storage()
+    version_031_production_fixture.set_storage(storage_data)
     assert version_031_production_fixture.save == original_save
 
   @pytest_cases.parametrize_with_cases(

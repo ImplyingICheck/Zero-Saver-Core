@@ -140,3 +140,5 @@ class Weapon(GeneratedItem):
 # arguments are stored in *__pydantic_extra__*.
 # class ModdedItem(Item):
 #   model_config = pydantic.ConfigDict(extra='allow')
+
+ZeroSaverItem = Weapon | GeneratedItem | Item
