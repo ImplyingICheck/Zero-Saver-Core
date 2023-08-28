@@ -14,11 +14,12 @@
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 """Stub file of a class representing chest items (alias: Storage, Stash) from a
 "Zero Sievert" save."""
+import pydantic
 
 
-class Stash:
+class Chest(pydantic.BaseModel):
   pass
 
 
-class Chest:
-  pass
+class Stash(pydantic.BaseModel):
+  chests: dict[str, Chest]
