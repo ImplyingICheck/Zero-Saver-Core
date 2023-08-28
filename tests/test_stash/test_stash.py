@@ -26,8 +26,19 @@ _CASES = 'case_stash.case_stash'
 @pytest_cases.parametrize_with_cases(
     'stash_data', cases=_CASES, prefix='stash_', has_tag=['Well-Formed'])
 def stash_fixture(stash_data):
-  return stash.Stash(chests=stash_data)
+  return stash.Stash(chest=stash_data)
+
+
+@pytest_cases.fixture
+@pytest_cases.parametrize_with_cases(
+    'chest_data', cases=_CASES, prefix='chest_', has_tag=['Well-Formed'])
+def chest_fixture(chest_data):
+  return stash.Chest(items=chest_data)
 
 
 def test_stash_init_well_formed(stash_fixture):
   assert stash_fixture
+
+
+def test_chest_init_well_formed(chest_fixture):
+  assert chest_fixture

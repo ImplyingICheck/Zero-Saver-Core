@@ -14,12 +14,23 @@
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 """Stub file of a class representing chest items (alias: Storage, Stash) from a
 "Zero Sievert" save."""
+from typing import TypeAlias
+
 import pydantic
+
+from zero_saver import item
+
+ZeroSaverItem: TypeAlias = item.ZeroSaverItem
+NumberLike: TypeAlias = item.NumberLike
 
 
 class Chest(pydantic.BaseModel):
-  pass
+  items: list[ZeroSaverItem]
+
+
+class StorageData(pydantic.BaseModel):
+  slot_now: NumberLike = pydantic.Field(alias='slot now')
 
 
 class Stash(pydantic.BaseModel):
-  chests: dict[str, Chest]
+  chests: dict[str, Chest | StorageData] = pydantic.Field(alias='chest')
