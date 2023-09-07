@@ -411,9 +411,6 @@ class GameDataIO:
     with _atomic_write(self._save_path, 'w', encoding='utf-8') as f:
       json.dump(self.save, f, cls=monkey_patch_json.ZeroSievertJsonEncoder)
 
-  def _import_gamedata(self):
-    pass
-
   def verify_save_integrity(self) -> None:
     """Compares the save file to the JSON Schema corresponding to supported
     save types. Raises an exception if self.save does not match the JSON Schema.
