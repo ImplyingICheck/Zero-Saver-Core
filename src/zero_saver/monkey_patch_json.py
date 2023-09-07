@@ -53,12 +53,15 @@ def format_with_two_digits_after_e(
 
 
 def is_almost_zero(o: decimal.Decimal) -> bool:
-  return cmath.isclose(
-      o,
-      0,
-      rel_tol=0,
-      abs_tol=ABS_TOL,
-  ) and str(o) != '0.0'
+  return (
+      cmath.isclose(
+          o,
+          0,
+          rel_tol=0,
+          abs_tol=ABS_TOL,
+      )
+      and str(o) != '0.0'
+  )
 
 
 class _JsonDecimal(float):
@@ -86,9 +89,7 @@ class _JsonDecimal(float):
 class MonkeyPatchedJsonEncoder(json.JSONEncoder):
 
   def iterencode(
-      self,
-      o: Any,
-      _one_shot: bool = False
+      self, o: Any, _one_shot: bool = False
   ) -> Generator[str | Generator[str, Any, None], Any, Any]:
     """Encode the given object and yield each string
     representation as available.
@@ -105,16 +106,21 @@ class MonkeyPatchedJsonEncoder(json.JSONEncoder):
     else:
       markers = None
     if self.ensure_ascii:
-      _encoder = json.encoder.encode_basestring_ascii  # pyright: ignore[reportGeneralTypeIssues]
+      _encoder = (
+          json.encoder.encode_basestring_ascii
+      )  # pyright: ignore[reportGeneralTypeIssues]
     else:
-      _encoder = json.encoder.encode_basestring  # pyright: ignore[reportGeneralTypeIssues]
+      _encoder = (
+          json.encoder.encode_basestring
+      )  # pyright: ignore[reportGeneralTypeIssues]
 
     def floatstr(
         o,
         allow_nan=self.allow_nan,
         _repr=_JsonDecimal.__repr__,  # line modified
         _inf=json.encoder.INFINITY,
-        _neginf=-json.encoder.INFINITY):
+        _neginf=-json.encoder.INFINITY,
+    ):
       # pylint: disable=[invalid-name]
       # Check for specials.  Note that this type of test is processor
       # and/or platform-specific, so do tests which don't depend on the
@@ -130,16 +136,24 @@ class MonkeyPatchedJsonEncoder(json.JSONEncoder):
         return _repr(o)
 
       if not allow_nan:
-        raise ValueError('Out of range float values are not JSON compliant: ' +
-                         repr(o))
+        raise ValueError(
+            'Out of range float values are not JSON compliant: ' + repr(o)
+        )
 
       return text
 
-    if (_one_shot and c_make_encoder is not None and self.indent is None):
-      _iterencode = c_make_encoder(markers, self.default, _encoder, self.indent,
-                                   self.key_separator, self.item_separator,
-                                   self.sort_keys, self.skipkeys,
-                                   self.allow_nan)
+    if _one_shot and c_make_encoder is not None and self.indent is None:
+      _iterencode = c_make_encoder(
+          markers,
+          self.default,
+          _encoder,
+          self.indent,
+          self.key_separator,
+          self.item_separator,
+          self.sort_keys,
+          self.skipkeys,
+          self.allow_nan,
+      )
     else:
       _iterencode = _make_iterencode(  # pylint: disable=[protected-access] # pyright: ignore[reportGeneralTypeIssues]
           markers,
@@ -286,8 +300,10 @@ def _make_iterencode(
       elif _skipkeys:
         continue
       else:
-        raise TypeError(f'keys must be str, int, float, bool or None, '
-                        f'not {key.__class__.__name__}')
+        raise TypeError(
+            f'keys must be str, int, float, bool or None, '
+            f'not {key.__class__.__name__}'
+        )
       if first:
         first = False
       else:
@@ -406,8 +422,8 @@ def get_class(qualifier_path: str) -> ClassConstructor:
 
 
 def parse_type_hints(
-    dictionary: Mapping[str,
-                        _VT_co],) -> ClassConstructor | Mapping[str, _VT_co]:
+    dictionary: Mapping[str, _VT_co],
+) -> ClassConstructor | Mapping[str, _VT_co]:
   if type_string := dictionary.get('__type__'):
     if isinstance(type_string, str):
       pattern = re.escape("'") + '(.*?)' + re.escape("'")
@@ -417,6 +433,7 @@ def parse_type_hints(
       else:
         return get_class(expected_class.group(1))
     else:
-      raise ValueError(f'Invalid type specified (type: {type_string}): '
-                       f'{dictionary}')
+      raise ValueError(
+          f'Invalid type specified (type: {type_string}): ' f'{dictionary}'
+      )
   return dictionary

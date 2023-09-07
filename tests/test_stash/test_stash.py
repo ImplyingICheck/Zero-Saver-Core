@@ -31,14 +31,16 @@ _CHEST_JSON_KEY_NAMES = ('items',)
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'stash_data', cases=_CASES, prefix='stash_', has_tag=['Well-Formed'])
+    'stash_data', cases=_CASES, prefix='stash_', has_tag=['Well-Formed']
+)
 def stash_fixture(stash_data):
   return stash.Stash(chest=stash_data)
 
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'chest_data', cases=_CASES, prefix='chest_', has_tag=['Well-Formed'])
+    'chest_data', cases=_CASES, prefix='chest_', has_tag=['Well-Formed']
+)
 def chest_fixture(chest_data):
   return stash.Chest(items=chest_data)
 
@@ -65,17 +67,24 @@ class TestPydanticFunctionality:
         'model, expected_property',
         parameterize_over_properties(
             (stash_fixture, _STASH_PUBLIC_MODEL_PROPERTIES),
-            (chest_fixture, _CHEST_PUBLIC_MODEL_PROPERTIES)))
-    def test_model_dump_contains_expected_properties(self, model,
-                                                     expected_property):
+            (chest_fixture, _CHEST_PUBLIC_MODEL_PROPERTIES),
+        ),
+    )
+    def test_model_dump_contains_expected_properties(
+        self, model, expected_property
+    ):
       assert expected_property in model.model_dump().keys()
 
   class TestModelDumpJson:
 
-    @pytest_cases.parametrize('model, expected_json_key_name',
-                              parameterize_over_properties(
-                                  (stash_fixture, _STASH_JSON_KEY_NAMES),
-                                  (chest_fixture, _CHEST_JSON_KEY_NAMES)))
-    def test_model_dump_contains_expected_properties(self, model,
-                                                     expected_json_key_name):
+    @pytest_cases.parametrize(
+        'model, expected_json_key_name',
+        parameterize_over_properties(
+            (stash_fixture, _STASH_JSON_KEY_NAMES),
+            (chest_fixture, _CHEST_JSON_KEY_NAMES),
+        ),
+    )
+    def test_model_dump_contains_expected_properties(
+        self, model, expected_json_key_name
+    ):
       assert expected_json_key_name in model.model_dump(by_alias=True).keys()

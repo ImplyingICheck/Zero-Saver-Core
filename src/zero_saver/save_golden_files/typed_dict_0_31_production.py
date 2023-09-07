@@ -706,7 +706,8 @@ class Player(TypedDict):
 
 class Inventory(TypedDict):
   items: List[_save_typed_dict.ZeroSievertLexedItem] | List[
-      _save_typed_dict.ZeroSievertParsedItem]
+      _save_typed_dict.ZeroSievertParsedItem
+  ]
 
 
 class PreRaid(TypedDict):

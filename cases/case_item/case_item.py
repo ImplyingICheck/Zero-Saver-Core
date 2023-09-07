@@ -21,27 +21,56 @@ import pytest_cases
 
 
 @pytest_cases.parametrize(
-    'value', [
-        0, 1, None, '', 'foo', {}, {
-            'foo': 'bar'
-        }, [], ['bar'], (), ('foo', 'bar'),
-        object()
+    'value',
+    [
+        0,
+        1,
+        None,
+        '',
+        'foo',
+        {},
+        {'foo': 'bar'},
+        [],
+        ['bar'],
+        (),
+        ('foo', 'bar'),
+        object(),
     ],
     ids=[
-        '0', '1', 'None', 'empty_string', 'non_empty_string', 'empty_dict',
-        'non_empty_dict', 'empty_list', 'non_empty_list', 'empty_tuple',
-        'non_empty_tuple', 'object()'
-    ])
+        '0',
+        '1',
+        'None',
+        'empty_string',
+        'non_empty_string',
+        'empty_dict',
+        'non_empty_dict',
+        'empty_list',
+        'non_empty_list',
+        'empty_tuple',
+        'non_empty_tuple',
+        'object()',
+    ],
+)
 def any_value_potential_value(value):
   return value
 
 
 @pytest_cases.case(tags=['CastableToInt', 'Well-Formed'])
-@pytest_cases.parametrize('value', [
-    '0', '1', 1, 0,
-    decimal.Decimal(1),
-    decimal.Decimal(1.0), 0.0, 1.0, b'0', b'1'
-])
+@pytest_cases.parametrize(
+    'value',
+    [
+        '0',
+        '1',
+        1,
+        0,
+        decimal.Decimal(1),
+        decimal.Decimal(1.0),
+        0.0,
+        1.0,
+        b'0',
+        b'1',
+    ],
+)
 def castable_to_int_well_formed(value):
   return value
 
@@ -50,15 +79,19 @@ class CastableToIntCase:
 
   @pytest_cases.case(tags=['CastableToInt', 'Malformed', 'ValueError'])
   @pytest_cases.parametrize(
-      'value', ['', 'Hello world!', b'', b'Hello world!'],
-      ids=['empty_string', 'Hello world!', 'empty_bytes', 'Hello world!_bytes'])
+      'value',
+      ['', 'Hello world!', b'', b'Hello world!'],
+      ids=['empty_string', 'Hello world!', 'empty_bytes', 'Hello world!_bytes'],
+  )
   def castable_to_int_malformed_valueerror(self, value):
     return value
 
   @pytest_cases.case(tags=['CastableToInt', 'Malformed', 'OverflowError'])
   @pytest_cases.parametrize(
-      'value', [cmath.inf, -cmath.inf],
-      ids=['positive_infinity', 'negative_infinity'])
+      'value',
+      [cmath.inf, -cmath.inf],
+      ids=['positive_infinity', 'negative_infinity'],
+  )
   def castable_to_int_malformed_overflowerror(self, value):
     return value
 
@@ -77,7 +110,7 @@ class ItemCase:
         'x': 248.0,
         'rotation': 0.0,
         'y': 119.0,
-        'quantity': 1.0
+        'quantity': 1.0,
     }
 
 
@@ -93,7 +126,7 @@ class GeneratedItemCase:
         'seen': 1.0,
         'created_from_player': 1.0,
         'item': 'bread',
-        'quantity': 1.0
+        'quantity': 1.0,
     }
 
 
@@ -124,8 +157,8 @@ class WeaponCase:
             'grip': 'no_item',
             'barrel': 'no_item',
             'att_1': 'no_item',
-            'att_3': 'no_item'
-        }
+            'att_3': 'no_item',
+        },
     }
 
   @pytest_cases.case(tags=['Weapon', 'Well-Formed', 'NoneMods'])
@@ -142,7 +175,7 @@ class WeaponCase:
         'ammo_quantity': 0.0,
         'item': 'akm',
         'weapon_fire_mode': 'automatic',
-        'mods': None
+        'mods': None,
     }
 
 
@@ -161,5 +194,5 @@ class AttachmentsCase:
         'grip': 'no_item',
         'barrel': 'no_item',
         'att_1': 'no_item',
-        'att_3': 'no_item'
+        'att_3': 'no_item',
     }

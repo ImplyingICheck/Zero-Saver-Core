@@ -49,7 +49,8 @@ class WinregErrorFormatter:
       shallow_copy: bool = True,
   ):
     self.winreg_error: FileNotFoundError = (
-        winreg_error if shallow_copy else copy.copy(winreg_error))
+        winreg_error if shallow_copy else copy.copy(winreg_error)
+    )
     self._hive = hive if hive is not None else ''
     self._key_path = key_path if key_path is not None else ''
     self._value_name = value_name if value_name is not None else ''
@@ -58,9 +59,12 @@ class WinregErrorFormatter:
     human_readable_hive = hkey_int_to_str(self._hive)
     full_key_path = os.path.join(human_readable_hive, self._key_path)
     if self._value_name:
-      self.winreg_error.strerror = (f'The registry key does not contain the '
-                                    f'value (key: {full_key_path}): '
-                                    f'{self._value_name}')
+      self.winreg_error.strerror = (
+          f'The registry key does not contain the '
+          f'value (key: {full_key_path}): '
+          f'{self._value_name}'
+      )
     else:
-      self.winreg_error.strerror = (f'The registry key does not exist: '
-                                    f'{full_key_path}')
+      self.winreg_error.strerror = (
+          f'The registry key does not exist: ' f'{full_key_path}'
+      )

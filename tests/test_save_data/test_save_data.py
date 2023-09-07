@@ -31,7 +31,8 @@ _CASES = 'case_save_data.case_save_data'
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
+    'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json'
+)
 def save_data_fixture(save):
   return save_data.SaveData(save)
 
@@ -40,7 +41,8 @@ def save_data_fixture(save):
 def mocked_save_data(mocker: pytest_mock.MockerFixture):
   mocker.patch(
       'zero_saver.save_data._get_save_factory',
-      side_effect=mocker.Mock(name='_factory', spec=save_data.SaveDataFactory))
+      side_effect=mocker.Mock(name='_factory', spec=save_data.SaveDataFactory),
+  )
   mocked_save_data = save_data.SaveData(mocker.Mock(name='mocked_save'))
   return mocked_save_data
 
@@ -48,18 +50,21 @@ def mocked_save_data(mocker: pytest_mock.MockerFixture):
 class TestSaveData:
 
   @pytest_cases.parametrize_with_cases(
-      'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
+      'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json'
+  )
   def test_save_data_init_well_formed(self, save):
     assert save_data.SaveData(save)
 
   @pytest_cases.parametrize_with_cases(
-      'save', cases=_CASES, has_tag=['Malformed'], prefix='save_json')
+      'save', cases=_CASES, has_tag=['Malformed'], prefix='save_json'
+  )
   def test_save_data_init_malformed_save_raises_value_error(self, save):
     with pytest.raises(ValueError):
       assert save_data.SaveData(save)
 
   @pytest_cases.parametrize_with_cases(
-      'save', cases=_CASES, has_tag=['Malformed'], prefix='save_json')
+      'save', cases=_CASES, has_tag=['Malformed'], prefix='save_json'
+  )
   def test_save_data_init_malformed_save_correct_error_message(self, save):
     with pytest.raises(ValueError, match='Invalid save'):
       assert save_data.SaveData(save)
@@ -71,33 +76,38 @@ class TestSaveData:
       assert save_data.SaveData(save)
 
   def test_save_data_init_unsupported_version_correct_error_message(
-      self, mocker):
+      self, mocker
+  ):
     save = mocker.MagicMock()
     save.__getitem__.return_value = 'THIS IS NOT A SUPPORTED SAVE VERSION :('
     with pytest.raises(ValueError, match='Unsupported save version'):
       assert save_data.SaveData(save)
 
   @pytest_cases.parametrize('expected_properties', ['_factory', 'player'])
-  def test_save_data_has_expected_properties(self, save_data_fixture,
-                                             expected_properties):
+  def test_save_data_has_expected_properties(
+      self, save_data_fixture, expected_properties
+  ):
     assert hasattr(save_data_fixture, expected_properties)
 
   def test_save_data_init_calls_get_save_factory_correctly(self, mocker):
     mocked_get_save_factory = mocker.patch(
-        'zero_saver.save_data._get_save_factory')
+        'zero_saver.save_data._get_save_factory'
+    )
     mocked_save = mocker.Mock(name='mocked_save')
     save_data.SaveData(mocked_save)
     mocked_get_save_factory.assert_called_once_with(mocked_save)
 
   def test_save_data_set_player_uses_correct_player_data_none(
-      self, mocked_save_data):
+      self, mocked_save_data
+  ):
     mocked_save_data.set_player(None)
     target_method = mocked_save_data._factory.set_player
     expected_player_data = mocked_save_data.player
     target_method.assert_called_once_with(expected_player_data)
 
   def test_save_data_set_player_uses_correct_player_data_mocked_argument(
-      self, mocker, mocked_save_data):
+      self, mocker, mocked_save_data
+  ):
     expected_player_data = mocker.Mock(name='player_data')
     mocked_save_data.set_player(expected_player_data)
     target_method = mocked_save_data._factory.set_player
@@ -110,7 +120,8 @@ class TestSaveData:
     cases=_CASES,
     has_tag=['Well-Formed'],
     scope='module',
-    prefix='save_json')
+    prefix='save_json',
+)
 def save_file_fixture(save):
   return save
 
@@ -138,32 +149,36 @@ class TestSaveDataFactory:
     with pytest.raises(NotImplementedError):
       save_data_factory_fixture.get_quest_flags()
 
-  def test_save_data_factory_get_difficulty_settings(self,
-                                                     save_data_factory_fixture):
+  def test_save_data_factory_get_difficulty_settings(
+      self, save_data_factory_fixture
+  ):
     with pytest.raises(NotImplementedError):
       save_data_factory_fixture.get_difficulty_settings()
 
-  def test_save_data_factory_set_player_mock(self, save_data_factory_fixture,
-                                             mocker):
+  def test_save_data_factory_set_player_mock(
+      self, save_data_factory_fixture, mocker
+  ):
     player = mocker.Mock()
     with pytest.raises(NotImplementedError):
       save_data_factory_fixture.set_player(player)
 
-  def test_save_data_factory_set_storage_mock(self, save_data_factory_fixture,
-                                              mocker):
+  def test_save_data_factory_set_storage_mock(
+      self, save_data_factory_fixture, mocker
+  ):
     storage = mocker.Mock()
     with pytest.raises(NotImplementedError):
       save_data_factory_fixture.set_storage(storage)
 
-  def test_save_data_factory_set_quest_flags_mock(self,
-                                                  save_data_factory_fixture,
-                                                  mocker):
+  def test_save_data_factory_set_quest_flags_mock(
+      self, save_data_factory_fixture, mocker
+  ):
     storage = mocker.Mock()
     with pytest.raises(NotImplementedError):
       save_data_factory_fixture.set_quest_flags(storage)
 
   def test_save_data_factory_set_difficulty_settings_mock(
-      self, save_data_factory_fixture, mocker):
+      self, save_data_factory_fixture, mocker
+  ):
     storage = mocker.Mock()
     with pytest.raises(NotImplementedError):
       save_data_factory_fixture.set_difficulty_settings(storage)
@@ -177,62 +192,75 @@ def version_031_production_fixture(save_file_fixture):
 class TestVersion031Production:
 
   def test_version_031_production_has_supported_versions_version_031_production(
-      self):
-    assert ('0.31 production'
-            in save_data._Version031Production.SUPPORTED_VERSIONS)
+      self,
+  ):
+    assert (
+        '0.31 production' in save_data._Version031Production.SUPPORTED_VERSIONS
+    )
 
   def test_version_031_production_supported_versions_is_frozenset(self):
-    assert isinstance(save_data._Version031Production.SUPPORTED_VERSIONS,
-                      frozenset)
+    assert isinstance(
+        save_data._Version031Production.SUPPORTED_VERSIONS, frozenset
+    )
 
   def test_version_031_production_get_player_returns_correct_type(
-      self, version_031_production_fixture):
+      self, version_031_production_fixture
+  ):
     player_data = version_031_production_fixture.get_player()
     assert isinstance(player_data, player.Player)
 
   def test_version_031_production_get_storage_returns_correct_type(
-      self, version_031_production_fixture):
+      self, version_031_production_fixture
+  ):
     player_data = version_031_production_fixture.get_storage()
     assert isinstance(player_data, stash.Stash)
 
   def test_version_031_production_set_player_stable_round_trip(
-      self, version_031_production_fixture):
+      self, version_031_production_fixture
+  ):
     original_save = copy.deepcopy(version_031_production_fixture.save)
     player_data = version_031_production_fixture.get_player()
     version_031_production_fixture.set_player(player_data)
     assert version_031_production_fixture.save == original_save
 
   def test_version_031_production_set_storage_stable_round_trip(
-      self, version_031_production_fixture):
+      self, version_031_production_fixture
+  ):
     original_save = copy.deepcopy(version_031_production_fixture.save)
     storage_data = version_031_production_fixture.get_storage()
     version_031_production_fixture.set_storage(storage_data)
     assert version_031_production_fixture.save == original_save
 
   @pytest_cases.parametrize_with_cases(
-      'stats', cases='case_player.case_player', prefix='stats_')
+      'stats', cases='case_player.case_player', prefix='stats_'
+  )
   def test_version_031_production_set_player_updates_stats(
-      self, mocker, version_031_production_fixture, stats):
+      self, mocker, version_031_production_fixture, stats
+  ):
     player_data = version_031_production_fixture.get_player()
     mocked_stats = mocker.Mock(spec=dir(player.Stats))
     mocked_stats.model_dump = lambda: stats
     player_data.stats = mocked_stats
     version_031_production_fixture.set_player(player_data)
     actual_data = version_031_production_fixture.save['data']['pre_raid'][
-        'player']
+        'player'
+    ]
     assert actual_data == stats
 
   @pytest_cases.parametrize_with_cases(
-      'inventory', cases='case_player.case_player', prefix='inventory_')
+      'inventory', cases='case_player.case_player', prefix='inventory_'
+  )
   def test_version_031_production_set_player_updates_inventory(
-      self, mocker, version_031_production_fixture, inventory):
+      self, mocker, version_031_production_fixture, inventory
+  ):
     player_data = version_031_production_fixture.get_player()
     mocked_inventory = mocker.Mock(spec=dir(player.Inventory))
     mocked_inventory.model_dump = lambda by_alias: inventory
     player_data.inventory = mocked_inventory
     version_031_production_fixture.set_player(player_data)
     actual_data = version_031_production_fixture.save['data']['pre_raid'][
-        'Inventory']['items']
+        'Inventory'
+    ]['items']
     assert actual_data == inventory
 
 
@@ -243,12 +271,14 @@ def expected_save_version(save):
 class TestGetSaveVersion:
 
   @pytest_cases.parametrize_with_cases(
-      'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
+      'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json'
+  )
   def test_get_save_version_well_formed_returns_correct_version(self, save):
     assert save_data.get_save_version(save) == expected_save_version(save)
 
   @pytest_cases.parametrize_with_cases(
-      'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json')
+      'save', cases=_CASES, has_tag=['Well-Formed'], prefix='save_json'
+  )
   def test_get_save_version_well_formed_returns_string(self, save):
     assert isinstance(save_data.get_save_version(save), str)
 
@@ -256,9 +286,11 @@ class TestGetSaveVersion:
       'save',
       cases=_CASES,
       has_tag=['Malformed', 'Subscriptable'],
-      prefix='save_json')
+      prefix='save_json',
+  )
   def test_get_save_version_malformed_subscriptable_raises_key_error(
-      self, save):
+      self, save
+  ):
     with pytest.raises(KeyError):
       save_data.get_save_version(save)
 
@@ -267,8 +299,10 @@ class TestGetSaveVersion:
       cases=_CASES,
       filter=pytest_cases.filters.has_tag('Malformed')
       & ~pytest_cases.filters.has_tag('Subscriptable'),
-      prefix='save_json')
+      prefix='save_json',
+  )
   def test_get_save_version_malformed_not_subscriptable_raises_type_error(
-      self, save):
+      self, save
+  ):
     with pytest.raises(TypeError):
       save_data.get_save_version(save)

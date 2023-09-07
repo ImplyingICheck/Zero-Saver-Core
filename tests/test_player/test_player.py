@@ -30,14 +30,33 @@ _CASES = 'case_player.case_player'
 _INVENTORY_PUBLIC_MODEL_PROPERTIES = ()
 _INVENTORY_PRIVATE_PROPERTIES = ()
 _INVENTORY_JSON_KEY_NAMES = ()
-_STATS_PUBLIC_MODEL_PROPERTIES = ('hp_max', 'stamina_max', 'x', 'y', 'wound',
-                                  'hp', 'energy', 'radiation', 'fatigue',
-                                  'thirst')
+_STATS_PUBLIC_MODEL_PROPERTIES = (
+    'hp_max',
+    'stamina_max',
+    'x',
+    'y',
+    'wound',
+    'hp',
+    'energy',
+    'radiation',
+    'fatigue',
+    'thirst',
+)
 # Explicitly defined in the Python object
 _STATS_PUBLIC_PROPERTIES = ('position',)
 _STATS_PRIVATE_PROPERTIES = ()
-_STATS_JSON_KEY_NAMES = ('hp_max', 'stamina_max', 'x', 'y', 'wound', 'hp',
-                         'energy', 'radiation', 'fatigue', 'thirst')
+_STATS_JSON_KEY_NAMES = (
+    'hp_max',
+    'stamina_max',
+    'x',
+    'y',
+    'wound',
+    'hp',
+    'energy',
+    'radiation',
+    'fatigue',
+    'thirst',
+)
 _PLAYER_PUBLIC__MODEL_PROPERTIES = ('stats', 'inventory')
 _PLAYER_PRIVATE_PROPERTIES = ()
 _PLAYER_JSON_KEY_NAMES = ('stats', 'inventory')
@@ -61,23 +80,27 @@ class PlayerTestComponents(player.Player, _TestComponents):
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'stats', cases=_CASES, has_tag=['Well-Formed'], prefix='stats_')
+    'stats', cases=_CASES, has_tag=['Well-Formed'], prefix='stats_'
+)
 def stats_fixture(stats):
   return StatsTestComponents(**stats, original_kwargs=stats)
 
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'inventory', cases=_CASES, has_tag=['Well-Formed'], prefix='inventory_')
+    'inventory', cases=_CASES, has_tag=['Well-Formed'], prefix='inventory_'
+)
 def inventory_fixture(inventory):
   return InventoryTestComponents(inventory)
 
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'stats', cases=_CASES, has_tag=['Well-Formed'], prefix='stats_')
+    'stats', cases=_CASES, has_tag=['Well-Formed'], prefix='stats_'
+)
 @pytest_cases.parametrize_with_cases(
-    'inventory', cases=_CASES, has_tag=['Well-Formed'], prefix='inventory_')
+    'inventory', cases=_CASES, has_tag=['Well-Formed'], prefix='inventory_'
+)
 def player_fixture(stats, inventory):
   kwargs = {'stats': stats, 'inventory': inventory}
   return PlayerTestComponents(**kwargs, original_kwargs=kwargs)
@@ -140,7 +163,8 @@ class TestInventory:
             isinstance,
             inventory_fixture,
             itertools.repeat(item.Weapon | item.GeneratedItem | item.Item),
-        ))
+        )
+    )
 
   def test_inventory_init_malformed_raises_validation_error(self, mocker):
     malformed_argument = mocker.Mock()
@@ -165,7 +189,8 @@ class TestInventory:
       'item_, item_type',
       cases=_CASES,
       has_tag=['Well-Formed'],
-      prefix='tuple_inventory_')
+      prefix='tuple_inventory_',
+  )
   def test_inventory_append_validates_object(self, item_, item_type):
     inventory = player.Inventory()
     inventory.append(item_)
@@ -175,7 +200,8 @@ class TestInventory:
       'item_, item_type',
       cases=_CASES,
       has_tag=['Well-Formed'],
-      prefix='tuple_inventory_')
+      prefix='tuple_inventory_',
+  )
   def test_inventory_extend_validates_object(self, item_, item_type):
     inventory = player.Inventory()
     inventory.extend([item_])
@@ -201,7 +227,8 @@ class TestInventory:
       'item_, item_type',
       cases=_CASES,
       has_tag=['Well-Formed'],
-      prefix='tuple_inventory_')
+      prefix='tuple_inventory_',
+  )
   def test_inventory_insert_validates_object(self, item_, item_type):
     inventory = player.Inventory()
     inventory.insert(0, item_)
@@ -254,9 +281,11 @@ class TestInventory:
       'item_, item_type',
       cases=_CASES,
       has_tag=['Well-Formed'],
-      prefix='tuple_inventory_')
-  def test_inventory_setitem_validates_object(self, mocked_inventory, item_,
-                                              item_type):
+      prefix='tuple_inventory_',
+  )
+  def test_inventory_setitem_validates_object(
+      self, mocked_inventory, item_, item_type
+  ):
     inventory, expected_items = mocked_inventory
     del expected_items  # Unused
     inventory[0] = item_
@@ -267,14 +296,17 @@ class TestInventory:
       'item_, item_type',
       cases=_CASES,
       has_tag=['Well-Formed'],
-      prefix='tuple_inventory_')
-  def test_inventory_setitem_slice_validates_object(self, mocked_inventory,
-                                                    item_, item_type):
+      prefix='tuple_inventory_',
+  )
+  def test_inventory_setitem_slice_validates_object(
+      self, mocked_inventory, item_, item_type
+  ):
     inventory, expected_items = mocked_inventory
     del expected_items  # Unused
     inventory[:2] = [item_] * 2
     assert isinstance(inventory[0], item_type) and isinstance(
-        inventory[1], item_type)
+        inventory[1], item_type
+    )
 
   @pytest.mark.slow
   @pytest_cases.parametrize_with_cases(
@@ -282,11 +314,14 @@ class TestInventory:
       cases=_CASES,
       prefix='pydantic_dump_',
       idstyle='explicit',
-      import_fixtures=True)
+      import_fixtures=True,
+  )
   def test_inventory_model_dump_json_matches_type_adapter(
-      self, inventory_fixture, dump_json_arguments, inventory_type_adapter):
-    expected_value = inventory_type_adapter.dump_json(inventory_fixture,
-                                                      **dump_json_arguments)
+      self, inventory_fixture, dump_json_arguments, inventory_type_adapter
+  ):
+    expected_value = inventory_type_adapter.dump_json(
+        inventory_fixture, **dump_json_arguments
+    )
     actual_value = inventory_fixture.model_dump_json(**dump_json_arguments)
     assert actual_value.encode() == expected_value
 
@@ -318,9 +353,12 @@ class TestPydanticFunctionality:
         parameterize_over_properties(
             (inventory_fixture, _INVENTORY_PUBLIC_MODEL_PROPERTIES),
             (stats_fixture, _STATS_PUBLIC_MODEL_PROPERTIES),
-            (player_fixture, _PLAYER_PUBLIC__MODEL_PROPERTIES)))
-    def test_model_dump_contains_expected_properties(self, model,
-                                                     expected_property):
+            (player_fixture, _PLAYER_PUBLIC__MODEL_PROPERTIES),
+        ),
+    )
+    def test_model_dump_contains_expected_properties(
+        self, model, expected_property
+    ):
       assert expected_property in model.model_dump().keys()
 
   class TestModelDumpJson:
@@ -330,18 +368,22 @@ class TestPydanticFunctionality:
         parameterize_over_properties(
             (inventory_fixture, _INVENTORY_JSON_KEY_NAMES),
             (stats_fixture, _STATS_JSON_KEY_NAMES),
-            (player_fixture, _PLAYER_JSON_KEY_NAMES)))
-    def test_model_dump_contains_expected_properties(self, model,
-                                                     expected_json_key_name):
+            (player_fixture, _PLAYER_JSON_KEY_NAMES),
+        ),
+    )
+    def test_model_dump_contains_expected_properties(
+        self, model, expected_json_key_name
+    ):
       assert expected_json_key_name in model.model_dump(by_alias=True).keys()
 
   class TestCustomClassTypeAdapter:
 
-    def test_inventory_type_adapter(self,
-                                    adapter=pydantic.TypeAdapter(
-                                        player.Inventory)):
+    def test_inventory_type_adapter(
+        self, adapter=pydantic.TypeAdapter(player.Inventory)
+    ):
       assert adapter
 
-    def test_inventory_type_adapter_has_json_schema(self,
-                                                    inventory_type_adapter):
+    def test_inventory_type_adapter_has_json_schema(
+        self, inventory_type_adapter
+    ):
       assert inventory_type_adapter.json_schema()

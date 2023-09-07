@@ -47,13 +47,14 @@ from zero_saver import monkey_patch_json
 
 if TYPE_CHECKING:
   from _typeshed import StrOrBytesPath, StrPath
+
   _T = TypeVar('_T')
   _S = TypeVar('_S')
   _KT = TypeVar('_KT')
 
   NestedStructure: TypeAlias = (
-      Mapping[str, 'NestedStructure[_T]'] | Sequence['NestedStructure[_T]']
-      | _T)
+      Mapping[str, 'NestedStructure[_T]'] | Sequence['NestedStructure[_T]'] | _T
+  )
   # Missing float | int compared to Python equivalent JSON
   ZeroSievertJsonValue = str | decimal.Decimal | None
   ZeroSievertInventory: TypeAlias = typed_dict_0_31_production.Inventory
@@ -124,13 +125,16 @@ class FileLocation:
   This section contains OS dependent code. As of "ZERO Sievert" version 0.31.24,
   only Windows10 is officially supported. Zero Saver support for additional OSes
   can be added here."""
+
   _WINDOWS_APPDATA_PROGRAM_FILE = 'ZeroSaver'
   _WINDOWS_APPDATA_LOCAL = 'LOCALAPPDATA'
-  _WINDOWS_ZERO_SIEVERT_INSTALL_PATH = pathlib.PurePath('steamapps', 'common',
-                                                        'ZERO Sievert')
+  _WINDOWS_ZERO_SIEVERT_INSTALL_PATH = pathlib.PurePath(
+      'steamapps', 'common', 'ZERO Sievert'
+  )
   _WINDOWS = 'Windows'
-  _WINDOWS_BACKUPS_DIRECTORY = pathlib.PurePath(_WINDOWS_APPDATA_PROGRAM_FILE,
-                                                'backup')
+  _WINDOWS_BACKUPS_DIRECTORY = pathlib.PurePath(
+      _WINDOWS_APPDATA_PROGRAM_FILE, 'backup'
+  )
 
   def __init__(self, system: str | None = None):
     self._system: str = system if system else platform.system()
@@ -155,9 +159,11 @@ class FileLocation:
     if self._system == self._WINDOWS:
       gamedata_order_file_name = 'gamedata_order.json'
       steam_install_path = _get_windows_steam_install_path()
-      return pathlib.PurePath(steam_install_path,
-                              self._WINDOWS_ZERO_SIEVERT_INSTALL_PATH,
-                              gamedata_order_file_name)
+      return pathlib.PurePath(
+          steam_install_path,
+          self._WINDOWS_ZERO_SIEVERT_INSTALL_PATH,
+          gamedata_order_file_name,
+      )
     raise ValueError(f'Operating system not supported: {self._system}')
 
   def _get_default_backup_directory(self) -> pathlib.Path:
@@ -187,7 +193,8 @@ class FileLocation:
 
 def _current_datetime_as_valid_filename() -> str:
   current_datetime = datetime.datetime.now().isoformat(
-      sep='H', timespec='minutes')
+      sep='H', timespec='minutes'
+  )
   return current_datetime.replace(':', 'M')
 
 
@@ -300,7 +307,8 @@ def _atomic_write(
       errors=errors,
       newline=newline,
       closefd=closefd,
-      opener=opener)
+      opener=opener,
+  )
   try:
     assert isinstance(f, (io.TextIOWrapper, io.BufferedWriter))
     yield f
@@ -325,14 +333,17 @@ class GameDataIO:
       backup_path: StrPath | None = '',
   ):
     file_locations = FileLocation()
-    self._save_path = pathlib.Path(
-        save_path) if save_path else file_locations.save_path
+    self._save_path = (
+        pathlib.Path(save_path) if save_path else file_locations.save_path
+    )
     self._backup_path = (
-        pathlib.Path(backup_path)
-        if backup_path else file_locations.backup_path)
+        pathlib.Path(backup_path) if backup_path else file_locations.backup_path
+    )
     self.save: ZeroSievertSave = self._read_save_file()
 
-  def _read_save_file(self,) -> ZeroSievertSave:
+  def _read_save_file(
+      self,
+  ) -> ZeroSievertSave:
     with open(self._save_path, 'r', encoding='utf-8') as f:
       return json.load(f, parse_float=decimal.Decimal)
 
@@ -345,15 +356,19 @@ class GameDataIO:
     """
     backup_path = self._backup_path
     save_path = self._save_path
-    backup_filename = (f'{save_path.name}'
-                       f'-{_current_datetime_as_valid_filename()}'
-                       f'-{safe_uuid if safe_uuid else uuid.uuid4()}'
-                       f'.dat')
+    backup_filename = (
+        f'{save_path.name}'
+        f'-{_current_datetime_as_valid_filename()}'
+        f'-{safe_uuid if safe_uuid else uuid.uuid4()}'
+        f'.dat'
+    )
     backup_file_path = backup_path.joinpath(backup_filename)
     backup_file_path.write_bytes(save_path.read_bytes())
     backup_matches_original = _files_match(save_path, backup_file_path)
-    if backup_matches_original and _iterator_length(
-        backup_path.iterdir()) >= MAXIMUM_NUMBER_OF_BACKUPS:
+    if (
+        backup_matches_original
+        and _iterator_length(backup_path.iterdir()) >= MAXIMUM_NUMBER_OF_BACKUPS
+    ):
       _delete_oldest_file(backup_path)
     if not backup_matches_original:
       os.remove(backup_file_path)
@@ -387,8 +402,10 @@ class GameDataIO:
       raise ValueError('Save not formatted properly.') from e
     try:
       if not self._backup_save_file():
-        raise RuntimeError('The SHA-256 hash of the written backup file and '
-                           'original save file do not match.')
+        raise RuntimeError(
+            'The SHA-256 hash of the written backup file and '
+            'original save file do not match.'
+        )
     except OSError as e:
       raise RuntimeError('Failed to create a backup file.') from e
     with _atomic_write(self._save_path, 'w', encoding='utf-8') as f:
@@ -415,4 +432,5 @@ class GameDataIO:
     """
     save_version = self.save['save_version']
     verifier.get_json_validator(save_version).validate_python(
-        self.save, strict=True)
+        self.save, strict=True
+    )
