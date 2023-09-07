@@ -29,48 +29,84 @@ class SaveDataTestingComponents:
 
 class SaveFileJsonCase:
 
-  @pytest_cases.case(tags=[
-      'Well-Formed', 'SaveJson', 'Custom', 'Equipment::1', 'Maximum',
-      'Version::0.31'
-  ])
+  @pytest_cases.case(
+      tags=[
+          'Well-Formed',
+          'SaveJson',
+          'Custom',
+          'Equipment::1',
+          'Maximum',
+          'Version::0.31',
+      ]
+  )
   def save_json_0_31_save_new_custom_maxsettings_equipment1(self):
     return file_util.serialize_save_json_from_file(
-        '0_31_save_new_custom_maxsettings_equipment1')
-
-  @pytest_cases.case(tags=[
-      'Well-Formed', 'SaveJson', 'Custom', 'Equipment::1', 'Minimum',
-      'Version::0.31'
-  ])
-  def save_json_0_31_save_new_custom_minsettings_equipment1(self):
-    return file_util.serialize_save_json_from_file(
-        '0_31_save_new_custom_minsettings_equipment1')
-
-  @pytest_cases.case(tags=[
-      'Well-Formed', 'SaveJson', 'Default', 'Hunter', 'Equipment::1',
-      'Version::0.31'
-  ])
-  def save_json_0_31_save_new_hunter_equipment1(self):
-    return file_util.serialize_save_json_from_file(
-        '0_31_save_new_hunter_equipment1')
-
-  @pytest_cases.case(tags=[
-      'Well-Formed', 'SaveJson', 'Default', 'Rookie', 'Equipment::1',
-      'Version::0.31'
-  ])
-  def save_json_0_31_save_new_rookie_equipment1(self):
-    return file_util.serialize_save_json_from_file(
-        '0_31_save_new_rookie_equipment1')
-
-  @pytest_cases.case(tags=[
-      'Well-Formed', 'SaveJson', 'Default', 'Survivor', 'Equipment::1',
-      'Version::0.31'
-  ])
-  def save_json_0_31_save_new_survivor_equipment1(self):
-    return file_util.serialize_save_json_from_file(
-        '0_31_save_new_survivor_equipment1')
+        '0_31_save_new_custom_maxsettings_equipment1'
+    )
 
   @pytest_cases.case(
-      tags=['Malformed', 'SaveJson', 'Subscriptable'], id='empty_dict')
+      tags=[
+          'Well-Formed',
+          'SaveJson',
+          'Custom',
+          'Equipment::1',
+          'Minimum',
+          'Version::0.31',
+      ]
+  )
+  def save_json_0_31_save_new_custom_minsettings_equipment1(self):
+    return file_util.serialize_save_json_from_file(
+        '0_31_save_new_custom_minsettings_equipment1'
+    )
+
+  @pytest_cases.case(
+      tags=[
+          'Well-Formed',
+          'SaveJson',
+          'Default',
+          'Hunter',
+          'Equipment::1',
+          'Version::0.31',
+      ]
+  )
+  def save_json_0_31_save_new_hunter_equipment1(self):
+    return file_util.serialize_save_json_from_file(
+        '0_31_save_new_hunter_equipment1'
+    )
+
+  @pytest_cases.case(
+      tags=[
+          'Well-Formed',
+          'SaveJson',
+          'Default',
+          'Rookie',
+          'Equipment::1',
+          'Version::0.31',
+      ]
+  )
+  def save_json_0_31_save_new_rookie_equipment1(self):
+    return file_util.serialize_save_json_from_file(
+        '0_31_save_new_rookie_equipment1'
+    )
+
+  @pytest_cases.case(
+      tags=[
+          'Well-Formed',
+          'SaveJson',
+          'Default',
+          'Survivor',
+          'Equipment::1',
+          'Version::0.31',
+      ]
+  )
+  def save_json_0_31_save_new_survivor_equipment1(self):
+    return file_util.serialize_save_json_from_file(
+        '0_31_save_new_survivor_equipment1'
+    )
+
+  @pytest_cases.case(
+      tags=['Malformed', 'SaveJson', 'Subscriptable'], id='empty_dict'
+  )
   def save_json_empty_dict(self):
     return {}
 

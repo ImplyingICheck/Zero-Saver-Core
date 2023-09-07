@@ -34,7 +34,7 @@ class StatsCase:
         'energy': 90.0,
         'radiation': 0.0,
         'fatigue': 97.632510444442118568986188620329,
-        'thirst': 90.0
+        'thirst': 90.0,
     }
 
 
@@ -45,20 +45,24 @@ class InventoryCase:
       'item_',
       cases='case_item.case_item',
       has_tag=['Well-Formed'],
-      prefix=('weapon_', 'generated_item_', 'item_'))  # type: ignore
+      prefix=('weapon_', 'generated_item_', 'item_'),  # type: ignore
+  )  # type: ignore
   def inventory_single_well_formed_item(self, item_):
     return [item_]
 
   @pytest_cases.case(
-      tags=['TupleTestValue', 'Item', 'Well-Formed', 'ExternalCases'])
+      tags=['TupleTestValue', 'Item', 'Well-Formed', 'ExternalCases']
+  )
   @pytest_cases.parametrize_with_cases(
       'item_',
       cases='case_item.case_item',
       has_tag=['Well-Formed'],
-      prefix=('weapon_', 'generated_item_', 'item_'))  # type: ignore
+      prefix=('weapon_', 'generated_item_', 'item_'),  # type: ignore
+  )  # type: ignore
   def tuple_inventory_item_type(self, item_):
-    validated_item = pydantic.TypeAdapter(item.Weapon | item.GeneratedItem
-                                          | item.Item).validate_python(item_)
+    validated_item = pydantic.TypeAdapter(
+        item.Weapon | item.GeneratedItem | item.Item
+    ).validate_python(item_)
     return item_, type(validated_item)
 
 
@@ -114,20 +118,33 @@ class PydanticDumpArgumentsCase:
 @pytest_cases.parametrize_with_cases('indent', cases='.', prefix='indent_')
 @pytest_cases.parametrize_with_cases('include', cases='.', prefix='include_')
 @pytest_cases.parametrize_with_cases(
-    'exclude', cases='.', has_tag=['Exclude'], prefix='exclude_')
+    'exclude', cases='.', has_tag=['Exclude'], prefix='exclude_'
+)
 @pytest_cases.parametrize_with_cases('by_alias', cases='.', prefix='by_alias_')
 @pytest_cases.parametrize_with_cases(
-    'exclude_unset', cases='.', prefix='exclude_unset_')
+    'exclude_unset', cases='.', prefix='exclude_unset_'
+)
 @pytest_cases.parametrize_with_cases(
-    'exclude_defaults', cases='.', prefix='exclude_defaults_')
+    'exclude_defaults', cases='.', prefix='exclude_defaults_'
+)
 @pytest_cases.parametrize_with_cases(
-    'exclude_none', cases='.', has_tag=['ExcludeNone'], prefix='exclude_none_')
+    'exclude_none', cases='.', has_tag=['ExcludeNone'], prefix='exclude_none_'
+)
 @pytest_cases.parametrize_with_cases(
-    'round_trip', cases='.', prefix='round_trip_')
+    'round_trip', cases='.', prefix='round_trip_'
+)
 @pytest_cases.parametrize_with_cases('warnings', cases='.', prefix='warnings_')
-def pydantic_dump_arguments_well_formed(indent, include, exclude, by_alias,
-                                        exclude_unset, exclude_defaults,
-                                        exclude_none, round_trip, warnings):
+def pydantic_dump_arguments_well_formed(
+    indent,
+    include,
+    exclude,
+    by_alias,
+    exclude_unset,
+    exclude_defaults,
+    exclude_none,
+    round_trip,
+    warnings,
+):
   return {
       'indent': indent,
       'include': include,
@@ -137,5 +154,5 @@ def pydantic_dump_arguments_well_formed(indent, include, exclude, by_alias,
       'exclude_defaults': exclude_defaults,
       'exclude_none': exclude_none,
       'round_trip': round_trip,
-      'warnings': warnings
+      'warnings': warnings,
   }

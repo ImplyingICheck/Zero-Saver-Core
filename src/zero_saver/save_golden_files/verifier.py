@@ -108,5 +108,6 @@ def get_json_validator(version: str) -> Validator:
     module = importlib.import_module(module)
   except ModuleNotFoundError:
     raise ModuleNotFoundError(
-        f'The validation class does not exist: {module}') from None
+        f'The validation class does not exist: {module}'
+    ) from None
   return pydantic.TypeAdapter(module.Model)

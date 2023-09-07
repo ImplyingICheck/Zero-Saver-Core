@@ -22,7 +22,6 @@ from typing import Literal, SupportsFloat, TypeAlias, TYPE_CHECKING
 import pydantic
 
 if TYPE_CHECKING:
-
   # Most mainstream python types implement __float__. While hacky, this is a
   # good placeholder until a protocol can be defined for the methods used in
   # Item.
@@ -61,6 +60,7 @@ class Item(pydantic.BaseModel):
     rotation: Whether the item model should be rotated 90° anti-clockwise in the
       player inventory view.
   """
+
   name: str = pydantic.Field(alias='item')
   x: NumberLike
   y: NumberLike
@@ -87,6 +87,7 @@ class GeneratedItem(Item):
       calculations; e.g., the "Cooking" skill gives bonuses when consuming
       player-created consumables.
   """
+
   seen: bool
   durability: NumberLike
   created_from_player: bool
@@ -99,6 +100,7 @@ class Attachments(pydantic.BaseModel):
   For a vanilla "ZERO Sievert" zero_saver.item.Weapon, each attribute should be
   "no_item" or a string representing the name of an attachment.
   """
+
   magazine: str
   stock: str
   handguard: str
@@ -128,6 +130,7 @@ class Weapon(GeneratedItem):
     weapon_fire_mode: The firing mode currently selected.
     mods: The attachments and accessories currently equipped to the weapon.
   """
+
   ammo_id: str
   ammo_quantity: int
   weapon_fire_mode: Literal['automatic', 'semi_automatic', 'bolt_action']

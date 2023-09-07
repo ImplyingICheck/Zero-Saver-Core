@@ -41,7 +41,8 @@ def mocked_save(mocker: pytest_mock.MockFixture):
   save = mocker.MagicMock(spec=typed_dict_0_31_production.Model, name='save')
   save.configure_mock(
       __getitem__=lambda self, x: getattr(self, x),
-      save_version='0.31 production')
+      save_version='0.31 production',
+  )
   return save
 
 
@@ -50,36 +51,38 @@ def mocked_game_data_io(mocker, mocked_save):
   mocker.patch('os.fdopen')
   mocker.patch('zero_saver.game_data_io.FileLocation')
   mocker.patch.object(
-      game_data_io.GameDataIO, '_read_save_file', return_value=mocked_save)
+      game_data_io.GameDataIO, '_read_save_file', return_value=mocked_save
+  )
   return game_data_io.GameDataIO()
 
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'save_file',
-    cases=_CASES,
-    prefix='save_file_path_',
-    has_tag=['Well-Formed'])
+    'save_file', cases=_CASES, prefix='save_file_path_', has_tag=['Well-Formed']
+)
 def game_data_io_fixture(mocker, save_file):
   mocker.patch('zero_saver.game_data_io.FileLocation')
   return game_data_io.GameDataIO(save_file), save_file
 
 
 def test_game_data_io_verify_save_integrity_invalid_save_raises_validation_error(  # pylint: disable=line-too-long
-    mocked_game_data_io):
+    mocked_game_data_io,
+):
   with pytest.raises(pydantic.ValidationError):
     mocked_game_data_io.verify_save_integrity()
 
 
 def test_game_data_io_verify_save_integrity_invalid_save_version_raises_module_not_found_error(  # pylint: disable=line-too-long
-    mocked_game_data_io):
+    mocked_game_data_io,
+):
   mocked_game_data_io.save.save_version = 'Unsupported save version'
   with pytest.raises(ModuleNotFoundError):
     mocked_game_data_io.verify_save_integrity()
 
 
 def test_game_data_io_verify_save_integrity_missing_save_version_raises_key_error(  # pylint: disable=line-too-long
-    mocked_game_data_io):
+    mocked_game_data_io,
+):
   mocked_game_data_io.save = {}
   with pytest.raises(KeyError):
     mocked_game_data_io.verify_save_integrity()
@@ -87,20 +90,23 @@ def test_game_data_io_verify_save_integrity_missing_save_version_raises_key_erro
 
 @pytest.mark.slow
 def test_game_data_io_verify_save_integrity_no_error_well_formed(
-    game_data_io_fixture):
+    game_data_io_fixture,
+):
   game_data_io_, save_file = game_data_io_fixture
   del save_file  # Unused
   game_data_io_.verify_save_integrity()
 
 
 def test_game_data_io_write_save_file_raises_value_error_invalid_save(
-    mocked_game_data_io):
+    mocked_game_data_io,
+):
   with pytest.raises(ValueError):
     mocked_game_data_io.write_save_file()
 
 
 def test_game_data_io_write_save_file_invalid_save_version_raises_runtime_error(
-    mocked_game_data_io):
+    mocked_game_data_io,
+):
   mocked_game_data_io.save.save_version = 'Unsupported save version'
   with pytest.raises(
       RuntimeError,
@@ -110,31 +116,37 @@ def test_game_data_io_write_save_file_invalid_save_version_raises_runtime_error(
 
 
 def test_game_data_io_write_save_file_missing_save_version_raises_runtime_error(
-    mocked_game_data_io):
+    mocked_game_data_io,
+):
   mocked_game_data_io.save = {}
   with pytest.raises(KeyError):
     mocked_game_data_io.verify_save_integrity()
 
 
 def test_game_data_io_write_save_file_failed_backup_raises_runtime_error(
-    mocker, mocked_game_data_io):
+    mocker, mocked_game_data_io
+):
   mocker.patch.object(
-      game_data_io.GameDataIO, '_backup_save_file', return_value=False)
+      game_data_io.GameDataIO, '_backup_save_file', return_value=False
+  )
   mocker.patch.object(game_data_io.GameDataIO, 'verify_save_integrity')
   with pytest.raises(
       RuntimeError,
       match=(
           'The SHA-256 hash of the written backup file and original save file'
-          ' do not match.'),
+          ' do not match.'
+      ),
   ):
     mocked_game_data_io.write_save_file()
 
 
 @pytest.mark.slow
 def test_game_data_io_write_save_file_well_formed_passes_correct_arguments_to_atomic_write(  # pylint: disable=line-too-long
-    mocker: pytest_mock.MockFixture, game_data_io_fixture):
+    mocker: pytest_mock.MockFixture, game_data_io_fixture
+):
   mocker.patch.object(
-      game_data_io.GameDataIO, '_backup_save_file', return_value=True)
+      game_data_io.GameDataIO, '_backup_save_file', return_value=True
+  )
   mocked_open = mocker.patch('zero_saver.game_data_io._atomic_write')
   game_data_io_, expected_save_path = game_data_io_fixture
   game_data_io_.write_save_file()
@@ -143,11 +155,14 @@ def test_game_data_io_write_save_file_well_formed_passes_correct_arguments_to_at
 
 @pytest.mark.slow
 def test_game_data_io_write_save_file_well_formed_writes_to_file_stream(
-    mocker: pytest_mock.MockFixture, game_data_io_fixture):
+    mocker: pytest_mock.MockFixture, game_data_io_fixture
+):
   mocker.patch.object(
-      game_data_io.GameDataIO, '_backup_save_file', return_value=True)
-  mocked_open = mocker.patch('zero_saver.game_data_io._atomic_write',
-                             mocker.mock_open())
+      game_data_io.GameDataIO, '_backup_save_file', return_value=True
+  )
+  mocked_open = mocker.patch(
+      'zero_saver.game_data_io._atomic_write', mocker.mock_open()
+  )
   game_data_io_, expected_save_path = game_data_io_fixture
   del expected_save_path  # Unused
   game_data_io_.write_save_file()
@@ -156,9 +171,11 @@ def test_game_data_io_write_save_file_well_formed_writes_to_file_stream(
 
 @pytest.mark.slow
 def test_game_data_io_write_save_file_well_formed_writes_expected_contents(
-    mocker: pytest_mock.MockFixture, game_data_io_fixture, file_like_fixture):
+    mocker: pytest_mock.MockFixture, game_data_io_fixture, file_like_fixture
+):
   mocker.patch.object(
-      game_data_io.GameDataIO, '_backup_save_file', return_value=True)
+      game_data_io.GameDataIO, '_backup_save_file', return_value=True
+  )
   mocker.patch('zero_saver.game_data_io._atomic_write', file_like_fixture())
   game_data_io_, expected_save_path = game_data_io_fixture
   game_data_io_.write_save_file()

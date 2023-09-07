@@ -28,26 +28,83 @@ _CASES = 'case_item.case_item'
 _ITEM_PUBLIC_PROPERTIES = ('name', 'x', 'y', 'quantity', 'rotation')
 _ITEM_PRIVATE_PROPERTIES = ()
 _ITEM_JSON_KEY_NAMES = ('item', 'x', 'y', 'quantity', 'rotation')
-_GENERATED_ITEM_PUBLIC_PROPERTIES = ('name', 'x', 'y', 'quantity', 'rotation',
-                                     'seen', 'durability',
-                                     'created_from_player')
+_GENERATED_ITEM_PUBLIC_PROPERTIES = (
+    'name',
+    'x',
+    'y',
+    'quantity',
+    'rotation',
+    'seen',
+    'durability',
+    'created_from_player',
+)
 _GENERATED_ITEM_PRIVATE_PROPERTIES = ()
-_GENERATED_ITEM_JSON_KEY_NAMES = ('item', 'x', 'y', 'quantity', 'rotation',
-                                  'seen', 'durability', 'created_from_player')
-_WEAPON_PUBLIC_PROPERTIES = ('name', 'x', 'y', 'quantity', 'rotation', 'seen',
-                             'durability', 'created_from_player', 'ammo_id',
-                             'ammo_quantity', 'weapon_fire_mode', 'mods')
+_GENERATED_ITEM_JSON_KEY_NAMES = (
+    'item',
+    'x',
+    'y',
+    'quantity',
+    'rotation',
+    'seen',
+    'durability',
+    'created_from_player',
+)
+_WEAPON_PUBLIC_PROPERTIES = (
+    'name',
+    'x',
+    'y',
+    'quantity',
+    'rotation',
+    'seen',
+    'durability',
+    'created_from_player',
+    'ammo_id',
+    'ammo_quantity',
+    'weapon_fire_mode',
+    'mods',
+)
 _WEAPON_PRIVATE_PROPERTIES = ()
-_WEAPON_JSON_KEY_NAMES = ('item', 'x', 'y', 'quantity', 'rotation', 'seen',
-                          'durability', 'created_from_player', 'ammo_id',
-                          'ammo_quantity', 'weapon_fire_mode', 'mods')
-_ATTACHMENTS_PUBLIC_PROPERTIES = ('magazine', 'stock', 'handguard', 'brake',
-                                  'scope', 'grip', 'barrel', 'att_1', 'att_2',
-                                  'att_3', 'att_4')
+_WEAPON_JSON_KEY_NAMES = (
+    'item',
+    'x',
+    'y',
+    'quantity',
+    'rotation',
+    'seen',
+    'durability',
+    'created_from_player',
+    'ammo_id',
+    'ammo_quantity',
+    'weapon_fire_mode',
+    'mods',
+)
+_ATTACHMENTS_PUBLIC_PROPERTIES = (
+    'magazine',
+    'stock',
+    'handguard',
+    'brake',
+    'scope',
+    'grip',
+    'barrel',
+    'att_1',
+    'att_2',
+    'att_3',
+    'att_4',
+)
 _ATTACHMENTS_PRIVATE_PROPERTIES = ()
-_ATTACHMENTS_JSON_KEY_NAMES = ('magazine', 'stock', 'handguard', 'brake',
-                               'scope', 'grip', 'barrel', 'att_1', 'att_2',
-                               'att_3', 'att_4')
+_ATTACHMENTS_JSON_KEY_NAMES = (
+    'magazine',
+    'stock',
+    'handguard',
+    'brake',
+    'scope',
+    'grip',
+    'barrel',
+    'att_1',
+    'att_2',
+    'att_3',
+    'att_4',
+)
 
 
 class _TestComponents(pydantic.BaseModel):
@@ -72,7 +129,8 @@ class AttachmentsTestComponents(item.Attachments, _TestComponents):
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'item', has_tag=['Well-Formed'], cases=_CASES, prefix='item_')
+    'item', has_tag=['Well-Formed'], cases=_CASES, prefix='item_'
+)
 def item_fixture(item):
   return ItemTestComponents(**item, original_kwargs=item)
 
@@ -97,27 +155,33 @@ class TestItem:
     assert isinstance(actual_value, expected_type)
 
   @pytest_cases.parametrize_with_cases(
-      'item_dict', has_tag=['Well-Formed'], cases=_CASES, prefix='item_')
+      'item_dict', has_tag=['Well-Formed'], cases=_CASES, prefix='item_'
+  )
   @pytest_cases.parametrize_with_cases(
       'malformed_value',
       has_tag=['Malformed'],
       cases=_CASES,
-      prefix='castable_to_int_')
+      prefix='castable_to_int_',
+  )
   def test_item_raises_value_error_on_malformed_quantity(
-      self, item_dict, malformed_value):
+      self, item_dict, malformed_value
+  ):
     item_dict['quantity'] = malformed_value
     with pytest.raises(ValueError):
       item.Item(**item_dict)
 
   @pytest_cases.parametrize_with_cases(
-      'item_dict', has_tag=['Well-Formed'], cases=_CASES, prefix='item_')
+      'item_dict', has_tag=['Well-Formed'], cases=_CASES, prefix='item_'
+  )
   @pytest_cases.parametrize_with_cases(
       'malformed_value',
       has_tag=['Malformed'],
       cases=_CASES,
-      prefix='castable_to_int_')
+      prefix='castable_to_int_',
+  )
   def test_item_malformed_quantity_error_message_well_formed(
-      self, item_dict, malformed_value):
+      self, item_dict, malformed_value
+  ):
     item_dict['quantity'] = malformed_value
     expected_message = 'Input should be a (valid integer|finite number)'
     with pytest.raises(ValueError, match=expected_message):
@@ -129,10 +193,12 @@ class TestItem:
     'generated_item',
     has_tag=['Well-Formed'],
     cases=_CASES,
-    prefix='generated_item_')
+    prefix='generated_item_',
+)
 def generated_item_fixture(generated_item):
   return GeneratedItemTestComponents(
-      **generated_item, original_kwargs=generated_item)
+      **generated_item, original_kwargs=generated_item
+  )
 
 
 class TestGeneratedItem:
@@ -140,10 +206,12 @@ class TestGeneratedItem:
   def test_generated_item_init_well_formed(self, generated_item_fixture):
     assert generated_item_fixture
 
-  @pytest_cases.parametrize('expected_property',
-                            _GENERATED_ITEM_PUBLIC_PROPERTIES)
-  def test_generated_item_public_properties(self, generated_item_fixture,
-                                            expected_property):
+  @pytest_cases.parametrize(
+      'expected_property', _GENERATED_ITEM_PUBLIC_PROPERTIES
+  )
+  def test_generated_item_public_properties(
+      self, generated_item_fixture, expected_property
+  ):
     assert hasattr(generated_item_fixture, expected_property)
 
   def test_generated_item_converts_seen_to_bool(self, generated_item_fixture):
@@ -152,7 +220,8 @@ class TestGeneratedItem:
     assert isinstance(actual_value, expected_type)
 
   def test_generated_item_converts_created_from_player_to_bool(
-      self, generated_item_fixture):
+      self, generated_item_fixture
+  ):
     expected_type = bool
     actual_value = generated_item_fixture.created_from_player
     assert isinstance(actual_value, expected_type)
@@ -160,7 +229,8 @@ class TestGeneratedItem:
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_')
+    'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_'
+)
 def weapon_fixture(weapon):
   return WeaponTestComponents(**weapon, original_kwargs=weapon)
 
@@ -176,41 +246,49 @@ class TestWeapon:
     assert isinstance(actual_value, expected_type)
 
   @pytest_cases.parametrize_with_cases(
-      'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_')
+      'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_'
+  )
   @pytest_cases.parametrize_with_cases(
       'malformed_value',
       has_tag=['Malformed'],
       cases=_CASES,
-      prefix='castable_to_int_')
+      prefix='castable_to_int_',
+  )
   def test_weapon_raises_value_error_on_malformed_ammo_quantity(
-      self, weapon, malformed_value):
+      self, weapon, malformed_value
+  ):
     weapon['ammo_quantity'] = malformed_value
     with pytest.raises(ValueError):
       item.Weapon(**weapon)
 
   @pytest_cases.parametrize_with_cases(
-      'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_')
+      'weapon', has_tag=['Well-Formed'], cases=_CASES, prefix='weapon_'
+  )
   @pytest_cases.parametrize_with_cases(
       'malformed_value',
       has_tag=['Malformed'],
       cases=_CASES,
-      prefix='castable_to_int_')
+      prefix='castable_to_int_',
+  )
   def test_weapon_raises_malformed_ammo_quantity_error_message_well_formed(
-      self, weapon, malformed_value):
+      self, weapon, malformed_value
+  ):
     weapon['ammo_quantity'] = malformed_value
     expected_message = 'Input should be a (valid integer|finite number)'
     with pytest.raises(ValueError, match=expected_message):
       item.Weapon(**weapon)
 
   @pytest_cases.parametrize('expected_properties', _WEAPON_PUBLIC_PROPERTIES)
-  def test_weapon_has_expected_public_properties(self, weapon_fixture,
-                                                 expected_properties):
+  def test_weapon_has_expected_public_properties(
+      self, weapon_fixture, expected_properties
+  ):
     assert hasattr(weapon_fixture, expected_properties)
 
 
 @pytest_cases.fixture
 @pytest_cases.parametrize_with_cases(
-    'attachments', has_tag=['Well-Formed'], cases=_CASES, prefix='attachments_')
+    'attachments', has_tag=['Well-Formed'], cases=_CASES, prefix='attachments_'
+)
 def attachments_fixture(attachments):
   return AttachmentsTestComponents(**attachments, original_kwargs=attachments)
 
@@ -220,14 +298,17 @@ class TestAttachment:
   def test_attachment_init_well_formed(self, attachments_fixture):
     assert attachments_fixture
 
-  def test_attachments_is_instance_pydantic_base_model(self,
-                                                       attachments_fixture):
+  def test_attachments_is_instance_pydantic_base_model(
+      self, attachments_fixture
+  ):
     assert isinstance(attachments_fixture, pydantic.BaseModel)
 
-  @pytest_cases.parametrize('expected_properties',
-                            _ATTACHMENTS_PUBLIC_PROPERTIES)
-  def test_attachments_has_expected_public_properties(self, attachments_fixture,
-                                                      expected_properties):
+  @pytest_cases.parametrize(
+      'expected_properties', _ATTACHMENTS_PUBLIC_PROPERTIES
+  )
+  def test_attachments_has_expected_public_properties(
+      self, attachments_fixture, expected_properties
+  ):
     assert hasattr(attachments_fixture, expected_properties)
 
 
@@ -235,55 +316,72 @@ class TestPydanticFunctionality:
 
   class TestModelDump:
 
-    @pytest_cases.parametrize('expected_property',
-                              _ITEM_PUBLIC_PROPERTIES + _ITEM_PRIVATE_PROPERTIES
-                             )
+    @pytest_cases.parametrize(
+        'expected_property', _ITEM_PUBLIC_PROPERTIES + _ITEM_PRIVATE_PROPERTIES
+    )
     def test_item_model_dump_contains_expected_properties(
-        self, item_fixture, expected_property):
+        self, item_fixture, expected_property
+    ):
       assert expected_property in item_fixture.model_dump().keys()
 
-    @pytest_cases.parametrize('expected_property',
-                              _GENERATED_ITEM_PUBLIC_PROPERTIES +
-                              _GENERATED_ITEM_PRIVATE_PROPERTIES)
+    @pytest_cases.parametrize(
+        'expected_property',
+        _GENERATED_ITEM_PUBLIC_PROPERTIES + _GENERATED_ITEM_PRIVATE_PROPERTIES,
+    )
     def test_generated_item_model_dump_contains_expected_properties(
-        self, generated_item_fixture, expected_property):
+        self, generated_item_fixture, expected_property
+    ):
       assert expected_property in generated_item_fixture.model_dump().keys()
 
-    @pytest_cases.parametrize('expected_property', _WEAPON_PUBLIC_PROPERTIES +
-                              _WEAPON_PRIVATE_PROPERTIES)
+    @pytest_cases.parametrize(
+        'expected_property',
+        _WEAPON_PUBLIC_PROPERTIES + _WEAPON_PRIVATE_PROPERTIES,
+    )
     def test_weapon_model_dump_contains_expected_properties(
-        self, weapon_fixture, expected_property):
+        self, weapon_fixture, expected_property
+    ):
       assert expected_property in weapon_fixture.model_dump().keys()
 
-    @pytest_cases.parametrize('expected_property',
-                              _ATTACHMENTS_PUBLIC_PROPERTIES +
-                              _ATTACHMENTS_PRIVATE_PROPERTIES)
+    @pytest_cases.parametrize(
+        'expected_property',
+        _ATTACHMENTS_PUBLIC_PROPERTIES + _ATTACHMENTS_PRIVATE_PROPERTIES,
+    )
     def test_attachments_model_dump_contains_expected_properties(
-        self, attachments_fixture, expected_property):
+        self, attachments_fixture, expected_property
+    ):
       assert expected_property in attachments_fixture.model_dump().keys()
 
   class TestModelDumpJson:
 
     @pytest_cases.parametrize('expected_json_key_name', _ITEM_JSON_KEY_NAMES)
     def test_item_model_dump_json_contains_expected_key_names(
-        self, item_fixture, expected_json_key_name):
+        self, item_fixture, expected_json_key_name
+    ):
       assert f'"{expected_json_key_name}"' in item_fixture.model_dump_json()
 
-    @pytest_cases.parametrize('expected_json_key_name',
-                              _GENERATED_ITEM_JSON_KEY_NAMES)
+    @pytest_cases.parametrize(
+        'expected_json_key_name', _GENERATED_ITEM_JSON_KEY_NAMES
+    )
     def test_generated_item_model_dump_json_contains_expected_key_names(
-        self, generated_item_fixture, expected_json_key_name):
-      assert (f'"{expected_json_key_name}"'
-              in generated_item_fixture.model_dump_json())
+        self, generated_item_fixture, expected_json_key_name
+    ):
+      assert (
+          f'"{expected_json_key_name}"'
+          in generated_item_fixture.model_dump_json()
+      )
 
     @pytest_cases.parametrize('expected_json_key_name', _WEAPON_JSON_KEY_NAMES)
     def test_weapon_model_dump_json_contains_expected_key_names(
-        self, weapon_fixture, expected_json_key_name):
+        self, weapon_fixture, expected_json_key_name
+    ):
       assert f'"{expected_json_key_name}"' in weapon_fixture.model_dump_json()
 
-    @pytest_cases.parametrize('expected_json_key_name',
-                              _ATTACHMENTS_JSON_KEY_NAMES)
+    @pytest_cases.parametrize(
+        'expected_json_key_name', _ATTACHMENTS_JSON_KEY_NAMES
+    )
     def test_attachments_model_dump_json_contains_expected_key_names(
-        self, attachments_fixture, expected_json_key_name):
-      assert (f'"{expected_json_key_name}"'
-              in attachments_fixture.model_dump_json())
+        self, attachments_fixture, expected_json_key_name
+    ):
+      assert (
+          f'"{expected_json_key_name}"' in attachments_fixture.model_dump_json()
+      )

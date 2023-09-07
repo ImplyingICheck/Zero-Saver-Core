@@ -72,6 +72,7 @@ class SaveDataFactory:
 
 class _Version031Production(SaveDataFactory):
   """A concrete SaveDataFactory for reading saves of version 0.31 production."""
+
   SUPPORTED_VERSIONS = frozenset(['0.31 production'])
 
   def get_player(self) -> player.Player:
@@ -79,14 +80,17 @@ class _Version031Production(SaveDataFactory):
     player_inventory = self.save['data']['pre_raid']['Inventory']['items']
     return player.Player(
         stats=typing.cast(player.Stats, player_stats),
-        inventory=typing.cast(player.Inventory, player_inventory))
+        inventory=typing.cast(player.Inventory, player_inventory),
+    )
 
   def set_player(self, player_data: player.Player) -> None:
     player_stats = self.save['data']['pre_raid']['player']
     player_inventory = self.save['data']['pre_raid']['Inventory']
     player_stats.update(
-        typing.cast(typed_dict_0_31_production.Player,
-                    player_data.stats.model_dump()))
+        typing.cast(
+            typed_dict_0_31_production.Player, player_data.stats.model_dump()
+        )
+    )
     player_inventory['items'] = player_data.inventory.model_dump(by_alias=True)
 
   def get_storage(self) -> stash.Stash:
@@ -96,8 +100,11 @@ class _Version031Production(SaveDataFactory):
   def set_storage(self, storage_data: stash.Stash) -> None:
     player_storage = self.save['data']
     player_storage.update(
-        typing.cast(typed_dict_0_31_production.Chest,
-                    storage_data.model_dump(by_alias=True)))
+        typing.cast(
+            typed_dict_0_31_production.Chest,
+            storage_data.model_dump(by_alias=True),
+        )
+    )
 
 
 # End concrete SaveDataFactory classes
