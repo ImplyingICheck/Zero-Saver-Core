@@ -14,9 +14,9 @@
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 [tool.poetry]
-name = "zero_saver"
-version = "0.1.0"
-description = "A save editor and manager for ZERO Sievert"
+name = "zero_saver_core"
+version = "0.1.1"
+description = "The layer of zero_saver interfacing directly with game data."
 authors = []
 readme = "README.md"
 
