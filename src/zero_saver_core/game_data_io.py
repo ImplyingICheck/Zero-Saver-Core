@@ -40,10 +40,10 @@ from typing import Any, BinaryIO, Literal, overload, TextIO, TYPE_CHECKING, Type
 
 import pydantic
 
-from zero_saver.exceptions import winreg_errors
-from zero_saver.save_golden_files import verifier
-from zero_saver.save_golden_files import typed_dict_0_31_production
-from zero_saver import monkey_patch_json
+from zero_saver_core.exceptions import winreg_errors
+from zero_saver_core.save_golden_files import verifier
+from zero_saver_core.save_golden_files import typed_dict_0_31_production
+from zero_saver_core import monkey_patch_json
 
 if TYPE_CHECKING:
   from _typeshed import StrOrBytesPath, StrPath
@@ -383,7 +383,7 @@ class GameDataIO:
 
     Raises:
       OSError: If an error occurs while handling
-        zero_saver.game_data_io._atomic_write() of self._save_path.
+        zero_saver_core.game_data_io._atomic_write() of self._save_path.
       ValueError: If integrity checks were successfully set up,
         but self.save does not pass integrity checks. See
         self.verify_save_integrity() for implementation details.
@@ -411,9 +411,6 @@ class GameDataIO:
     with _atomic_write(self._save_path, 'w', encoding='utf-8') as f:
       json.dump(self.save, f, cls=monkey_patch_json.ZeroSievertJsonEncoder)
 
-  def _import_gamedata(self):
-    pass
-
   def verify_save_integrity(self) -> None:
     """Compares the save file to the JSON Schema corresponding to supported
     save types. Raises an exception if self.save does not match the JSON Schema.
@@ -426,7 +423,7 @@ class GameDataIO:
         JSON schema corresponding to the save version.
       KeyError: If self.save does not contain the field 'save_version'.
       ModuleNotFoundError: If no TypedDict corresponding to the version of
-        self.save exists. See zero_saver.save_golden_files.verifier for
+        self.save exists. See zero_saver_core.save_golden_files.verifier for
         implementation details.
 
     """

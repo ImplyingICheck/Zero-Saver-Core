@@ -28,8 +28,8 @@ from typing import Any, overload, TypeAlias, SupportsIndex, TYPE_CHECKING, Liter
 import pydantic
 from pydantic_core import core_schema
 
-from zero_saver import item
-from zero_saver.save_golden_files import _save_typed_dict
+from zero_saver_core import item
+from zero_saver_core.save_golden_files import _save_typed_dict
 
 if TYPE_CHECKING:
   Slice: TypeAlias = slice

@@ -15,7 +15,7 @@
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 """The editor designed to interface with main story quest progress, current
 quests, and time of day."""
-from zero_saver.editors import editor
+from zero_saver_core.editors import editor
 
 
 class Quest:

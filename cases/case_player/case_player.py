@@ -17,7 +17,7 @@
 import pydantic
 import pytest_cases.filters
 
-from zero_saver import item
+from zero_saver_core import item
 
 
 class StatsCase:

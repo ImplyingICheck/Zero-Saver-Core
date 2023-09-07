@@ -13,11 +13,9 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
-"""Constructs and handles save information from savefiles.
-
-Designed as the primary interface for working with save_data.SaveData
-"""
+"""The editor designed to handle savefile-related difficulty settings."""
+from zero_saver_core.editors import editor
 
 
-class SaveManager:
+class DifficultEditor(editor.Editor):
   pass

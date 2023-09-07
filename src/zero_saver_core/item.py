@@ -45,8 +45,8 @@ else:
 
 class Item(pydantic.BaseModel):
   """A dataclass representing the properties inherited by all items in "ZERO
-  Sievert". Generally, zero_saver.item.GeneratedItem should be used to represent
-  over zero_saver.item.Item.
+  Sievert". Generally, zero_saver_core.item.GeneratedItem should be used to
+  represent over zero_saver_core.item.Item.
 
   Args:
     name: A string used by "ZERO Saver" to identify an item. Functions as an
@@ -97,9 +97,8 @@ class Attachments(pydantic.BaseModel):
   """BaseModel representing the "mods" section of a "ZERO Sievert" weapon,
   typically a firearm.
 
-  For a vanilla "ZERO Sievert" zero_saver.item.Weapon, each attribute should be
-  "no_item" or a string representing the name of an attachment.
-  """
+  For a vanilla "ZERO Sievert" zero_saver_core.item.Weapon, each attribute
+  should be "no_item" or a string representing the name of an attachment."""
 
   magazine: str
   stock: str

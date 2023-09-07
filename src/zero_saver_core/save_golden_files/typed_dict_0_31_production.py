@@ -18,9 +18,8 @@
 #   filename:  key_structure_0.31_production_clean_types.json
 #   timestamp: 2023-08-15T21:41:59+00:00
 """This file reflects the values lexed from a deserialized "ZERO Sievert" save
-in JSON format. It is not equivalent to expected fields nor types in zero_saver
-objects.
-"""
+in JSON format. It is not equivalent to expected fields nor types in
+zero_saver_core objects."""
 # pylint: disable=[invalid-name, missing-class-docstring]
 from __future__ import annotations
 
@@ -28,7 +27,7 @@ import decimal
 from typing import Any, Dict, List
 from typing_extensions import NotRequired, TypedDict
 
-from zero_saver.save_golden_files import _save_typed_dict
+from zero_saver_core.save_golden_files import _save_typed_dict
 
 Base = TypedDict(
     'Base',

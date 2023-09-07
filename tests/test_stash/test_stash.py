@@ -17,7 +17,7 @@
 # pylint: disable=redefined-outer-name
 import pytest_cases
 
-from zero_saver import stash
+from zero_saver_core import stash
 
 _CASES = 'case_stash.case_stash'
 _STASH_PUBLIC_MODEL_PROPERTIES = ('chests',)
