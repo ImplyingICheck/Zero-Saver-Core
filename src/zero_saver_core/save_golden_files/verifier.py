@@ -61,8 +61,9 @@ def open_golden_file(filename: StrPath) -> TextIO:
 
   Raises:
     OSError: If an error occurs while handling open() of the file corresponding
-      to the path: zero_saver.save_golden_files.verifier.GOLDEN_FILE_DIRECTORY
-      + *filename*.
+      to the path:
+      zero_saver_core.save_golden_files.verifier.GOLDEN_FILE_DIRECTORY +
+      *filename*.
   """
   return open(
       pathlib.Path(GOLDEN_FILE_DIRECTORY, filename),
@@ -80,12 +81,13 @@ def golden_save_file_from_version(version: str) -> TextIO:
 
   Returns:
     A TextIO stream with read permissions, encoded by
-    zero_saver.save_golden_files.verifier.ENCODING.
+    zero_saver_core.save_golden_files.verifier.ENCODING.
 
   Raises:
     OSError: If an error occurs during open() of the file corresponding to
-      *version*. See zero_saver.save_golden_files.verifier.open_golden_file()
-      for implementation details.
+      *version*. See
+      zero_saver_core.save_golden_files.verifier.open_golden_file() for
+      implementation details.
   """
   filename = f"{GoldenFilePrefix.SAVE}{version.replace(' ', '_')}.json"
   return open_golden_file(filename)
@@ -103,7 +105,7 @@ def get_json_validator(version: str) -> Validator:
   """
   clean_version_name = version.translate(str.maketrans('. ', '__'))
   file_name = f'typed_dict_{clean_version_name}'
-  module = f'zero_saver.save_golden_files.{file_name}'
+  module = f'zero_saver_core.save_golden_files.{file_name}'
   try:
     module = importlib.import_module(module)
   except ModuleNotFoundError:

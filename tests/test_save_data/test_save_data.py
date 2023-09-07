@@ -22,9 +22,9 @@ import pytest
 import pytest_cases.filters
 import pytest_mock
 
-from zero_saver import save_data
-from zero_saver import player
-from zero_saver import stash
+from zero_saver_core import save_data
+from zero_saver_core import player
+from zero_saver_core import stash
 
 _CASES = 'case_save_data.case_save_data'
 
@@ -40,7 +40,7 @@ def save_data_fixture(save):
 @pytest.fixture
 def mocked_save_data(mocker: pytest_mock.MockerFixture):
   mocker.patch(
-      'zero_saver.save_data._get_save_factory',
+      'zero_saver_core.save_data._get_save_factory',
       side_effect=mocker.Mock(name='_factory', spec=save_data.SaveDataFactory),
   )
   mocked_save_data = save_data.SaveData(mocker.Mock(name='mocked_save'))
@@ -91,7 +91,7 @@ class TestSaveData:
 
   def test_save_data_init_calls_get_save_factory_correctly(self, mocker):
     mocked_get_save_factory = mocker.patch(
-        'zero_saver.save_data._get_save_factory'
+        'zero_saver_core.save_data._get_save_factory'
     )
     mocked_save = mocker.Mock(name='mocked_save')
     save_data.SaveData(mocked_save)

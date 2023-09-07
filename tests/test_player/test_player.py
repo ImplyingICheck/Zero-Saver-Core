@@ -23,8 +23,8 @@ import pytest_cases
 import pydantic
 import pytest
 
-from zero_saver import player
-from zero_saver import item
+from zero_saver_core import player
+from zero_saver_core import item
 
 _CASES = 'case_player.case_player'
 _INVENTORY_PUBLIC_MODEL_PROPERTIES = ()

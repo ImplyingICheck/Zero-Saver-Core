@@ -22,7 +22,7 @@ import pydantic
 import pytest
 import pytest_cases
 
-from zero_saver import item
+from zero_saver_core import item
 
 _CASES = 'case_item.case_item'
 _ITEM_PUBLIC_PROPERTIES = ('name', 'x', 'y', 'quantity', 'rotation')

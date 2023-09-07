@@ -18,12 +18,12 @@ from __future__ import annotations
 
 import typing
 
-from zero_saver import game_data_io
-from zero_saver import player
-from zero_saver import stash
-from zero_saver import quest
-from zero_saver import difficulty_settings
-from zero_saver.save_golden_files import typed_dict_0_31_production
+from zero_saver_core import game_data_io
+from zero_saver_core import player
+from zero_saver_core import stash
+from zero_saver_core import quest
+from zero_saver_core import difficulty_settings
+from zero_saver_core.save_golden_files import typed_dict_0_31_production
 
 
 def get_save_version(save: game_data_io.ZeroSievertSave) -> str:
@@ -34,7 +34,7 @@ def get_save_version(save: game_data_io.ZeroSievertSave) -> str:
 
 class SaveDataFactory:
   """Abstract factory representing the methods used to parse a
-  zero_saver.game_data_io.ZeroSievertSave."""
+  zero_saver_core.game_data_io.ZeroSievertSave."""
 
   def __init__(self, save: game_data_io.ZeroSievertSave):
     self.save = save
@@ -123,12 +123,12 @@ def _get_save_factory(save: game_data_io.ZeroSievertSave) -> SaveDataFactory:
 
 
 class SaveData:
-  """Extracts data from *save* into a structured format of zero_saver objects.
-  Each object is stored in an attribute.
+  """Extracts data from *save* into a structured format of zero_saver_core
+  objects. Each object is stored in an attribute.
 
   Public interface for accessing the contents of a save file. Interactions
   with the structured data from *save* should be handled with public methods of
-  zero_saver.save_data.SaveData. The underlying constructor factory is not
+  zero_saver_core.save_data.SaveData. The underlying constructor factory is not
   guaranteed to have consistent implementation."""
 
   def __init__(self, save: game_data_io.ZeroSievertSave):

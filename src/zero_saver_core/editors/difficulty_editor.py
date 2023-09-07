@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License along with
 # Zero Saver. If not, see <https://www.gnu.org/licenses/>.
 """The editor designed to handle savefile-related difficulty settings."""
-from zero_saver.editors import editor
+from zero_saver_core.editors import editor
 
 
 class DifficultEditor(editor.Editor):

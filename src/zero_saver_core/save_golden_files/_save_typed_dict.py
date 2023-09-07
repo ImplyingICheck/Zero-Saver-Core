@@ -12,25 +12,19 @@
 #  A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #  You should have received a copy of the GNU General Public License along with
 #  Zero Saver. If not, see <https://www.gnu.org/licenses/>.
-"""Stub file of a class representing chest items (alias: Storage, Stash) from a
-"Zero Sievert" save."""
-from typing import TypeAlias
+"""Type hints used across zero_saver_core when referencing save file data.
 
-import pydantic
+Types defined here are independent of save version and are robust for usage
+within zero_saver_core.
 
-from zero_saver import item
+These types should not be used externally. Instead, import the type directly
+from the public API being used."""
+from __future__ import annotations
 
-ZeroSaverItem: TypeAlias = item.ZeroSaverItem
-NumberLike: TypeAlias = item.NumberLike
+import decimal
 
-
-class Chest(pydantic.BaseModel):
-  items: list[ZeroSaverItem]
-
-
-class StorageData(pydantic.BaseModel):
-  slot_now: NumberLike = pydantic.Field(alias='slot now')
-
-
-class Stash(pydantic.BaseModel):
-  chests: dict[str, Chest | StorageData] = pydantic.Field(alias='chest')
+ZeroSievertAttachments = dict[str, str]
+ZeroSievertJsonValue = str | decimal.Decimal | None | ZeroSievertAttachments
+ZeroSievertLexedItem = dict[str, ZeroSievertJsonValue]
+ZeroSievertParsedValue = ZeroSievertJsonValue | bool | dict[str, str] | int
+ZeroSievertParsedItem = dict[str, ZeroSievertParsedValue]
